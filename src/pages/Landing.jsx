@@ -19,14 +19,16 @@ function useReveal() {
 }
 
 // ── Tiny reusable badge ─────────────────────────────────
-function Tag({ children }) {
+function Tag({ children, dark = false }) {
   // Check if children is a string starting with ✨
   const text = typeof children === 'string' ? children.replace('✨', '').trim() : children;
   return (
     <span style={{
       display:'inline-flex', alignItems:'center', gap:'0.4rem',
-      background:'rgba(255,255,255,0.03)', color:'white',
-      border:'1px solid rgba(255,255,255,0.1)', borderRadius:50,
+      background: dark ? 'rgba(15,76,129,0.08)' : 'rgba(255,255,255,0.03)', 
+      color: dark ? 'var(--navy-dark)' : 'white',
+      border: dark ? '1px solid rgba(15,76,129,0.15)' : '1px solid rgba(255,255,255,0.1)', 
+      borderRadius:50,
       padding:'0.32rem 1rem', fontSize:'0.7rem', fontWeight:700,
       textTransform:'uppercase', letterSpacing:'0.12em', marginBottom:'0.8rem',
     }}>
@@ -650,7 +652,7 @@ export default function Landing() {
       <section id="como-funciona" className="section-pad" style={{ background:'var(--bg)' }}>
         <div className="s-inner">
           <div style={{ textAlign:'center', maxWidth:580, margin:'0 auto 3.5rem' }}>
-            <div className="rv"><Tag>{lang === 'EN' ? '🔄 Simple process' : '🔄 Proceso simple'}</Tag></div>
+            <div className="rv"><Tag dark>{lang === 'EN' ? '🔄 Simple process' : '🔄 Proceso simple'}</Tag></div>
             <h2 className="rv d1" style={{ fontSize:'clamp(1.8rem,3.5vw,2.6rem)', fontWeight:800, color:'var(--text)', letterSpacing:'-0.03em', lineHeight:1.1, marginBottom:'0.9rem', marginTop:'0.6rem' }}>
               {lang === 'EN' ? 'Book in ' : 'Reserva en '}<span style={{ color:'var(--orange)' }}>{lang === 'EN' ? 'a few steps' : 'pocos pasos'}</span>
             </h2>
