@@ -51,7 +51,6 @@ export const SITE = {
     { value: '5', suffix: '★', label: 'Rating Airbnb' },
     { value: '+100', suffix: '', label: 'Huéspedes felices' },
     { value: '24', suffix: 'h', label: 'Atención continua' },
-    { value: '0', suffix: '%', label: 'Comisión oculta' },
   ],
 };
 

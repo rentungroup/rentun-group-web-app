@@ -405,7 +405,7 @@ export default function Landing() {
           {/* Header */}
           <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', flexWrap:'wrap', gap:'1.5rem', marginBottom:'3.5rem' }}>
             <div>
-              <div className="rv"><Tag>{lang === 'EN' ? '🏠 Our properties' : '🏠 Nuestras propiedades'}</Tag></div>
+              <div className="rv"><Tag dark={true}>{lang === 'EN' ? '🏠 Our properties' : '🏠 Nuestras propiedades'}</Tag></div>
               <h2 className="rv d1" style={{ fontSize:'clamp(1.8rem,3.5vw,2.6rem)', fontWeight:800, color:'var(--text)', letterSpacing:'-0.03em', lineHeight:1.1, marginBottom:'0.9rem' }}>
                 {lang === 'EN' ? 'Available' : 'Alojamientos'} <span style={{ color:'var(--orange)' }}>{lang === 'EN' ? 'Accommodations' : 'disponibles'}</span>
               </h2>
@@ -619,7 +619,7 @@ export default function Landing() {
             </div>
 
             {/* Float badge */}
-            <div style={{ position:'absolute', bottom:'7.5rem', right:0, background:'white', borderRadius:20, padding:'1.2rem 1.6rem', boxShadow:'0 20px 55px rgba(15,76,129,0.2)', display:'flex', alignItems:'center', gap:'1rem', border:'1px solid #E6E7E8', zIndex: 2 }}>
+            <div style={{ position:'relative', marginTop:'1.5rem', width:'fit-content', background:'white', borderRadius:20, padding:'1.2rem 1.6rem', boxShadow:'0 20px 55px rgba(15,76,129,0.2)', display:'flex', alignItems:'center', gap:'1rem', border:'1px solid #E6E7E8', zIndex: 2 }}>
               <div style={{ width:48, height:48, background:'rgba(245,124,0,0.1)', borderRadius:14, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.5rem' }}>⭐</div>
               <div>
                 <strong style={{ display:'block', fontSize:'1.3rem', fontWeight:900, color:'var(--navy)', lineHeight:1 }}>5.0 / 5.0</strong>
