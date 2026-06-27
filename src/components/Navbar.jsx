@@ -189,10 +189,11 @@ const mobileNavLink = {
 };
 
 const navBtn = {
-  display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem',
   background: 'linear-gradient(135deg,#F57C00,#FF9A2F)',
   color: 'white', textDecoration: 'none',
-  padding: '0.55rem 1.5rem', borderRadius: 50,
+  padding: '0.65rem 1.5rem', borderRadius: 50,
   fontWeight: 700, fontSize: '0.85rem',
+  lineHeight: 1,
   boxShadow: '0 4px 16px rgba(245,124,0,0.38)',
 };
