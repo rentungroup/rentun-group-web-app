@@ -97,7 +97,7 @@ export default function Navbar() {
       <ul className="nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: '2rem', listStyle: 'none', margin: 0, padding: 0 }}>
         <li><button onClick={() => scrollTo('propiedades')} style={navLink}>{t.navProps}</button></li>
         <li><button onClick={() => scrollTo('nosotros')} style={navLink}>{t.navNosotros}</button></li>
-        <li><Link to="/guia" style={navLink}>{t.navGuia}</Link></li>
+        {/* <li><Link to="/guia" style={navLink}>{t.navGuia}</Link></li> */}
         
         {/* Idioma Selector */}
         <li style={{ display:'flex', gap:'2px', border:'1px solid rgba(255,255,255,0.18)', borderRadius:50, padding:'2px', background:'rgba(0,0,0,0.15)' }}>
@@ -145,7 +145,7 @@ export default function Navbar() {
         }}>
           <button onClick={() => scrollTo('propiedades')} style={mobileNavLink}>{t.navProps}</button>
           <button onClick={() => scrollTo('nosotros')} style={mobileNavLink}>{t.navNosotros}</button>
-          <Link to="/guia" onClick={() => setMenuOpen(false)} style={mobileNavLink}>{t.navGuia}</Link>
+          {/* <Link to="/guia" onClick={() => setMenuOpen(false)} style={mobileNavLink}>{t.navGuia}</Link> */}
 
           {/* Selectores Mobile */}
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:'1rem', marginTop:'0.5rem' }}>

@@ -567,10 +567,12 @@ export default function Landing() {
                           </a>
                         )}
                         
+                        {/*
                         <Link to={`/guia?prop=${p.id}`}
                               style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'rgba(15,76,129,0.06)', color:'var(--navy)', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700, border:'1px solid rgba(15,76,129,0.14)' }}>
                           {t.propGuideLink}
                         </Link>
+                        */}
                       </div>
                     </div>
                   </div>
@@ -719,12 +721,14 @@ export default function Landing() {
                   {t.navNosotros}
                 </a>
               </li>
+              {/*
               <li>
                 <Link to="/guia" style={{ color:'rgba(255,255,255,0.48)', textDecoration:'none', fontSize:'0.82rem', fontWeight:500, transition:'color 0.2s' }}
                       onMouseOver={e => e.target.style.color = 'white'} onMouseOut={e => e.target.style.color = 'rgba(255,255,255,0.48)'}>
                   {t.navGuia}
                 </Link>
               </li>
+              */}
             </ul>
           </div>
 
