@@ -630,7 +630,7 @@ export default function Landing() {
 
           {/* Features */}
           <div>
-            <div className="rv"><Tag>{t.aboutTitle}</Tag></div>
+            <div className="rv"><Tag dark={true}>{t.aboutTitle}</Tag></div>
             <h2 className="rv d1" style={{ fontSize:'clamp(1.8rem,3.5vw,2.6rem)', fontWeight:800, color:'var(--text)', letterSpacing:'-0.03em', lineHeight:1.1, marginBottom:'2rem', marginTop:'0.6rem' }}>
               {lang === 'EN' ? 'Your comfort,' : 'Tu comodidad,'}<br/>{lang === 'EN' ? 'our priority' : 'nuestra '} <span style={{ color:'var(--orange)' }}>{lang === 'EN' ? 'priority' : 'prioridad'}</span>
             </h2>
