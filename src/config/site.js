@@ -13,7 +13,7 @@ export const SITE = {
   // ── Anfitrión ──────────────────────────────────────
   hostName: 'Rentun Group',
   hostBio: '¡Hola! Somos Rentun Group, tu anfitrión en Bogotá. Estamos comprometidos en brindarte una estadía increíble. Si tienes alguna duda sobre el apartamento, recomendaciones locales o necesitas asistencia, no dudes en escribirnos por WhatsApp.',
-  hostImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&q=80',
+  hostImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&q=60',
 
   // ── Contacto ───────────────────────────────────────
   whatsapp: '573219511173',           // Número temporal — actualizar cuando llegue el real
@@ -43,7 +43,7 @@ export const SITE = {
     baths:     1,
     description: 'Acogedor apartamento completamente equipado en Bogotá. Ideal para viajes de negocio o de placer. Disfruta de un ambiente moderno con todo lo que necesitas para una estadía perfecta.',
     amenities: ['🛏️ Cama cómoda', '📶 WiFi incluido', '🍳 Cocina equipada', '❄️ Climatización', '📺 TV Smart', '🔑 Check-in flexible'],
-    image:     'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=80&w=1200',
+    image:     'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=60&w=800',
   },
 
   // ── Stats Landing ──────────────────────────────────

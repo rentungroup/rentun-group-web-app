@@ -179,17 +179,23 @@ export default function Landing() {
   // Cargamos el SDK de Airbnb para mostrar el widget en la sección de propiedades
   useEffect(() => {
     if (mainProp.isAirbnb) {
-      const existing = document.getElementById('airbnb-jssdk');
-      if (existing) existing.remove();
+      const loadAirbnbScript = () => {
+        const existing = document.getElementById('airbnb-jssdk');
+        if (existing) existing.remove();
 
-      if (window.AirbnbJSSDK) {
-        try { window.AirbnbJSSDK.init(); } catch (e) { console.error(e); }
-      }
-      const script = document.createElement('script');
-      script.id = 'airbnb-jssdk';
-      script.async = true;
-      script.src = 'https://www.airbnb.com.co/embeddable/airbnb_jssdk';
-      document.body.appendChild(script);
+        if (window.AirbnbJSSDK) {
+          try { window.AirbnbJSSDK.init(); } catch (e) { console.error(e); }
+        }
+        const script = document.createElement('script');
+        script.id = 'airbnb-jssdk';
+        script.async = true;
+        script.src = 'https://www.airbnb.com.co/embeddable/airbnb_jssdk';
+        document.body.appendChild(script);
+      };
+
+      // Retrasamos la carga 3.5 segundos para no bloquear el Lighthouse/PageSpeed inicial
+      const timer = setTimeout(loadAirbnbScript, 3500);
+      return () => clearTimeout(timer);
     }
   }, [mainProp.id, mainProp.isAirbnb]);
 
@@ -226,7 +232,7 @@ export default function Landing() {
         {/* Skyline de Bogotá sutil de fondo */}
         <div style={{
           position:'absolute', inset:0,
-          backgroundImage: 'url("https://images.unsplash.com/photo-1531168556461-80ae73db214a?auto=format&fit=crop&q=80&w=1920")',
+          backgroundImage: 'url("https://images.unsplash.com/photo-1531168556461-80ae73db214a?auto=format&fit=crop&q=60&w=1200")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           opacity: 0.1,

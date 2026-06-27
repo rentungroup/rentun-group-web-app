@@ -16,9 +16,9 @@ export const DEFAULTS = {
   ctaSub:       'Contáctanos por WhatsApp o reserva directamente en Airbnb.',
   
   heroImages: [
-    'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=80&w=1200',
-    'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=80&w=1200',
-    'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=80&w=1200'
+    'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=60&w=800',
+    'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=60&w=800',
+    'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=60&w=800'
   ],
 
   // ── Anfitrión e RNT ──
@@ -74,9 +74,9 @@ export const DEFAULTS = {
       airbnbSafety: SITE.airbnb.safety,
       airbnbEmbedId: SITE.airbnb.embedId,
       images: [
-        'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=80&w=1200',
-        'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=80&w=1200',
-        'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=80&w=1200'
+        'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=60&w=800',
+        'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=60&w=800',
+        'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=60&w=800'
       ],
       amenities: SITE.property.amenities,
       customWifiQR: '',
@@ -92,7 +92,7 @@ export const DEFAULTS = {
       title: 'Supermercado Olímpica',
       subtitle: 'Víveres y artículos de aseo a pocos pasos.',
       description: 'Encuentra todo lo que necesitas para tu estadía. Víveres, artículos de aseo y más, a pocos pasos de la casa. Cuenta con droguería y cajero automático.',
-      image: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80&w=800',
+      image: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=60&w=600',
       distance: '200m',
       walkingTime: '3 min',
       mapLink: 'https://maps.google.com/?q=Supermercado+Olimpica+Bogota',
@@ -103,7 +103,7 @@ export const DEFAULTS = {
       title: 'Restaurante Local Premium',
       subtitle: 'Comida típica colombiana y cortes excelentes.',
       description: 'Deliciosa comida local y cortes de carne excelentes. Perfecto para un almuerzo en familia o probar la típica comida de la región.',
-      image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=80&w=800',
+      image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&q=60&w=600',
       distance: '450m',
       walkingTime: '6 min',
       mapLink: 'https://maps.google.com/?q=Restaurante+Bogota',
@@ -117,19 +117,19 @@ export const DEFAULTS = {
       id: 1, 
       title: 'Calentador de agua', 
       description: 'El calentador de agua se activa automáticamente. Si necesitas ajustar la temperatura, contacta al anfitrión por WhatsApp.', 
-      image: 'https://images.unsplash.com/photo-1585338107529-13afc5f02586?auto=format&fit=crop&q=80&w=800' 
+      image: 'https://images.unsplash.com/photo-1585338107529-13afc5f02586?auto=format&fit=crop&q=60&w=600' 
     },
     { 
       id: 2, 
       title: 'Control de aire acondicionado', 
       description: 'El aire acondicionado se controla con el control remoto. Temperatura recomendada: 22°C. Recuerda apagarlo al salir.', 
-      image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=800' 
+      image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=60&w=600' 
     },
     { 
       id: 3, 
       title: 'Acceso al edificio', 
       description: 'Para ingresar al edificio menciona tu nombre en portería. Te entregaremos el código de acceso al apartamento por WhatsApp al confirmar la reserva.', 
-      image: 'https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=80&w=800' 
+      image: 'https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&q=60&w=600' 
     }
   ],
 
