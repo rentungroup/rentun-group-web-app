@@ -55,5 +55,5 @@ export const SITE = {
 };
 
 // Helper: genera link de WhatsApp con mensaje pre-llenado
-export const waLink = (msg = 'Hola Rentun Group! Me interesa reservar un apartamento \\uD83C\\uDFE0') =>
+export const waLink = (msg = 'Hola Rentun Group! Me interesa reservar un apartamento') =>
   `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(msg)}`;

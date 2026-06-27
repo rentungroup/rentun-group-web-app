@@ -343,7 +343,7 @@ export default function Landing() {
               {mainProp.isAirbnb ? (
                 <BtnAirbnb href={ab.booking} id="hero-reserve-airbnb">{t.btnAirbnb}</BtnAirbnb>
               ) : (
-                <BtnWA msg={lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name} \\uD83C\\uDFE0` : `Hola! Me interesa reservar el apartamento ${mainProp.name} \\uD83C\\uDFE0`} id="hero-reserve-wa">{t.btnWhatsapp}</BtnWA>
+                <BtnWA msg={lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name}` : `Hola! Me interesa reservar el apartamento ${mainProp.name}`} id="hero-reserve-wa">{t.btnWhatsapp}</BtnWA>
               )}
               <a href={waLink(lang === 'EN' ? 'Hello! I would like more information about Rentun Group apartments.' : 'Hola! Quisiera más información sobre los apartamentos de Rentun Group.')}
                  target="_blank" rel="noopener noreferrer" id="hero-whatsapp-btn"
@@ -429,7 +429,7 @@ export default function Landing() {
                 {t.propSub}
               </p>
             </div>
-            <a href={waLink(lang === 'EN' ? 'Hello! I would like to check availability for Rentun Group apartments \uD83C\uDFE0' : 'Hola! Me gustaría conocer disponibilidad de los apartamentos Rentun Group \uD83C\uDFE0')}
+            <a href={waLink(lang === 'EN' ? 'Hello! I would like to check availability for Rentun Group apartments' : 'Hola! Me gustaría conocer disponibilidad de los apartamentos Rentun Group')}
                target="_blank" rel="noopener noreferrer" id="props-wa-btn" className="rv d3"
                style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'var(--orange)', color:'var(--text)', textDecoration:'none', padding:'0.8rem 1.8rem', borderRadius:8, fontWeight:800, fontSize:'0.88rem', boxShadow:'var(--shadow-md)', flexShrink:0, transition:'all 0.2s' }}>
               {t.btnAvailability}
@@ -484,16 +484,6 @@ export default function Landing() {
                   </div>
 
                   <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:'1rem' }}>
-                    {/* 
-                    <div>
-                      <span style={{ display:'block', fontSize:'0.75rem', color:'var(--gray)', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'0.15rem' }}>
-                        {lang === 'EN' ? 'Estimated Rate' : 'Tarifa Estimada'}
-                      </span>
-                      <strong style={{ fontSize:'1.35rem', color:'var(--text)', fontWeight:950 }}>
-                        {formatPrice(mainProp.price, currency)}
-                      </strong>
-                    </div>
-                    */}
                     
                     <div style={{ display:'flex', gap:'0.8rem', flexWrap:'wrap' }}>
                       {mainProp.isAirbnb ? (
@@ -502,13 +492,13 @@ export default function Landing() {
                              style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'#FF385C', color:'white', textDecoration:'none', padding:'0.75rem 1.6rem', borderRadius:8, fontWeight:700, fontSize:'0.85rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
                             {t.btnAirbnb}
                           </a>
-                          <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name} \uD83C\uDFE0` : `Hola! Me interesa reservar el apartamento ${mainProp.name} \uD83C\uDFE0`)} target="_blank" rel="noopener noreferrer" id="props-whatsapp-btn"
+                          <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name}` : `Hola! Me interesa reservar el apartamento ${mainProp.name}`)} target="_blank" rel="noopener noreferrer" id="props-whatsapp-btn"
                              style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.75rem 1.6rem', borderRadius:8, fontWeight:700, fontSize:'0.85rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
                             {lang === 'EN' ? '💬 Inquire direct' : '💬 Consultar directo'}
                           </a>
                         </>
                       ) : (
-                        <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name} \uD83C\uDFE0` : `Hola! Me interesa reservar el apartamento ${mainProp.name} \uD83C\uDFE0`)} target="_blank" rel="noopener noreferrer" id="props-whatsapp-btn"
+                        <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name}` : `Hola! Me interesa reservar el apartamento ${mainProp.name}`)} target="_blank" rel="noopener noreferrer" id="props-whatsapp-btn"
                            style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.75rem 1.8rem', borderRadius:8, fontWeight:700, fontSize:'0.88rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
                           {t.btnWhatsapp}
                         </a>
@@ -563,13 +553,7 @@ export default function Landing() {
                     </div>
 
                     <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid #f1f2f4', paddingTop:'1rem' }}>
-                      {/*
-                      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'0.3rem' }}>
-                        <span style={{ fontSize:'0.75rem', color:'var(--text-muted)' }}>{lang === 'EN' ? 'Estimated rate:' : 'Tarifa estimada:'}</span>
-                        <strong style={{ fontSize:'1rem', color:'var(--text)', fontWeight:800 }}>{formatPrice(p.price, currency)}</strong>
-                      </div>
-                      */}
-
+                      
                       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.6rem' }}>
                         {p.isAirbnb ? (
                           <a href={p.airbnbListing} target="_blank" rel="noopener noreferrer"
@@ -577,7 +561,7 @@ export default function Landing() {
                             🗓️ Airbnb
                           </a>
                         ) : (
-                          <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${p.name} 🏠` : `Hola! Me interesa reservar el apartmento ${p.name} 🏠`)} target="_blank" rel="noopener noreferrer"
+                          <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${p.name}` : `Hola! Me interesa reservar el apartmento ${p.name}`)} target="_blank" rel="noopener noreferrer"
                              style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700, boxShadow:'0 4px 12px rgba(37,211,102,0.15)' }}>
                             💬 WhatsApp
                           </a>
