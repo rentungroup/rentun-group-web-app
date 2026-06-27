@@ -8,6 +8,7 @@ import PrintView  from './pages/PrintView';
 import ChatWidget from './components/ChatWidget';
 import { AuthProvider } from './context/AuthContext';
 import { ConfigProvider, useConfig } from './context/ConfigContext';
+import { Analytics } from '@vercel/analytics/react';
 
 function FontLoader() {
   const { config } = useConfig();
@@ -53,6 +54,7 @@ export default function App() {
           </Routes>
           <ChatWidget />
         </BrowserRouter>
+        <Analytics />
       </ConfigProvider>
     </AuthProvider>
   );
