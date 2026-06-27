@@ -136,6 +136,9 @@ function ImageSlider({ images }) {
         alt="Apartamento" 
         className="slider-img" 
         style={{ position: 'relative', zIndex: 2, borderRadius: '28px' }}
+        fetchPriority={currentIndex === 0 ? "high" : "auto"}
+        loading={currentIndex === 0 ? "eager" : "lazy"}
+        decoding="async"
       />
       {images.length > 1 && (
         <div className="slider-dots" style={{ zIndex: 3 }}>
