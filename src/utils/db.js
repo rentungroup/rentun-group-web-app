@@ -364,9 +364,17 @@ export const uploadImage = async (fileOrBase64, bucket = 'images') => {
 };
 
 // ── Helper: link de WhatsApp con mensaje ───────────────
-export const waLink = (whatsappNumber, msg) =>
-  `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`;
-
+export const waLink = (whatsappOrMsg, msgArg) => {
+  let num = SITE.whatsapp;
+  let msg = whatsappOrMsg;
+  if (msgArg !== undefined) {
+    num = whatsappOrMsg;
+    msg = msgArg;
+  }
+  // Si no hay número (borrado por error) usar el de SITE
+  if (!num) num = SITE.whatsapp;
+  return `https://wa.me/${num}?text=${encodeURIComponent(msg || '')}`;
+};
 // ── Traducción y Localización (ES / EN) ──
 const TRANSLATIONS = {
   ES: {
