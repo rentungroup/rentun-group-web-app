@@ -112,7 +112,7 @@ export default function Navbar() {
         </li>
 
         <li>
-          <a href={waLink('Hola Rentun Group! Me interesa reservar 🏠')}
+          <a href={waLink('Hola Rentun Group! Me interesa reservar \\uD83C\\uDFE0')}
             target="_blank" rel="noopener noreferrer"
             style={navBtn}>
             {t.navReservar}
@@ -164,7 +164,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          <a href={waLink('Hola Rentun Group! Me interesa reservar 🏠')}
+          <a href={waLink('Hola Rentun Group! Me interesa reservar \\uD83C\\uDFE0')}
              target="_blank" rel="noopener noreferrer"
              style={{ ...navBtn, justifyContent: 'center', padding: '0.8rem' }}>
             {t.navReservar}
