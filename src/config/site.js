@@ -17,7 +17,7 @@ export const SITE = {
 
   // ── Contacto ───────────────────────────────────────
   whatsapp: '573219511173',           // Número temporal — actualizar cuando llegue el real
-  email: 'rentungroup@gmail.com',    // TODO: conectar a Supabase para edición dinámica
+  email: 'admin@rentungroup.com',    // TODO: conectar a Supabase para edición dinámica
 
   // ── Links Airbnb (Propiedad Bogotá) ────────────────
   airbnb: {
