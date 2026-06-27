@@ -57,13 +57,13 @@ export default function Legal() {
             </p>
           </div>
 
-          {/* Card 2: Habeas Data */}
+          {/* Card 2: Políticas de Privacidad / Habeas Data */}
           <div style={{ background: 'white', borderRadius: 24, border: '1px solid #E6E7E8', padding: '2rem', boxShadow: '0 4px 20px rgba(15,76,129,0.04)' }}>
             <h3 style={{ display:'flex', alignItems:'center', gap:'0.6rem', fontSize: '1.15rem', fontWeight: 800, color: '#0F4C81', margin: '0 0 1rem' }}>
-              <span>📂</span> {cfg.legalHabeasTitle || 'Protección de Datos Personales (Habeas Data)'}
+              <span>🔐</span> {cfg.legalHabeasTitle || 'Políticas de Privacidad y Tratamiento de Datos Personales (Habeas Data)'}
             </h3>
             <p style={{ fontSize: '0.88rem', color: '#334155', lineHeight: 1.7, margin: 0, textAlign: 'justify', whiteSpace: 'pre-line' }}>
-              {cfg.legalHabeasData || 'En cumplimiento de la Ley 1581 de 2012 (Ley General de Protección de Datos Personales) y el Decreto 1377 de 2013, informamos que los datos de carácter personal recolectados para efectos comerciales, consultas de disponibilidad, reservas o facturación, serán almacenados en nuestras bases de datos con absoluta confidencialidad y medidas de seguridad. Como titular de la información, tienes derecho a conocer, actualizar, rectificar y suprimir tus datos personales de nuestras bases de datos comunicándote directamente a través de nuestros canales de contacto oficiales.'}
+              {cfg.legalHabeasData || 'En cumplimiento de la Ley 1581 de 2012 (Ley General de Protección de Datos Personales) y el Decreto 1377 de 2013, Rentun Group informa que los datos de carácter personal recolectados (nombres, correos, teléfonos) para efectos comerciales, consultas de disponibilidad, reservas o facturación, serán almacenados en nuestras bases de datos con absoluta confidencialidad y medidas de seguridad.\n\nEl uso de estos datos es exclusivamente para prestarte un servicio de alojamiento premium, enviarte notificaciones sobre tu reserva y mantenerte informado sobre nuestras novedades. Como titular de la información, tienes derecho a conocer, actualizar, rectificar y suprimir tus datos personales de nuestras bases de datos comunicándote directamente a través de nuestro correo oficial (admin@rentungroup.com) o WhatsApp.'}
             </p>
           </div>
 

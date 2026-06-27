@@ -771,7 +771,7 @@ export default function Landing() {
               <li>
                 <Link to="/legal" style={{ color:'var(--orange)', textDecoration:'none', fontSize:'0.82rem', fontWeight:800, transition:'opacity 0.2s' }}
                       onMouseOver={e => e.target.style.opacity = '0.8'} onMouseOut={e => e.target.style.opacity = '1'}>
-                  {lang === 'EN' ? '📄 Legal Regulations →' : '📄 Normativas Legales →'}
+                  {lang === 'EN' ? '📄 Privacy Policy & Legal →' : '📄 Políticas de Privacidad y Legales →'}
                 </Link>
               </li>
               <li style={{ fontSize:'0.82rem', color:'rgba(255,255,255,0.7)', fontWeight:700 }}>
