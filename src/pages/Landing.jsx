@@ -468,6 +468,7 @@ export default function Landing() {
                   </div>
 
                   <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:'1rem' }}>
+                    {/* 
                     <div>
                       <span style={{ display:'block', fontSize:'0.75rem', color:'var(--gray)', fontWeight:600, textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'0.15rem' }}>
                         {lang === 'EN' ? 'Estimated Rate' : 'Tarifa Estimada'}
@@ -476,6 +477,7 @@ export default function Landing() {
                         {formatPrice(mainProp.price, currency)}
                       </strong>
                     </div>
+                    */}
                     
                     <div style={{ display:'flex', gap:'0.8rem', flexWrap:'wrap' }}>
                       {mainProp.isAirbnb ? (
@@ -545,10 +547,12 @@ export default function Landing() {
                     </div>
 
                     <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid #f1f2f4', paddingTop:'1rem' }}>
+                      {/*
                       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'0.3rem' }}>
                         <span style={{ fontSize:'0.75rem', color:'var(--text-muted)' }}>{lang === 'EN' ? 'Estimated rate:' : 'Tarifa estimada:'}</span>
                         <strong style={{ fontSize:'1rem', color:'var(--text)', fontWeight:800 }}>{formatPrice(p.price, currency)}</strong>
                       </div>
+                      */}
 
                       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.6rem' }}>
                         {p.isAirbnb ? (
