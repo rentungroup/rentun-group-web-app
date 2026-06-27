@@ -96,7 +96,7 @@ PROPIEDADES DISPONIBLES:\n`;
           'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model: 'llama3-70b-8192',
+          model: 'llama-3.3-70b-versatile',
           messages: [
             { role: 'system', content: systemPrompt },
             ...messages.slice(-6).map(m => ({ role: m.role, content: m.content })),
@@ -108,6 +108,8 @@ PROPIEDADES DISPONIBLES:\n`;
       });
 
       if (!response.ok) {
+        const errData = await response.json();
+        console.error('Groq API Error Detail:', errData);
         throw new Error('Error al conectar con la IA');
       }
 
