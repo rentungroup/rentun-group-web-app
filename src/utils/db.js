@@ -270,7 +270,7 @@ export const saveConfig = async (newData) => {
     // 2. Upsert properties
     if (newData.properties) {
       const propData = newData.properties.map(p => ({
-        id: p.id === 'default-apt' ? undefined : p.id,
+        id: (p.id === 'default-apt' || !p.id) ? crypto.randomUUID() : p.id,
         name: p.name, description: p.description, location: p.location, address: p.address,
         wifi_ssid: p.wifiSSID, wifi_password: p.wifiPassword, price: p.price,
         bedrooms: p.bedrooms, beds: p.beds, baths: p.baths,
@@ -279,7 +279,11 @@ export const saveConfig = async (newData) => {
         airbnb_rules: p.airbnbRules, airbnb_safety: p.airbnbSafety, airbnb_embed_id: p.airbnbEmbedId,
         images: p.images, custom_wifi_qr: p.customWifiQR, custom_guide_qr: p.customGuideQR, custom_whatsapp_qr: p.customWhatsappQR
       }));
-      await supabase.from('properties').upsert(propData);
+      const { error: propError } = await supabase.from('properties').upsert(propData);
+      if (propError) {
+        console.error('SUPABASE ERROR IN PROPERTIES:', propError);
+        throw propError;
+      }
     }
 
     // Para las demás listas, borramos e insertamos todo para sincronizar el estado monolítico
