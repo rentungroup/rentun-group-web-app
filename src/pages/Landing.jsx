@@ -457,14 +457,14 @@ export default function Landing() {
               <div style={{ padding:'2.5rem 3rem', display:'flex', flexDirection:'column', justifyContent:'space-between' }}>
                 <div>
                   <h3 style={{ fontSize:'1.6rem', fontWeight:900, color:'var(--text)', marginBottom:'0.3rem', letterSpacing:'-0.02em' }}>
-                    {mainProp.name}
+                    {lang === 'EN' ? (mainProp.nameEn || (mainProp.name === 'Apartamento Premium • Bogotá' ? 'Premium Apartment • Bogotá' : mainProp.name)) : mainProp.name}
                   </h3>
                   <span style={{ display:'block', fontSize:'0.82rem', color:'var(--orange)', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:'1.5rem' }}>
-                    📍 {mainProp.location}
+                    📍 {lang === 'EN' ? (mainProp.locationEn || mainProp.location) : mainProp.location}
                   </span>
                   
                   <p style={{ fontSize:'0.94rem', color:'var(--text-muted)', lineHeight:1.7, marginBottom:'2rem' }}>
-                    {mainProp.description}
+                    {lang === 'EN' ? (mainProp.descriptionEn || (mainProp.description.includes('Acogedor apartamento') ? 'Cozy fully equipped apartment in Bogotá. Ideal for business or leisure trips. Enjoy a modern environment with everything you need for a perfect stay.' : mainProp.description)) : mainProp.description}
                   </p>
 
                   {/* Amenities & specs */}
@@ -507,13 +507,6 @@ export default function Landing() {
                   </div>
                 </div>
 
-                {/* Guide link button at bottom */}
-                <div style={{ marginTop:'2.5rem', paddingTop:'1.2rem', borderTop:'1px solid #F1F2F4' }}>
-                  <Link to={`/guia?prop=${mainProp.id}`}
-                        style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'var(--navy-dark)', color:'white', textDecoration:'none', padding:'0.65rem', borderRadius:8, fontSize:'0.78rem', fontWeight:700, border:'none', transition:'all 0.2s' }}>
-                    {lang === 'EN' ? '📖 View guest guide' : '📖 Ver guía del huésped'}
-                  </Link>
-                </div>
               </div>
             </div>
           ) : (
@@ -554,7 +547,7 @@ export default function Landing() {
 
                     <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid #f1f2f4', paddingTop:'1rem' }}>
                       
-                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.6rem' }}>
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:'0.6rem' }}>
                         {p.isAirbnb ? (
                           <a href={p.airbnbListing} target="_blank" rel="noopener noreferrer"
                              style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#FF385C', color:'white', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700, boxShadow:'0 4px 12px rgba(255,56,92,0.15)' }}>
@@ -566,8 +559,6 @@ export default function Landing() {
                             💬 WhatsApp
                           </a>
                         )}
-                        
-                        {/*
                         <Link to={`/guia?prop=${p.id}`}
                               style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'rgba(15,76,129,0.06)', color:'var(--navy)', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700, border:'1px solid rgba(15,76,129,0.14)' }}>
                           {t.propGuideLink}

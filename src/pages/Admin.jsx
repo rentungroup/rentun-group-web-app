@@ -879,6 +879,10 @@ export default function Admin() {
                       <Field label="Nombre del apartamento *" value={propForm.name} onChange={e => setPropForm(p => ({ ...p, name: e.target.value }))} placeholder="Ej: Suite Premium Bogotá" />
                       <Field label="Ubicación *" value={propForm.location} onChange={e => setPropForm(p => ({ ...p, location: e.target.value }))} placeholder="Ej: Chapinero, Bogotá" />
                     </div>
+                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.8rem', opacity: 0.8 }}>
+                      <Field label="Nombre (Inglés)" value={propForm.nameEn || ''} onChange={e => setPropForm(p => ({ ...p, nameEn: e.target.value }))} placeholder="Ej: Premium Suite Bogotá" />
+                      <Field label="Ubicación (Inglés)" value={propForm.locationEn || ''} onChange={e => setPropForm(p => ({ ...p, locationEn: e.target.value }))} placeholder="Ej: Chapinero, Bogota" />
+                    </div>
 
                     {/* Precio y Tipo */}
                     <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.8rem' }}>
@@ -895,6 +899,7 @@ export default function Admin() {
                     </div>
 
                     <Field label="Descripción corta *" value={propForm.description} onChange={e => setPropForm(p => ({ ...p, description: e.target.value }))} multiline placeholder="Describe el apartamento para la landing page..." />
+                    <Field label="Descripción corta (Inglés)" value={propForm.descriptionEn || ''} onChange={e => setPropForm(p => ({ ...p, descriptionEn: e.target.value }))} multiline placeholder="Describe in English..." />
                     
                     {/* Habitaciones, Camas, Baños */}
                     <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'0.8rem' }}>
