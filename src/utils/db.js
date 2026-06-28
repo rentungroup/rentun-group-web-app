@@ -231,13 +231,17 @@ export const fetchConfig = async () => {
         mapLink: p.map_link, category: p.category
       })) : DEFAULTS.places,
 
-      manuals: manualsRes.data?.length ? manualsRes.data : DEFAULTS.manuals,
+      manuals: manualsRes.data?.length ? manualsRes.data.map(m => ({
+        id: m.id, title: m.title, pdfUrl: m.pdf_url || ''
+      })) : DEFAULTS.manuals,
       
       houseRules: rulesRes.data?.length ? rulesRes.data.map(r => ({
         id: r.id, title: r.title, allowed: r.allowed, isPublic: r.is_public
       })) : DEFAULTS.houseRules,
       
-      emergencies: emergenciesRes.data?.length ? emergenciesRes.data : DEFAULTS.emergencies,
+      emergencies: emergenciesRes.data?.length ? emergenciesRes.data.map(e => ({
+        id: e.id, title: e.title, value: e.phone || e.value || '', icon: e.icon || ''
+      })) : DEFAULTS.emergencies,
       
       faqs: faqsRes.data?.length ? faqsRes.data : DEFAULTS.faqs
     };
@@ -270,7 +274,7 @@ export const saveConfig = async (newData) => {
     // 2. Upsert properties
     if (newData.properties) {
       const propData = newData.properties.map(p => ({
-        id: (p.id === 'default-apt' || !p.id) ? crypto.randomUUID() : p.id,
+        id: (!p.id) ? crypto.randomUUID() : p.id,
         name: p.name, description: p.description, location: p.location, address: p.address,
         wifi_ssid: p.wifiSSID, wifi_password: p.wifiPassword, price: p.price,
         bedrooms: p.bedrooms, beds: p.beds, baths: p.baths,
@@ -305,7 +309,7 @@ export const saveConfig = async (newData) => {
     if (newData.emergencies) {
       await supabase.from('emergencies').delete().neq('id', '00000000-0000-0000-0000-000000000000');
       await supabase.from('emergencies').insert(newData.emergencies.map(e => ({
-        title: e.title, value: e.value
+        title: e.title, phone: e.value || e.phone || '', icon: e.icon || ''
       })));
     }
 
@@ -319,7 +323,7 @@ export const saveConfig = async (newData) => {
     if (newData.manuals) {
       await supabase.from('manuals').delete().neq('id', '00000000-0000-0000-0000-000000000000');
       await supabase.from('manuals').insert(newData.manuals.map(m => ({
-        title: m.title, description: m.description, image: m.image
+        title: m.title, pdf_url: m.pdf_url || m.pdfUrl || ''
       })));
     }
 
