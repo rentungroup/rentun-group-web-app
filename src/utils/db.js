@@ -232,7 +232,8 @@ export const fetchConfig = async () => {
       })) : DEFAULTS.places,
 
       manuals: manualsRes.data?.length ? manualsRes.data.map(m => ({
-        id: m.id, title: m.title, pdfUrl: m.pdf_url || ''
+        id: m.id, title: m.title, description: m.description || '', 
+        image: m.image || '', pdfUrl: m.pdf_url || ''
       })) : DEFAULTS.manuals,
       
       houseRules: rulesRes.data?.length ? rulesRes.data.map(r => ({
@@ -271,17 +272,23 @@ export const saveConfig = async (newData) => {
       hero_images: newData.heroImages
     }).eq('id', 1);
 
-    // 2. Upsert properties
+    // 2. Upsert properties — id must be a valid UUID
     if (newData.properties) {
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       const propData = newData.properties.map(p => ({
-        id: (!p.id) ? crypto.randomUUID() : p.id,
-        name: p.name, description: p.description, location: p.location, address: p.address,
-        wifi_ssid: p.wifiSSID, wifi_password: p.wifiPassword, price: p.price,
-        bedrooms: p.bedrooms, beds: p.beds, baths: p.baths,
-        is_airbnb: p.isAirbnb, airbnb_listing: p.airbnbListing, airbnb_booking: p.airbnbBooking,
-        airbnb_reviews: p.airbnbReviews, airbnb_contact: p.airbnbContact, airbnb_calendar: p.airbnbCalendar,
-        airbnb_rules: p.airbnbRules, airbnb_safety: p.airbnbSafety, airbnb_embed_id: p.airbnbEmbedId,
-        images: p.images, custom_wifi_qr: p.customWifiQR, custom_guide_qr: p.customGuideQR, custom_whatsapp_qr: p.customWhatsappQR
+        // Solo usar el id si es un UUID válido, si no generar uno nuevo
+        id: (p.id && uuidRegex.test(p.id)) ? p.id : crypto.randomUUID(),
+        name: p.name || '', description: p.description || '', location: p.location || '', address: p.address || '',
+        wifi_ssid: p.wifiSSID || '', wifi_password: p.wifiPassword || '', price: p.price || '',
+        bedrooms: p.bedrooms || 1, beds: p.beds || 1, baths: p.baths || 1,
+        is_airbnb: p.isAirbnb ?? false,
+        airbnb_listing: p.airbnbListing || '', airbnb_booking: p.airbnbBooking || '',
+        airbnb_reviews: p.airbnbReviews || '', airbnb_contact: p.airbnbContact || '',
+        airbnb_calendar: p.airbnbCalendar || '', airbnb_rules: p.airbnbRules || '',
+        airbnb_safety: p.airbnbSafety || '', airbnb_embed_id: p.airbnbEmbedId || '',
+        images: Array.isArray(p.images) ? p.images : [],
+        custom_wifi_qr: p.customWifiQR || '', custom_guide_qr: p.customGuideQR || '',
+        custom_whatsapp_qr: p.customWhatsappQR || ''
       }));
       const { error: propError } = await supabase.from('properties').upsert(propData);
       if (propError) {
@@ -292,39 +299,57 @@ export const saveConfig = async (newData) => {
 
     // Para las demás listas, borramos e insertamos todo para sincronizar el estado monolítico
     if (newData.places) {
-      await supabase.from('places').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      await supabase.from('places').insert(newData.places.map(p => ({
+      const { error: delPlaces } = await supabase.from('places').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      if (delPlaces) { console.error('DEL places:', delPlaces); throw delPlaces; }
+      const { error: insPlaces } = await supabase.from('places').insert(newData.places.map(p => ({
         title: p.title, subtitle: p.subtitle, description: p.description, image: p.image,
         distance: p.distance, walking_time: p.walkingTime, map_link: p.mapLink, category: p.category
       })));
+      if (insPlaces) { console.error('INS places:', insPlaces); throw insPlaces; }
     }
 
     if (newData.houseRules) {
-      await supabase.from('house_rules').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      await supabase.from('house_rules').insert(newData.houseRules.map(r => ({
+      const { error: delRules } = await supabase.from('house_rules').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      if (delRules) { console.error('DEL house_rules:', delRules); throw delRules; }
+      const { error: insRules } = await supabase.from('house_rules').insert(newData.houseRules.map(r => ({
         title: r.title, allowed: r.allowed, is_public: r.isPublic
       })));
+      if (insRules) { console.error('INS house_rules:', insRules); throw insRules; }
     }
 
     if (newData.emergencies) {
-      await supabase.from('emergencies').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      await supabase.from('emergencies').insert(newData.emergencies.map(e => ({
-        title: e.title, phone: e.value || e.phone || '', icon: e.icon || ''
+      const { error: delEmerg } = await supabase.from('emergencies').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      if (delEmerg) { console.error('DEL emergencies:', delEmerg); throw delEmerg; }
+      const { error: insEmerg } = await supabase.from('emergencies').insert(newData.emergencies.map(e => ({
+        // value es NOT NULL en la BD, phone y icon son opcionales
+        title: e.title || '',
+        value: e.value || e.phone || '',
+        phone: e.phone || e.value || '',
+        icon: e.icon || ''
       })));
+      if (insEmerg) { console.error('INS emergencies:', insEmerg); throw insEmerg; }
     }
 
     if (newData.faqs) {
-      await supabase.from('faqs').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      await supabase.from('faqs').insert(newData.faqs.map(f => ({
+      const { error: delFaqs } = await supabase.from('faqs').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      if (delFaqs) { console.error('DEL faqs:', delFaqs); throw delFaqs; }
+      const { error: insFaqs } = await supabase.from('faqs').insert(newData.faqs.map(f => ({
         question: f.question, answer: f.answer
       })));
+      if (insFaqs) { console.error('INS faqs:', insFaqs); throw insFaqs; }
     }
 
     if (newData.manuals) {
-      await supabase.from('manuals').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-      await supabase.from('manuals').insert(newData.manuals.map(m => ({
-        title: m.title, pdf_url: m.pdf_url || m.pdfUrl || ''
+      const { error: delManuals } = await supabase.from('manuals').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      if (delManuals) { console.error('DEL manuals:', delManuals); throw delManuals; }
+      const { error: insManuals } = await supabase.from('manuals').insert(newData.manuals.map(m => ({
+        // description es NOT NULL en la BD
+        title: m.title || '',
+        description: m.description || m.title || '',
+        image: m.image || '',
+        pdf_url: m.pdf_url || m.pdfUrl || ''
       })));
+      if (insManuals) { console.error('INS manuals:', insManuals); throw insManuals; }
     }
 
     return true;
