@@ -13,7 +13,7 @@ export const SITE = {
   // ── Anfitrión ──────────────────────────────────────
   hostName: 'Rentun Group',
   hostBio: '¡Hola! Somos Rentun Group, tu anfitrión en Bogotá. Estamos comprometidos en brindarte una estadía increíble. Si tienes alguna duda sobre el apartamento, recomendaciones locales o necesitas asistencia, no dudes en escribirnos por WhatsApp.',
-  hostImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&q=60',
+  hostImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=165&h=165&fit=crop&q=80',
 
   // ── Contacto ───────────────────────────────────────
   whatsapp: '573219511173',           // Número temporal — actualizar cuando llegue el real

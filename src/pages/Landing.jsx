@@ -202,6 +202,24 @@ export default function Landing() {
     }
   }, [mainProp.id, mainProp.isAirbnb]);
 
+  // Efecto para añadir 'title' a los iframes de Airbnb inyectados para mejorar accesibilidad (Lighthouse)
+  useEffect(() => {
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts++;
+      const iframes = document.querySelectorAll('.airbnb-embed-frame iframe');
+      iframes.forEach(iframe => {
+        if (!iframe.getAttribute('title')) {
+          iframe.setAttribute('title', 'Airbnb Property Details');
+        }
+      });
+      if (iframes.length > 0 || attempts > 20) {
+        clearInterval(interval);
+      }
+    }, 500);
+    return () => clearInterval(interval);
+  }, [mainProp.isAirbnb]);
+
   // Enlaces de Airbnb para el primer apartamento (Hero)
   const ab = {
     listing: mainProp.airbnbListing || SITE.airbnb.listing,
