@@ -995,6 +995,7 @@ export default function Admin() {
                             currentImage={propForm.customWifiQR}
                             onImageSelected={(base64) => setPropForm(p => ({ ...p, customWifiQR: base64 }))}
                             onImageRemoved={() => setPropForm(p => ({ ...p, customWifiQR: '' }))}
+                            objectFit="contain"
                           />
                           <ImageUploader
                             id="qrGuide"
@@ -1002,6 +1003,7 @@ export default function Admin() {
                             currentImage={propForm.customGuideQR}
                             onImageSelected={(base64) => setPropForm(p => ({ ...p, customGuideQR: base64 }))}
                             onImageRemoved={() => setPropForm(p => ({ ...p, customGuideQR: '' }))}
+                            objectFit="contain"
                           />
                           <ImageUploader
                             id="qrWhatsapp"
@@ -1009,6 +1011,7 @@ export default function Admin() {
                             currentImage={propForm.customWhatsappQR}
                             onImageSelected={(base64) => setPropForm(p => ({ ...p, customWhatsappQR: base64 }))}
                             onImageRemoved={() => setPropForm(p => ({ ...p, customWhatsappQR: '' }))}
+                            objectFit="contain"
                           />
                         </div>
                       )}

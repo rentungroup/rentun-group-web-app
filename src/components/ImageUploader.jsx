@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { UploadCloud, Image as ImageIcon, Trash2, Edit2 } from 'lucide-react';
 import { compressImage } from '../utils/imageCompressor';
 
-export default function ImageUploader({ id, label, currentImage, onImageSelected, onImageRemoved }) {
+export default function ImageUploader({ id, label, currentImage, onImageSelected, onImageRemoved, objectFit = 'cover' }) {
   const [isDragActive, setIsDragActive] = useState(false);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
@@ -77,7 +77,7 @@ export default function ImageUploader({ id, label, currentImage, onImageSelected
           <img 
             src={currentImage} 
             alt="Uploader preview" 
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={{ width: '100%', height: '100%', objectFit }}
           />
           
           <div style={{
