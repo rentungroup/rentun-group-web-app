@@ -156,6 +156,83 @@ function ImageSlider({ images }) {
   );
 }
 
+// ── PropImageCycle: mini image strip that cycles automatically ──────────────
+function PropImageCycle({ images }) {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    if (!images || images.length <= 1) return;
+    const t = setInterval(() => setIdx(i => (i + 1) % images.length), 3000);
+    return () => clearInterval(t);
+  }, [images]);
+  if (!images?.length) return null;
+  return (
+    <img src={images[idx]} alt="Foto del apartamento"
+         style={{ width:'100%', height:'100%', objectFit:'cover', transition:'opacity 0.4s' }} />
+  );
+}
+
+// ── PropCard: reusable card for 2-3 grid and 4+ slider ─────────────────────
+function PropCard({ p, idx, lang, t, waLink }) {
+  const [imgIdx, setImgIdx] = useState(0);
+  useEffect(() => {
+    if (!p.images || p.images.length <= 1) return;
+    const timer = setInterval(() => setImgIdx(i => (i + 1) % p.images.length), 3500);
+    return () => clearInterval(timer);
+  }, [p.images]);
+
+  return (
+    <div className={`rv d${idx + 1}`} style={{ background:'white', borderRadius:28, overflow:'hidden', border:'1px solid #E6E7E8', boxShadow:'0 10px 30px rgba(0,0,0,0.04)', display:'flex', flexDirection:'column', height:'100%' }}>
+      {/* Image with auto-rotation */}
+      <div style={{ height:240, overflow:'hidden', background:'#fafafa', position:'relative', flexShrink:0 }}>
+        {p.images?.length > 0 ? (
+          <img src={p.images[imgIdx]} alt={p.name}
+               style={{ width:'100%', height:'100%', objectFit:'cover', transition:'opacity 0.5s' }} />
+        ) : (
+          <div style={{ height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'3rem', background:'#e2e8f0' }}>🏨</div>
+        )}
+        <span style={{ position:'absolute', top:'1rem', left:'1rem', background:'#F57C00', color:'white', fontSize:'0.65rem', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em', padding:'0.28rem 0.8rem', borderRadius:50, zIndex:2 }}>
+          {p.isAirbnb ? 'Airbnb' : (lang === 'EN' ? 'Direct' : 'Directo')}
+        </span>
+        <span style={{ position:'absolute', top:'1rem', right:'1rem', background:'rgba(255,255,255,0.96)', borderRadius:50, padding:'0.3rem 0.75rem', fontSize:'0.75rem', fontWeight:800, color:'#1a2332', zIndex:2 }}>⭐ 5.0</span>
+        {p.images?.length > 1 && (
+          <span style={{ position:'absolute', bottom:8, right:10, background:'rgba(0,0,0,0.5)', color:'white', fontSize:'0.6rem', fontWeight:700, padding:'0.15rem 0.5rem', borderRadius:50, zIndex:2 }}>📸 {p.images.length}</span>
+        )}
+      </div>
+
+      {/* Card Content */}
+      <div style={{ padding:'1.8rem', flex:1, display:'flex', flexDirection:'column', justifyContent:'space-between', gap:'1.2rem' }}>
+        <div>
+          <h3 style={{ fontSize:'1.2rem', fontWeight:800, color:'var(--text)', margin:'0 0 0.4rem', letterSpacing:'-0.01em' }}>{p.name}</h3>
+          <p style={{ fontSize:'0.75rem', color:'var(--orange)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.05em', margin:'0 0 0.8rem' }}>{p.location}</p>
+          <p style={{ fontSize:'0.85rem', color:'var(--text-muted)', lineHeight:1.6, margin:0, display:'-webkit-box', WebkitLineClamp:3, WebkitBoxOrient:'vertical', overflow:'hidden' }}>{p.description}</p>
+          <div style={{ display:'flex', gap:'0.8rem', marginTop:'1.2rem', fontSize:'0.78rem', color:'var(--text-muted)', fontWeight:500 }}>
+            <span>🛏️ {p.bedrooms} {t.propBedrooms}</span>
+            <span>•</span>
+            <span>🛌 {p.beds} {t.propBeds}</span>
+            <span>•</span>
+            <span>🚿 {p.baths} {t.propBaths}</span>
+          </div>
+        </div>
+        <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid #f1f2f4', paddingTop:'1rem' }}>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:'0.6rem' }}>
+            {p.isAirbnb ? (
+              <a href={p.airbnbListing} target="_blank" rel="noopener noreferrer"
+                 style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#FF385C', color:'white', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700 }}>
+                🗓️ Airbnb
+              </a>
+            ) : (
+              <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${p.name}` : `Hola! Me interesa reservar el apartamento ${p.name}`)} target="_blank" rel="noopener noreferrer"
+                 style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700 }}>
+                💬 WhatsApp
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ════════════════════════════════════════════════════════
 //  LANDING PAGE
 // ════════════════════════════════════════════════════════
@@ -455,137 +532,102 @@ export default function Landing() {
           </div>
 
           {properties.length === 1 ? (
-            /* Single property card — full width */
-            <div className="rv property-card" style={{ background:'white', borderRadius:16, overflow:'hidden', border:'none', boxShadow:'var(--shadow-md)', marginTop:'3rem' }}>
-              {/* Image side - Airbnb Widget */}
-              <div style={{ position:'relative', overflow:'hidden', minHeight:450, background:'#fafafa', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                <div className="airbnb-embed-frame"
-                     data-id={mainProp.airbnbEmbedId || SITE.airbnb.embedId}
-                     data-view="home"
-                     data-hide-price="true"
-                     style={{ width:'100%', height:'100%', margin:'auto', display:'block', border:'none', borderRadius:0, overflow:'hidden', background:'white' }}>
-                  <a href={mainProp.airbnbListing || SITE.airbnb.listing}>{lang === 'EN' ? 'View on Airbnb' : 'Ver en Airbnb'}</a>
-                  <a href={mainProp.airbnbListing || SITE.airbnb.listing} rel="nofollow">Vivienda rentada · Bogotá · ★5.0 · {mainProp.bedrooms} {t.propBedrooms} · {mainProp.beds} {t.propBeds} · {mainProp.baths} {t.propBaths}</a>
-                </div>
-                <span style={{ position:'absolute', top:'1rem', left:'1rem', background:'var(--orange)', color:'var(--text)', fontSize:'0.65rem', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em', padding:'0.28rem 0.8rem', borderRadius:50, boxShadow:'var(--shadow-sm)', zIndex: 2 }}>{lang === 'EN' ? '✨ Available' : '✨ Disponible'}</span>
-                <span style={{ position:'absolute', top:'1rem', right:'1rem', background:'rgba(255,255,255,0.96)', borderRadius:50, padding:'0.3rem 0.75rem', display:'flex', alignItems:'center', gap:'0.25rem', fontSize:'0.75rem', fontWeight:800, color:'#1a2332', boxShadow:'0 2px 10px rgba(0,0,0,0.12)', zIndex: 2 }}>⭐ 5.0</span>
+            /* ── Single property: Airbnb embed + rotating property images ── */
+            <div className="rv property-card" style={{ background:'white', borderRadius:16, overflow:'hidden', border:'none', boxShadow:'var(--shadow-md)', marginTop:'3rem', display:'grid', gridTemplateColumns:'1fr 1fr', minHeight:480 }}>
+              {/* Left: Airbnb widget if has embed, otherwise rotating images */}
+              <div style={{ position:'relative', overflow:'hidden', background:'#fafafa', display:'flex', alignItems:'stretch' }}>
+                {mainProp.isAirbnb && (mainProp.airbnbEmbedId || SITE.airbnb.embedId) ? (
+                  <div style={{ width:'100%', position:'relative' }}>
+                    <div className="airbnb-embed-frame"
+                         data-id={mainProp.airbnbEmbedId || SITE.airbnb.embedId}
+                         data-view="home"
+                         data-hide-price="true"
+                         style={{ width:'100%', height:'100%', margin:'auto', display:'block', border:'none', borderRadius:0, overflow:'hidden', background:'white' }}>
+                      <a href={mainProp.airbnbListing || SITE.airbnb.listing}>{lang === 'EN' ? 'View on Airbnb' : 'Ver en Airbnb'}</a>
+                      <a href={mainProp.airbnbListing || SITE.airbnb.listing} rel="nofollow">Vivienda rentada · Bogotá · ★5.0 · {mainProp.bedrooms} {t.propBedrooms} · {mainProp.beds} {t.propBeds} · {mainProp.baths} {t.propBaths}</a>
+                    </div>
+                    <span style={{ position:'absolute', top:'1rem', left:'1rem', background:'var(--orange)', color:'var(--text)', fontSize:'0.65rem', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em', padding:'0.28rem 0.8rem', borderRadius:50, boxShadow:'var(--shadow-sm)', zIndex:2 }}>{lang === 'EN' ? '✨ Available' : '✨ Disponible'}</span>
+                    <span style={{ position:'absolute', top:'1rem', right:'1rem', background:'rgba(255,255,255,0.96)', borderRadius:50, padding:'0.3rem 0.75rem', display:'flex', alignItems:'center', gap:'0.25rem', fontSize:'0.75rem', fontWeight:800, color:'#1a2332', boxShadow:'0 2px 10px rgba(0,0,0,0.12)', zIndex:2 }}>⭐ 5.0</span>
+                  </div>
+                ) : (
+                  /* No Airbnb embed — show rotating images */
+                  <div style={{ width:'100%', height:'100%', minHeight:480, position:'relative' }}>
+                    <ImageSlider images={mainProp.images?.length ? mainProp.images : null} />
+                    <span style={{ position:'absolute', top:'1rem', left:'1rem', background:'var(--orange)', color:'var(--text)', fontSize:'0.65rem', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em', padding:'0.28rem 0.8rem', borderRadius:50, boxShadow:'var(--shadow-sm)', zIndex:2 }}>{lang === 'EN' ? '✨ Available' : '✨ Disponible'}</span>
+                    <span style={{ position:'absolute', top:'1rem', right:'1rem', background:'rgba(255,255,255,0.96)', borderRadius:50, padding:'0.3rem 0.75rem', display:'flex', alignItems:'center', gap:'0.25rem', fontSize:'0.75rem', fontWeight:800, color:'#1a2332', boxShadow:'0 2px 10px rgba(0,0,0,0.12)', zIndex:2 }}>⭐ 5.0</span>
+                  </div>
+                )}
               </div>
 
-              {/* Content side */}
-              <div style={{ padding:'2.5rem 3rem', display:'flex', flexDirection:'column', justifyContent:'space-between' }}>
+              {/* Right: details + images carousel (always shows property images) */}
+              <div style={{ padding:'2.5rem 3rem', display:'flex', flexDirection:'column', justifyContent:'space-between', gap:'1.5rem' }}>
+                {/* Property photo mini-carousel when Airbnb embed is active */}
+                {mainProp.isAirbnb && mainProp.images?.length > 0 && (
+                  <div style={{ borderRadius:12, overflow:'hidden', height:160, flexShrink:0, position:'relative' }}>
+                    <PropImageCycle images={mainProp.images} />
+                    <span style={{ position:'absolute', bottom:8, right:10, background:'rgba(0,0,0,0.5)', color:'white', fontSize:'0.6rem', fontWeight:700, padding:'0.15rem 0.5rem', borderRadius:50, zIndex:2 }}>📸 {mainProp.images.length} fotos</span>
+                  </div>
+                )}
+
                 <div>
                   <h3 style={{ fontSize:'1.6rem', fontWeight:900, color:'var(--text)', marginBottom:'0.3rem', letterSpacing:'-0.02em' }}>
-                    {lang === 'EN' ? (mainProp.nameEn || (mainProp.name === 'Apartamento Premium • Bogotá' ? 'Premium Apartment • Bogotá' : mainProp.name)) : mainProp.name}
+                    {lang === 'EN' ? (mainProp.nameEn || mainProp.name) : mainProp.name}
                   </h3>
                   <span style={{ display:'block', fontSize:'0.82rem', color:'var(--orange)', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:'1.5rem' }}>
                     📍 {lang === 'EN' ? (mainProp.locationEn || mainProp.location) : mainProp.location}
                   </span>
-                  
                   <p style={{ fontSize:'0.94rem', color:'var(--text-muted)', lineHeight:1.7, marginBottom:'2rem' }}>
-                    {lang === 'EN' ? (mainProp.descriptionEn || (mainProp.description.includes('Acogedor apartamento') ? 'Cozy fully equipped apartment in Bogotá. Ideal for business or leisure trips. Enjoy a modern environment with everything you need for a perfect stay.' : mainProp.description)) : mainProp.description}
+                    {lang === 'EN' ? (mainProp.descriptionEn || mainProp.description) : mainProp.description}
                   </p>
 
-                  {/* Amenities & specs */}
                   <div style={{ display:'flex', flexWrap:'wrap', gap:'1.5rem', borderTop:'1px solid #E6E7E8', borderBottom:'1px solid #E6E7E8', padding:'1.2rem 0', marginBottom:'2rem' }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.88rem', fontWeight:600, color:'var(--text)' }}>
-                      <span>🛏️</span>
-                      <span>{mainProp.bedrooms} {lang === 'EN' ? (mainProp.bedrooms === 1 ? 'Bedroom' : 'Bedrooms') : (mainProp.bedrooms === 1 ? 'Habitación' : 'Habitaciones')}</span>
-                    </div>
-                    <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.88rem', fontWeight:600, color:'var(--text)' }}>
-                      <span>🛌</span>
-                      <span>{mainProp.beds} {lang === 'EN' ? (mainProp.beds === 1 ? 'Bed' : 'Beds') : (mainProp.beds === 1 ? 'Cama' : 'Camas')}</span>
-                    </div>
-                    <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.88rem', fontWeight:600, color:'var(--text)' }}>
-                      <span>🚿</span>
-                      <span>{mainProp.baths} {lang === 'EN' ? (mainProp.baths === 1 ? 'Bathroom' : 'Bathrooms') : (mainProp.baths === 1 ? 'Baño' : 'Baños')}</span>
-                    </div>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.88rem', fontWeight:600, color:'var(--text)' }}><span>🛏️</span><span>{mainProp.bedrooms} {lang === 'EN' ? (mainProp.bedrooms === 1 ? 'Bedroom' : 'Bedrooms') : (mainProp.bedrooms === 1 ? 'Habitación' : 'Habitaciones')}</span></div>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.88rem', fontWeight:600, color:'var(--text)' }}><span>🛌</span><span>{mainProp.beds} {lang === 'EN' ? (mainProp.beds === 1 ? 'Bed' : 'Beds') : (mainProp.beds === 1 ? 'Cama' : 'Camas')}</span></div>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.88rem', fontWeight:600, color:'var(--text)' }}><span>🚿</span><span>{mainProp.baths} {lang === 'EN' ? (mainProp.baths === 1 ? 'Bathroom' : 'Bathrooms') : (mainProp.baths === 1 ? 'Baño' : 'Baños')}</span></div>
                   </div>
 
-                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:'1rem' }}>
-                    
-                    <div style={{ display:'flex', gap:'0.8rem', flexWrap:'wrap' }}>
-                      {mainProp.isAirbnb ? (
-                        <>
-                          <a href={mainProp.airbnbBooking || SITE.airbnb.booking} target="_blank" rel="noopener noreferrer" id="props-reserve-btn"
-                             style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'#FF385C', color:'white', textDecoration:'none', padding:'0.75rem 1.6rem', borderRadius:8, fontWeight:700, fontSize:'0.85rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
-                            {t.btnAirbnb}
-                          </a>
-                          <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name}` : `Hola! Me interesa reservar el apartamento ${mainProp.name}`)} target="_blank" rel="noopener noreferrer" id="props-whatsapp-btn"
-                             style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.75rem 1.6rem', borderRadius:8, fontWeight:700, fontSize:'0.85rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
-                            {lang === 'EN' ? '💬 Inquire direct' : '💬 Consultar directo'}
-                          </a>
-                        </>
-                      ) : (
-                        <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name}` : `Hola! Me interesa reservar el apartamento ${mainProp.name}`)} target="_blank" rel="noopener noreferrer" id="props-whatsapp-btn"
-                           style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.75rem 1.8rem', borderRadius:8, fontWeight:700, fontSize:'0.88rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
-                          {t.btnWhatsapp}
+                  <div style={{ display:'flex', gap:'0.8rem', flexWrap:'wrap' }}>
+                    {mainProp.isAirbnb ? (
+                      <>
+                        <a href={mainProp.airbnbBooking || SITE.airbnb.booking} target="_blank" rel="noopener noreferrer" id="props-reserve-btn"
+                           style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'#FF385C', color:'white', textDecoration:'none', padding:'0.75rem 1.6rem', borderRadius:8, fontWeight:700, fontSize:'0.85rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
+                          {t.btnAirbnb}
                         </a>
-                      )}
-                    </div>
+                        <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name}` : `Hola! Me interesa reservar el apartamento ${mainProp.name}`)} target="_blank" rel="noopener noreferrer" id="props-whatsapp-btn"
+                           style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.75rem 1.6rem', borderRadius:8, fontWeight:700, fontSize:'0.85rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
+                          {lang === 'EN' ? '💬 Inquire direct' : '💬 Consultar directo'}
+                        </a>
+                      </>
+                    ) : (
+                      <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name}` : `Hola! Me interesa reservar el apartamento ${mainProp.name}`)} target="_blank" rel="noopener noreferrer" id="props-whatsapp-btn"
+                         style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.75rem 1.8rem', borderRadius:8, fontWeight:700, fontSize:'0.88rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
+                        {t.btnWhatsapp}
+                      </a>
+                    )}
                   </div>
                 </div>
-
               </div>
             </div>
-          ) : (
-            /* Properties Grid */
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(320px, 1fr))', gap:'2rem', marginTop:'3rem' }}>
+
+          ) : properties.length <= 3 ? (
+            /* ── 2-3 properties: responsive grid ── */
+            <div style={{ display:'grid', gridTemplateColumns: properties.length === 2 ? 'repeat(2,1fr)' : 'repeat(3,1fr)', gap:'2rem', marginTop:'3rem' }}>
               {properties.map((p, idx) => (
-                <div key={p.id} className={`rv d${idx + 1}`} style={{ background:'white', borderRadius:28, overflow:'hidden', border:'1px solid #E6E7E8', boxShadow:'0 10px 30px rgba(0,0,0,0.04)', display:'flex', flexDirection:'column' }}>
-                  {/* Image / Carousel part */}
-                  <div style={{ height:240, overflow:'hidden', background:'#fafafa', position:'relative' }}>
-                    <div style={{ height: '100%', position: 'relative' }}>
-                      {p.images?.[0] ? (
-                        <img src={p.images[0]} alt={p.name} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                      ) : (
-                        <div style={{ height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'3rem', background:'#e2e8f0' }}>🏨</div>
-                      )}
-                    </div>
-                    <span style={{ position:'absolute', top:'1rem', left:'1rem', background:'#F57C00', color:'white', fontSize:'0.65rem', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em', padding:'0.28rem 0.8rem', borderRadius:50, zIndex:2 }}>
-                      {p.isAirbnb ? 'Airbnb' : t.propDirect}
-                    </span>
-                    <span style={{ position:'absolute', top:'1rem', right:'1rem', background:'rgba(255,255,255,0.96)', borderRadius:50, padding:'0.3rem 0.75rem', fontSize:'0.75rem', fontWeight:800, color:'#1a2332', zIndex:2 }}>⭐ 5.0</span>
-                  </div>
-
-                  {/* Card Content */}
-                  <div style={{ padding:'1.8rem', flex:1, display:'flex', flexDirection:'column', justifyContent:'space-between', gap:'1.2rem' }}>
-                    <div>
-                      <h3 style={{ fontSize:'1.2rem', fontWeight:800, color:'var(--text)', margin:'0 0 0.4rem', letterSpacing:'-0.01em' }}>{p.name}</h3>
-                      <p style={{ fontSize:'0.75rem', color:'var(--orange)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.05em', margin:'0 0 0.8rem' }}>{p.location}</p>
-                      <p style={{ fontSize:'0.85rem', color:'var(--text-muted)', lineHeight:1.6, margin:0, display:'-webkit-box', WebkitLineClamp:3, WebkitBoxOrient:'vertical', overflow:'hidden' }}>{p.description}</p>
-                      
-                      <div style={{ display:'flex', gap:'0.8rem', marginTop:'1.2rem', fontSize:'0.78rem', color:'var(--text-muted)', fontWeight:500 }}>
-                        <span>🛏️ {p.bedrooms} {t.propBedrooms}</span>
-                        <span>•</span>
-                        <span>🛌 {p.beds} {t.propBeds}</span>
-                        <span>•</span>
-                        <span>🚿 {p.baths} {t.propBaths}</span>
-                      </div>
-                    </div>
-
-                    <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid #f1f2f4', paddingTop:'1rem' }}>
-                      
-                      <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:'0.6rem' }}>
-                        {p.isAirbnb ? (
-                          <a href={p.airbnbListing} target="_blank" rel="noopener noreferrer"
-                             style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#FF385C', color:'white', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700, boxShadow:'0 4px 12px rgba(255,56,92,0.15)' }}>
-                            🗓️ Airbnb
-                          </a>
-                        ) : (
-                          <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${p.name}` : `Hola! Me interesa reservar el apartmento ${p.name}`)} target="_blank" rel="noopener noreferrer"
-                             style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700, boxShadow:'0 4px 12px rgba(37,211,102,0.15)' }}>
-                            💬 WhatsApp
-                          </a>
-                        )}
-                        <Link to={`/guia?prop=${p.id}`}
-                              style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'rgba(15,76,129,0.06)', color:'var(--navy)', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700, border:'1px solid rgba(15,76,129,0.14)' }}>
-                          {t.propGuideLink}
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <PropCard key={p.id} p={p} idx={idx} lang={lang} t={t} waLink={waLink} />
               ))}
+            </div>
+
+          ) : (
+            /* ── 4+ properties: horizontal scrolling slider ── */
+            <div style={{ position:'relative', marginTop:'3rem' }}>
+              <div style={{ display:'flex', gap:'1.5rem', overflowX:'auto', paddingBottom:'1rem', scrollSnapType:'x mandatory', WebkitOverflowScrolling:'touch', scrollbarWidth:'none' }}>
+                {properties.map((p, idx) => (
+                  <div key={p.id} style={{ minWidth:'300px', maxWidth:'320px', flexShrink:0, scrollSnapAlign:'start' }}>
+                    <PropCard p={p} idx={idx} lang={lang} t={t} waLink={waLink} />
+                  </div>
+                ))}
+              </div>
+              <p style={{ textAlign:'center', fontSize:'0.75rem', color:'var(--text-muted)', marginTop:'0.5rem' }}>← Desliza para ver más →</p>
             </div>
           )}
         </div>
