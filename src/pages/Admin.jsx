@@ -507,7 +507,7 @@ export default function Admin() {
           <div>
             <span style={{ display:'block', color:'white', fontWeight:800, fontSize:'1.1rem' }}>Rentun Group — Panel Admin</span>
             <span style={{ color:'rgba(230,231,232,0.65)', fontSize:'0.72rem', fontWeight:500 }}>
-              Edita el contenido del sitio · Los cambios se guardan localmente
+              Edita el contenido del sitio
             </span>
           </div>
         </div>
@@ -543,10 +543,7 @@ export default function Admin() {
         </div>
       )}
 
-      {/* ── Info banner Supabase ── */}
-      <div style={{ background:'rgba(15,76,129,0.06)', borderBottom:'1px solid rgba(15,76,129,0.1)', padding:'0.8rem 3rem', display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.78rem', color:'#0F4C81', fontWeight:600 }}>
-        ℹ️ <span>Los cambios se guardan en el navegador. <strong>Pendiente conectar a Supabase</strong> para persistencia en la nube — esperar credenciales del proyecto.</span>
-      </div>
+
 
       {/* ── Tab Switcher ── */}
       <div style={{ display:'flex', justifyContent:'center', gap:'1rem', margin:'2rem 0 0.5rem', flexWrap:'wrap', padding:'0 2rem' }}>
@@ -1466,22 +1463,7 @@ export default function Admin() {
           </div>
         )}
 
-        {/* Info panel: próximas conexiones */}
-        <div style={{ background:'linear-gradient(135deg,rgba(15,76,129,0.05),rgba(245,124,0,0.04))', border:'1.5px dashed rgba(15,76,129,0.2)', borderRadius:20, padding:'1.5rem 2rem', marginTop:'2rem' }}>
-          <h3 style={{ fontWeight:700, color:'var(--navy)', fontSize:'0.95rem', margin:'0 0 1rem' }}>🔮 Próximas integraciones</h3>
-          <ul style={{ listStyle:'none', display:'flex', flexDirection:'column', gap:'0.7rem', padding:0, margin:0 }}>
-            {[
-              { icon:'🗄️', text:'Supabase — Persistencia en la nube (esperando credenciales del proyecto)' },
-              { icon:'🐙', text:'GitHub — Repositorio de control de versiones del proyecto' },
-              { icon:'▲', text:'Vercel — Deploy automático desde GitHub (gratis con plan Hobby)' },
-              { icon:'▲', text:'Auth Admin — Login protegido para el panel (con Supabase Auth)' },
-            ].map(i => (
-              <li key={i.text} style={{ display:'flex', alignItems:'center', gap:'0.7rem', fontSize:'0.85rem', color:'#5c6d80' }}>
-                <span style={{ fontSize:'1.1rem' }}>{i.icon}</span> {i.text}
-              </li>
-            ))}
-          </ul>
-        </div>
+
 
         {/* Bottom save button */}
         <div style={{ display:'flex', justifyContent:'flex-end', marginTop:'2.5rem', gap:'1rem' }}>
