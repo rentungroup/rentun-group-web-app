@@ -94,10 +94,9 @@ export default function PrintView() {
           
           {/* Brand Header */}
           <div style={{ textAlign: 'center', marginTop: '0.8rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <img src="/logos/rentungroupblue.webp" alt="Rentun Group Logo" style={{ width: 45, height: 45, objectFit: 'contain', marginBottom: '0.4rem' }} />
-            <span style={{ fontSize: '0.62rem', letterSpacing: '0.24em', fontWeight: 900, color: '#0F4C81', textTransform: 'uppercase', display: 'block' }}>BIENVENIDO A TU HOGAR TEMPORAL</span>
-            <h1 style={{ fontSize: '2.1rem', fontWeight: 900, color: '#0d1724', margin: '0.4rem 0 0.6rem', fontFamily: 'Outfit, sans-serif', letterSpacing: '-0.02em' }}>{prop.name}</h1>
-            <div style={{ width: 50, height: 3, background: '#F57C00', margin: '0.4rem auto 0.8rem', borderRadius: 50 }} />
+            <span style={{ fontSize: '1.2rem', letterSpacing: '0.15em', fontWeight: 900, color: '#0d1724', textTransform: 'uppercase', marginBottom: '1.2rem' }}>BIENVENIDO A</span>
+            <img src="/logos/rentungroupblue.webp" alt="Rentun Group Logo" style={{ width: 140, objectFit: 'contain', marginBottom: '1.2rem' }} />
+            <div style={{ width: 50, height: 3, background: '#F57C00', margin: '0.4rem auto 1.2rem', borderRadius: 50 }} />
             <p style={{ fontSize: '0.75rem', color: '#5c6d80', maxWidth: 360, margin: '0 auto', lineHeight: 1.5, fontWeight: 500 }}>
               Escanea los códigos QR para conectarte a internet o acceder a la guía interactiva del apartamento (manuales, reglas y lugares recomendados).
             </p>
