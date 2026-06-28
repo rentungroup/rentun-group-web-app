@@ -128,14 +128,14 @@ PROPIEDADES DISPONIBLES:\n`;
   return (
     <>
       <button 
-        className="chat-fab-btn"
+        className="chat-fab-btn no-print"
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Abrir chat de ayuda"
       >
         {isOpen ? <X size={28} /> : <MessageCircle size={28} />}
       </button>
 
-      <div className={`chat-window ${isOpen ? 'open' : ''}`}>
+      <div className={`chat-window no-print ${isOpen ? 'open' : ''}`}>
         <div className="chat-header">
           <div className="chat-header-info">
             <div className="chat-avatar">

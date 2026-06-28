@@ -93,7 +93,8 @@ export default function PrintView() {
         <div style={{ position: 'relative', zIndex: 10, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           
           {/* Brand Header */}
-          <div style={{ textAlign: 'center', marginTop: '0.8rem' }}>
+          <div style={{ textAlign: 'center', marginTop: '0.8rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <img src="/logos/rentungroupblue.webp" alt="Rentun Group Logo" style={{ width: 45, height: 45, objectFit: 'contain', marginBottom: '0.4rem' }} />
             <span style={{ fontSize: '0.62rem', letterSpacing: '0.24em', fontWeight: 900, color: '#0F4C81', textTransform: 'uppercase', display: 'block' }}>BIENVENIDO A TU HOGAR TEMPORAL</span>
             <h1 style={{ fontSize: '2.1rem', fontWeight: 900, color: '#0d1724', margin: '0.4rem 0 0.6rem', fontFamily: 'Outfit, sans-serif', letterSpacing: '-0.02em' }}>{prop.name}</h1>
             <div style={{ width: 50, height: 3, background: '#F57C00', margin: '0.4rem auto 0.8rem', borderRadius: 50 }} />
