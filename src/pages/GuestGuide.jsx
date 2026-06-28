@@ -344,11 +344,18 @@ export default function GuestGuide() {
                 <div style={{ fontSize:'3rem', marginBottom:'1rem' }}>🎉</div>
                 <h3 style={{ fontSize:'1.2rem', fontWeight:800, color:'#065f46', marginBottom:'0.5rem' }}>{t.guideCheckoutDoneTitle}</h3>
                 <p style={{ fontSize:'0.88rem', color:'#047857', marginBottom:'1.2rem' }}>{t.guideCheckoutDoneDesc}</p>
-                <a href={waLink(cfg.whatsapp, lang === 'EN' ? `Hello! I have completed the checkout checklist for the apartment "${activeProp.name || 'Apartamento'}". Thanks for everything! 🙌` : `Hola! Ya completé el checklist de salida del apartamento "${activeProp.name || 'Apartamento'}". ¡Muchas gracias por todo! 🙌`)}
-                   target="_blank" rel="noopener noreferrer"
-                   style={{ display:'inline-flex', alignItems:'center', gap:'0.5rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.8rem 1.8rem', borderRadius:50, fontWeight:700, fontSize:'0.9rem' }}>
-                  {t.guideCheckoutBtn}
-                </a>
+                <div style={{ display:'flex', gap:'1rem', flexWrap:'wrap', justifyContent:'center' }}>
+                  <a href={waLink(cfg.whatsapp, lang === 'EN' ? `Hello! I have completed the checkout checklist for the apartment "${activeProp.name || 'Apartamento'}". Thanks for everything! 🙌` : `Hola! Ya completé el checklist de salida del apartamento "${activeProp.name || 'Apartamento'}". ¡Muchas gracias por todo! 🙌`)}
+                     target="_blank" rel="noopener noreferrer"
+                     style={{ display:'inline-flex', alignItems:'center', gap:'0.5rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.8rem 1.8rem', borderRadius:50, fontWeight:700, fontSize:'0.9rem' }}>
+                    {t.guideCheckoutBtn}
+                  </a>
+                  <a href="https://g.page/r/CdfJPwfVetufEBM/review"
+                     target="_blank" rel="noopener noreferrer"
+                     style={{ display:'inline-flex', alignItems:'center', gap:'0.6rem', background:'#1a73e8', color:'white', padding:'0.8rem 1.8rem', borderRadius:50, textDecoration:'none', fontWeight:700, fontSize:'0.9rem', boxShadow:'0 4px 15px rgba(26,115,232,0.2)' }}>
+                    ⭐ {lang === 'EN' ? 'Leave a Review' : 'Dejar Reseña'}
+                  </a>
+                </div>
               </div>
             ) : (
               <div style={{ display:'flex', flexDirection:'column', gap:'0.8rem', marginBottom:'1.5rem' }}>

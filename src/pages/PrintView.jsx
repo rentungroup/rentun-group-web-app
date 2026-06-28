@@ -32,11 +32,13 @@ export default function PrintView() {
   const autoWifiQRUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(wifiQRString)}`;
   const autoGuideQRUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(guideUrl)}`;
   const autoWhatsappQRUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(whatsappUrl)}`;
+  const autoReviewQRUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent('https://g.page/r/CdfJPwfVetufEBM/review')}`;
 
   // Usar QR personalizado si existe, de lo contrario auto-generado
   const wifiQR = prop.customWifiQR || autoWifiQRUrl;
   const guideQR = prop.customGuideQR || autoGuideQRUrl;
   const whatsappQR = prop.customWhatsappQR || autoWhatsappQRUrl;
+  const reviewQR = autoReviewQRUrl;
 
   const handlePrint = () => {
     window.print();
@@ -101,40 +103,58 @@ export default function PrintView() {
           </div>
 
           {/* QRs Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', margin: '1.5rem 0' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.2rem', margin: '1.5rem 0' }}>
             
             {/* WiFi Block */}
-            <div style={{ background: 'white', border: '1px solid #E6E7E8', borderRadius: 20, padding: '1.4rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 12px rgba(0,0,0,0.01)' }}>
+            <div style={{ background: 'white', border: '1px solid #E6E7E8', borderRadius: 20, padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 12px rgba(0,0,0,0.01)' }}>
               <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(15,76,129,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0F4C81', marginBottom: '0.6rem' }}>
                 <Wifi size={18} />
               </div>
-              <h2 style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0d1724', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.8rem' }}>Conexión WiFi</h2>
+              <h2 style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0d1724', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.8rem' }}>Conexión WiFi</h2>
               
-              <div style={{ border: '1px solid #E6E7E8', padding: '0.5rem', borderRadius: 12, background: '#f8fafc', marginBottom: '0.8rem' }}>
-                <img src={wifiQR} alt="WiFi QR" style={{ width: 120, height: 120, objectFit: 'contain', display: 'block' }} />
+              <div style={{ border: '1px solid #E6E7E8', padding: '0.4rem', borderRadius: 12, background: '#f8fafc', marginBottom: '0.8rem' }}>
+                <img src={wifiQR} alt="WiFi QR" style={{ width: 100, height: 100, objectFit: 'contain', display: 'block' }} />
               </div>
 
-              <div style={{ fontSize: '0.72rem', color: '#5c6d80', textAlign: 'left', width: '100%', borderTop: '1px solid #f1f2f4', paddingTop: '0.6rem', boxSizing: 'border-box' }}>
+              <div style={{ fontSize: '0.65rem', color: '#5c6d80', textAlign: 'left', width: '100%', borderTop: '1px solid #f1f2f4', paddingTop: '0.6rem', boxSizing: 'border-box' }}>
                 <div style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}><strong style={{ color: '#0d1724' }}>Red:</strong> {prop.wifiSSID}</div>
                 <div style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}><strong style={{ color: '#0d1724' }}>Clave:</strong> {prop.wifiPassword}</div>
               </div>
             </div>
 
             {/* Guide Block */}
-            <div style={{ background: 'white', border: '1px solid #E6E7E8', borderRadius: 20, padding: '1.4rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 12px rgba(0,0,0,0.01)' }}>
+            <div style={{ background: 'white', border: '1px solid #E6E7E8', borderRadius: 20, padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 12px rgba(0,0,0,0.01)' }}>
               <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(15,76,129,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0F4C81', marginBottom: '0.6rem' }}>
                 <Eye size={18} />
               </div>
-              <h2 style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0d1724', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.8rem' }}>Guía Digital</h2>
+              <h2 style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0d1724', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.8rem' }}>Guía Digital</h2>
               
-              <div style={{ border: '1px solid #E6E7E8', padding: '0.5rem', borderRadius: 12, background: '#f8fafc', marginBottom: '0.8rem' }}>
-                <img src={guideQR} alt="Guía QR" style={{ width: 120, height: 120, objectFit: 'contain', display: 'block' }} />
+              <div style={{ border: '1px solid #E6E7E8', padding: '0.4rem', borderRadius: 12, background: '#f8fafc', marginBottom: '0.8rem' }}>
+                <img src={guideQR} alt="Guía QR" style={{ width: 100, height: 100, objectFit: 'contain', display: 'block' }} />
               </div>
 
-              <div style={{ fontSize: '0.72rem', color: '#5c6d80', textAlign: 'left', width: '100%', borderTop: '1px solid #f1f2f4', paddingTop: '0.6rem', boxSizing: 'border-box' }}>
+              <div style={{ fontSize: '0.65rem', color: '#5c6d80', textAlign: 'left', width: '100%', borderTop: '1px solid #f1f2f4', paddingTop: '0.6rem', boxSizing: 'border-box' }}>
                 <div style={{ fontWeight: 800, color: '#0d1724', marginBottom: '0.1rem' }}>Escanea para ver:</div>
-                <div style={{ fontSize: '0.65rem' }}>• Manuales e info de acceso</div>
-                <div style={{ fontSize: '0.65rem' }}>• Sitios de interés y check-out</div>
+                <div>• Info de acceso</div>
+                <div>• Sitios de interés</div>
+              </div>
+            </div>
+
+            {/* Review Block */}
+            <div style={{ background: 'white', border: '1px solid #E6E7E8', borderRadius: 20, padding: '1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 12px rgba(0,0,0,0.01)' }}>
+              <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(245,124,0,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F57C00', marginBottom: '0.6rem', fontSize: '1.2rem' }}>
+                ⭐
+              </div>
+              <h2 style={{ fontSize: '0.75rem', fontWeight: 800, color: '#0d1724', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 0.8rem' }}>Dejar Reseña</h2>
+              
+              <div style={{ border: '1px solid #E6E7E8', padding: '0.4rem', borderRadius: 12, background: '#f8fafc', marginBottom: '0.8rem' }}>
+                <img src={reviewQR} alt="Review QR" style={{ width: 100, height: 100, objectFit: 'contain', display: 'block' }} />
+              </div>
+
+              <div style={{ fontSize: '0.65rem', color: '#5c6d80', textAlign: 'left', width: '100%', borderTop: '1px solid #f1f2f4', paddingTop: '0.6rem', boxSizing: 'border-box' }}>
+                <div style={{ fontWeight: 800, color: '#0d1724', marginBottom: '0.1rem' }}>¿Te gustó tu estadía?</div>
+                <div>¡Déjanos 5 estrellas</div>
+                <div>en Google Maps!</div>
               </div>
             </div>
 
