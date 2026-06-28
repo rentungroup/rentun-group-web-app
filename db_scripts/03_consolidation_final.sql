@@ -20,7 +20,11 @@ alter table public.site_settings
   add column if not exists host_bio text,
   add column if not exists host_image text,
   add column if not exists rnt_number text,
-  add column if not exists hero_images jsonb;
+  add column if not exists hero_images jsonb,
+  add column if not exists chat_assistant_name text,
+  add column if not exists chat_assistant_subtitle text,
+  add column if not exists chat_assistant_welcome text,
+  add column if not exists chat_assistant_avatar text;
 
 insert into public.site_settings (id) values (1) on conflict (id) do nothing;
 

@@ -222,6 +222,13 @@ export const fetchConfig = async () => {
       rntNumber: settings.rnt_number || DEFAULTS.rntNumber,
       heroImages: settings.hero_images || DEFAULTS.heroImages,
       
+      chatAssistant: {
+        name: settings.chat_assistant_name || DEFAULTS.chatAssistant.name,
+        subtitle: settings.chat_assistant_subtitle || DEFAULTS.chatAssistant.subtitle,
+        welcome: settings.chat_assistant_welcome || DEFAULTS.chatAssistant.welcome,
+        avatar: settings.chat_assistant_avatar || DEFAULTS.chatAssistant.avatar
+      },
+      
       properties: mappedProperties,
       
       places: placesRes.data?.length ? placesRes.data.map(p => ({
@@ -270,7 +277,11 @@ export const saveConfig = async (newData) => {
       host_bio: newData.hostBio,
       host_image: newData.hostImage,
       rnt_number: newData.rntNumber,
-      hero_images: Array.isArray(newData.heroImages) ? newData.heroImages : []
+      hero_images: Array.isArray(newData.heroImages) ? newData.heroImages : [],
+      chat_assistant_name: newData.chatAssistant?.name || '',
+      chat_assistant_subtitle: newData.chatAssistant?.subtitle || '',
+      chat_assistant_welcome: newData.chatAssistant?.welcome || '',
+      chat_assistant_avatar: newData.chatAssistant?.avatar || ''
     });
     if (settingsError) {
       console.error('SUPABASE ERROR IN SITE_SETTINGS:', settingsError);
