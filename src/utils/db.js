@@ -255,8 +255,9 @@ export const fetchConfig = async () => {
 // ── Guarda la configuración (Actualización monolítica para Admin) ──────────
 export const saveConfig = async (newData) => {
   try {
-    // 1. Update site_settings
-    await supabase.from('site_settings').update({
+    // 1. Upsert site_settings (crea la fila si no existe, la actualiza si ya existe)
+    const { error: settingsError } = await supabase.from('site_settings').upsert({
+      id: 1,
       font_pair: newData.fontPair,
       whatsapp: newData.whatsapp,
       email: newData.email,
@@ -269,8 +270,12 @@ export const saveConfig = async (newData) => {
       host_bio: newData.hostBio,
       host_image: newData.hostImage,
       rnt_number: newData.rntNumber,
-      hero_images: newData.heroImages
-    }).eq('id', 1);
+      hero_images: Array.isArray(newData.heroImages) ? newData.heroImages : []
+    });
+    if (settingsError) {
+      console.error('SUPABASE ERROR IN SITE_SETTINGS:', settingsError);
+      throw settingsError;
+    }
 
     // 2. Upsert properties — id must be a valid UUID
     if (newData.properties) {
