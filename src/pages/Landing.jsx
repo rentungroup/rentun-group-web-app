@@ -581,7 +581,6 @@ export default function Landing() {
                               style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'rgba(15,76,129,0.06)', color:'var(--navy)', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700, border:'1px solid rgba(15,76,129,0.14)' }}>
                           {t.propGuideLink}
                         </Link>
-                        */}
                       </div>
                     </div>
                   </div>
