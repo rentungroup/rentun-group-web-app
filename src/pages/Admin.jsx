@@ -989,30 +989,32 @@ export default function Admin() {
                           <p style={{ fontSize:'0.72rem', color:'#5c6d80', margin:'0 0 0.5rem', lineHeight:1.4 }}>
                             Sube tus propios QRs (de WiFi, Guía o WhatsApp). Reemplazarán a los códigos autogenerados en la tarjeta de bienvenida.
                           </p>
-                          <ImageUploader
-                            id="qrWifi"
-                            label="Código QR del WiFi"
-                            currentImage={propForm.customWifiQR}
-                            onImageSelected={(base64) => setPropForm(p => ({ ...p, customWifiQR: base64 }))}
-                            onImageRemoved={() => setPropForm(p => ({ ...p, customWifiQR: '' }))}
-                            objectFit="contain"
-                          />
-                          <ImageUploader
-                            id="qrGuide"
-                            label="Código QR de la Guía"
-                            currentImage={propForm.customGuideQR}
-                            onImageSelected={(base64) => setPropForm(p => ({ ...p, customGuideQR: base64 }))}
-                            onImageRemoved={() => setPropForm(p => ({ ...p, customGuideQR: '' }))}
-                            objectFit="contain"
-                          />
-                          <ImageUploader
-                            id="qrWhatsapp"
-                            label="Código QR de WhatsApp"
-                            currentImage={propForm.customWhatsappQR}
-                            onImageSelected={(base64) => setPropForm(p => ({ ...p, customWhatsappQR: base64 }))}
-                            onImageRemoved={() => setPropForm(p => ({ ...p, customWhatsappQR: '' }))}
-                            objectFit="contain"
-                          />
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
+                            <ImageUploader
+                              id="qrWifi"
+                              label="Código QR del WiFi"
+                              currentImage={propForm.customWifiQR}
+                              onImageSelected={(base64) => setPropForm(p => ({ ...p, customWifiQR: base64 }))}
+                              onImageRemoved={() => setPropForm(p => ({ ...p, customWifiQR: '' }))}
+                              objectFit="contain"
+                            />
+                            <ImageUploader
+                              id="qrGuide"
+                              label="Código QR de la Guía"
+                              currentImage={propForm.customGuideQR}
+                              onImageSelected={(base64) => setPropForm(p => ({ ...p, customGuideQR: base64 }))}
+                              onImageRemoved={() => setPropForm(p => ({ ...p, customGuideQR: '' }))}
+                              objectFit="contain"
+                            />
+                            <ImageUploader
+                              id="qrWhatsapp"
+                              label="Código QR de WhatsApp"
+                              currentImage={propForm.customWhatsappQR}
+                              onImageSelected={(base64) => setPropForm(p => ({ ...p, customWhatsappQR: base64 }))}
+                              onImageRemoved={() => setPropForm(p => ({ ...p, customWhatsappQR: '' }))}
+                              objectFit="contain"
+                            />
+                          </div>
                         </div>
                       )}
                     </div>
