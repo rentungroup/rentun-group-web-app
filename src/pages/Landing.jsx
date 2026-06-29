@@ -87,7 +87,7 @@ const BtnNavy = ({ href, children, id }) => (
 const BtnWA = ({ msg, children, id, style }) => (
   <a href={waLink(msg)} id={id} target="_blank" rel="noopener noreferrer"
      style={{
-       display:'inline-flex', alignItems:'center', gap:'0.6rem',
+       display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'0.6rem',
        background:'#25D366', color:'white', textDecoration:'none',
        padding:'1rem 2.2rem', borderRadius:8, fontWeight:700, fontSize:'1rem',
        boxShadow:'var(--shadow-md)', transition:'all 0.2s', ...style,
@@ -99,7 +99,7 @@ const BtnWA = ({ msg, children, id, style }) => (
 const BtnAirbnb = ({ href, children, id, style }) => (
   <a href={href} id={id} target="_blank" rel="noopener noreferrer"
      style={{
-       display:'inline-flex', alignItems:'center', gap:'0.6rem',
+       display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'0.6rem',
        background:'#FF385C', color:'white', textDecoration:'none',
        padding:'1rem 2.2rem', borderRadius:8, fontWeight:700, fontSize:'1rem',
        boxShadow:'var(--shadow-md)', transition:'all 0.2s', ...style,
@@ -446,7 +446,7 @@ export default function Landing() {
               )}
               <a href={waLink(lang === 'EN' ? 'Hello! I would like more information about Rentun Group apartments.' : 'Hola! Quisiera más información sobre los apartamentos de Rentun Group.')}
                  target="_blank" rel="noopener noreferrer" id="hero-whatsapp-btn"
-                 style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'rgba(255,255,255,0.08)', color:'white', textDecoration:'none', padding:'0.9rem 1.8rem', borderRadius:50, fontWeight:700, fontSize:'0.88rem', border:'1px solid rgba(255,255,255,0.18)', transition:'all 0.2s' }}>
+                 style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'0.55rem', background:'rgba(255,255,255,0.08)', color:'white', textDecoration:'none', padding:'0.9rem 1.8rem', borderRadius:50, fontWeight:700, fontSize:'0.88rem', border:'1px solid rgba(255,255,255,0.18)', transition:'all 0.2s' }}>
                 {t.btnAvailability}
               </a>
             </div>
@@ -584,13 +584,19 @@ export default function Landing() {
                     {lang === 'EN' ? (mainProp.descriptionEn || mainProp.description) : mainProp.description}
                   </p>
 
-                  <div style={{ display:'flex', flexWrap:'wrap', gap:'1rem 1.5rem', borderTop:'1px solid #E6E7E8', borderBottom:'1px solid #E6E7E8', padding:'1.2rem 0', marginBottom:'2rem' }}>
+                  {/* Fila de características básicas con bordes */}
+                  <div style={{ display:'flex', flexWrap:'wrap', gap:'1rem 1.5rem', borderTop:'1px solid #E6E7E8', borderBottom:'1px solid #E6E7E8', padding:'1.2rem 0', marginBottom:'1.2rem' }}>
                     <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.85rem', fontWeight:600, color:'var(--text)' }}><span>🛏️</span><span>{mainProp.bedrooms} {lang === 'EN' ? (mainProp.bedrooms === 1 ? 'Bedroom' : 'Bedrooms') : (mainProp.bedrooms === 1 ? 'Habitación' : 'Habitaciones')}</span></div>
-                    <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.85rem', fontWeight:600, color:'var(--text)' }}><span>🛏</span><span>{mainProp.beds} {lang === 'EN' ? (mainProp.beds === 1 ? 'Bed' : 'Beds') : (mainProp.beds === 1 ? 'Cama' : 'Camas')}</span></div>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.85rem', fontWeight:600, color:'var(--text)' }}><span>🛌</span><span>{mainProp.beds} {lang === 'EN' ? (mainProp.beds === 1 ? 'Bed' : 'Beds') : (mainProp.beds === 1 ? 'Cama' : 'Camas')}</span></div>
                     <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.85rem', fontWeight:600, color:'var(--text)' }}><span>🚿</span><span>{mainProp.baths} {lang === 'EN' ? (mainProp.baths === 1 ? 'Bathroom' : 'Bathrooms') : (mainProp.baths === 1 ? 'Baño' : 'Baños')}</span></div>
-                    <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.85rem', fontWeight:600, color:'var(--text)' }}><span>📡</span><span>{lang === 'EN' ? 'High-speed WiFi' : 'WiFi alta velocidad'}</span></div>
-                    <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.85rem', fontWeight:600, color:'var(--text)' }}><span>💻</span><span>{lang === 'EN' ? 'Workspace' : 'Zona de trabajo'}</span></div>
-                    <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.85rem', fontWeight:600, color:'var(--text)' }}><span>🍳</span><span>{lang === 'EN' ? 'Full Kitchen' : 'Cocina equipada'}</span></div>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.85rem', fontWeight:600, color:'var(--text)' }}><span>👥</span><span>{mainProp.guests || 2} {lang === 'EN' ? 'Guests' : 'Personas'}</span></div>
+                  </div>
+
+                  {/* Servicios destacados (Amenidades) */}
+                  <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(110px, 1fr))', gap:'0.8rem', marginBottom:'2rem' }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.8rem', fontWeight:600, color:'var(--text-muted)' }}><span>📡</span><span>{lang === 'EN' ? 'High-speed WiFi' : 'WiFi alta velocidad'}</span></div>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.8rem', fontWeight:600, color:'var(--text-muted)' }}><span>💻</span><span>{lang === 'EN' ? 'Workspace' : 'Zona de trabajo'}</span></div>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.8rem', fontWeight:600, color:'var(--text-muted)' }}><span>🍳</span><span>{lang === 'EN' ? 'Full Kitchen' : 'Cocina equipada'}</span></div>
                   </div>
 
                   <div style={{ display:'flex', gap:'0.8rem', flexWrap:'wrap' }}>

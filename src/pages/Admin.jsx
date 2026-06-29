@@ -162,7 +162,7 @@ export default function Admin() {
   // Estados para CRUD de propiedades (apartamentos)
   const [propForm, setPropForm] = useState({
     id: '', name: '', description: '', location: '', address: '', wifiSSID: '', wifiPassword: '', price: '',
-    bedrooms: 1, beds: 1, baths: 1, isAirbnb: true,
+    bedrooms: 1, beds: 1, baths: 1, guests: 2, isAirbnb: true,
     airbnbListing: '', airbnbBooking: '', airbnbReviews: '', airbnbContact: '', airbnbCalendar: '', airbnbRules: '', airbnbSafety: '', airbnbEmbedId: '',
     images: [], customWifiQR: '', customGuideQR: '', customWhatsappQR: ''
   });
@@ -249,7 +249,7 @@ export default function Admin() {
   const clearPropForm = () => {
     setPropForm({
       id: '', name: '', description: '', location: '', address: '', wifiSSID: '', wifiPassword: '', price: '',
-      bedrooms: 1, beds: 1, baths: 1, isAirbnb: true,
+      bedrooms: 1, beds: 1, baths: 1, guests: 2, isAirbnb: true,
       airbnbListing: '', airbnbBooking: '', airbnbReviews: '', airbnbContact: '', airbnbCalendar: '', airbnbRules: '', airbnbSafety: '', airbnbEmbedId: '',
       images: [], customWifiQR: '', customGuideQR: '', customWhatsappQR: ''
     });
@@ -943,11 +943,12 @@ export default function Admin() {
                     <Field label="Descripción corta *" value={propForm.description} onChange={e => setPropForm(p => ({ ...p, description: e.target.value }))} multiline placeholder="Describe el apartamento para la landing page..." />
                     <Field label="Descripción corta (Inglés)" value={propForm.descriptionEn || ''} onChange={e => setPropForm(p => ({ ...p, descriptionEn: e.target.value }))} multiline placeholder="Describe in English..." />
                     
-                    {/* Habitaciones, Camas, Baños */}
-                    <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'0.8rem' }}>
+                    {/* Habitaciones, Camas, Baños, Personas */}
+                    <div style={{ display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:'0.8rem' }}>
                       <Field label="Habitaciones" type="number" value={propForm.bedrooms} onChange={e => setPropForm(p => ({ ...p, bedrooms: parseInt(e.target.value) || 1 }))} />
                       <Field label="Camas" type="number" value={propForm.beds} onChange={e => setPropForm(p => ({ ...p, beds: parseInt(e.target.value) || 1 }))} />
                       <Field label="Baños" type="number" value={propForm.baths} onChange={e => setPropForm(p => ({ ...p, baths: parseFloat(e.target.value) || 1 }))} />
+                      <Field label="Personas" type="number" value={propForm.guests || 2} onChange={e => setPropForm(p => ({ ...p, guests: parseInt(e.target.value) || 2 }))} />
                     </div>
 
                     <AdminSection title="Datos de la Guía" icon="🔑">

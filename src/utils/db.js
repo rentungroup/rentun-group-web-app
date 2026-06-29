@@ -64,6 +64,7 @@ export const DEFAULTS = {
       bedrooms: 1,
       beds: 1,
       baths: 1,
+      guests: 2,
       isAirbnb: true,
       airbnbListing: SITE.airbnb.listing,
       airbnbBooking: SITE.airbnb.booking,
@@ -209,7 +210,7 @@ export const fetchConfig = async () => {
       id: p.id, name: p.name, description: p.description,
       location: p.location, address: p.address,
       wifiSSID: p.wifi_ssid, wifiPassword: p.wifi_password,
-      price: p.price, bedrooms: p.bedrooms, beds: p.beds, baths: p.baths,
+      price: p.price, bedrooms: p.bedrooms, beds: p.beds, baths: p.baths, guests: p.guests || 2,
       isAirbnb: p.is_airbnb, airbnbListing: p.airbnb_listing,
       airbnbBooking: p.airbnb_booking, airbnbReviews: p.airbnb_reviews,
       airbnbContact: p.airbnb_contact, airbnbCalendar: p.airbnb_calendar,
@@ -332,7 +333,7 @@ export const saveConfig = async (newData) => {
         id: (p.id && uuidRegex.test(p.id)) ? p.id : crypto.randomUUID(),
         name: p.name || '', description: p.description || '', location: p.location || '', address: p.address || '',
         wifi_ssid: p.wifiSSID || '', wifi_password: p.wifiPassword || '', price: p.price || '',
-        bedrooms: p.bedrooms || 1, beds: p.beds || 1, baths: p.baths || 1,
+        bedrooms: p.bedrooms || 1, beds: p.beds || 1, baths: p.baths || 1, guests: p.guests || 2,
         is_airbnb: p.isAirbnb ?? false,
         airbnb_listing: p.airbnbListing || '', airbnb_booking: p.airbnbBooking || '',
         airbnb_reviews: p.airbnbReviews || '', airbnb_contact: p.airbnbContact || '',
@@ -497,7 +498,7 @@ const TRANSLATIONS = {
     // Stats
     statReviews: 'Valoraciones',
     statApartments: 'Apartamentos',
-    statGuests: 'Satisfechos',
+    statGuests: 'Huéspedes Satisfechos',
     statReturn: 'Retorno',
 
     // Properties section
