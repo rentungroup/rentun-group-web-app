@@ -4,7 +4,7 @@ import { useConfig } from '../context/ConfigContext';
 import { waLink, getTranslation, formatPrice } from '../utils/db';
 import { SITE } from '../config/site';
 import Navbar from '../components/Navbar';
-import { ArrowRight, Star, Home, Coffee, Info, Smartphone, ExternalLink, CalendarDays, Users, Clock, Zap, MapPin, Key, Wifi } from 'lucide-react';
+import { ArrowRight, Star, Home, Coffee, Info, Smartphone, ExternalLink, CalendarDays, Users, Clock, Zap, MapPin, Key, Wifi, PawPrint } from 'lucide-react';
 
 // ── Scroll Reveal Hook ──────────────────────────────────
 function useReveal() {
@@ -412,9 +412,9 @@ export default function Landing() {
               justify-content: flex-start;
             }
             
-            .stats-grid-7 {
+            .stats-grid-8 {
               display: grid;
-              grid-template-columns: repeat(7, 1fr);
+              grid-template-columns: repeat(8, 1fr);
               gap: 1rem;
               width: 100%;
               max-width: 1400px;
@@ -442,7 +442,7 @@ export default function Landing() {
               justify-content: center;
             }
             
-            .stats-val-7 {
+            .stats-val-8 {
               font-size: 1.1rem;
               font-weight: 800;
               color: var(--white);
@@ -451,7 +451,7 @@ export default function Landing() {
               text-transform: uppercase;
             }
             
-            .stats-lbl-7 {
+            .stats-lbl-8 {
               font-size: 0.68rem;
               font-weight: 600;
               color: rgba(255,255,255,0.6);
@@ -491,7 +491,7 @@ export default function Landing() {
               .hero-top-line { --justify-hero: center !important; }
               .hero-btns { justify-content: center !important; width: 100% !important; }
               
-              .stats-grid-7 {
+              .stats-grid-8 {
                 grid-template-columns: repeat(4, 1fr) !important;
                 gap: 1.5rem 1rem !important;
               }
@@ -502,7 +502,7 @@ export default function Landing() {
             }
             
             @media (max-width: 768px) {
-              .stats-grid-7 {
+              .stats-grid-8 {
                 grid-template-columns: repeat(2, 1fr) !important;
                 gap: 1.5rem 0.5rem !important;
               }
@@ -514,10 +514,10 @@ export default function Landing() {
                 width: 28px !important;
                 height: 28px !important;
               }
-              .stats-val-7 {
+              .stats-val-8 {
                 font-size: 0.95rem !important;
               }
-              .stats-lbl-7 {
+              .stats-lbl-8 {
                 font-size: 0.58rem !important;
                 letter-spacing: 0.05em !important;
               }
@@ -540,9 +540,19 @@ export default function Landing() {
           
           {/* Left: Text content */}
           <div>
-            {/* Top Badge */}
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem', justifyContent: 'var(--justify-hero)' }} className="hero-top-line">
+            {/* Top Badge & Stars */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '1.5rem', justifyContent: 'var(--justify-hero)' }} className="hero-top-line">
               <Tag>{t.heroTag}</Tag>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                <div style={{ display: 'flex', gap: '0.15rem' }}>
+                  {[1,2,3,4,5].map(i => (
+                    <svg key={i} width="13" height="13" viewBox="0 0 24 24" fill="var(--orange)">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  ))}
+                </div>
+                <span style={{ fontSize: '0.82rem', color: 'var(--orange)', fontWeight: 800 }}>5.0</span>
+              </div>
             </div>
 
             <h1 style={{ fontSize:'clamp(2.4rem,5vw,3.8rem)', fontWeight:900, color:'white', letterSpacing:'-0.035em', lineHeight:1.06, marginBottom:'1.5rem' }}>
@@ -605,7 +615,7 @@ export default function Landing() {
 
       {/* ── STATS STRIP ─────────────────────────────── */}
       <div style={{ background:'var(--navy-dark)', borderBottom:'1px solid rgba(196,154,60,0.3)', padding:'2.5rem 2rem' }}>
-        <div className="stats-grid-7">
+        <div className="stats-grid-8">
           {[
             { icon: <Star size={34} strokeWidth={1.5} />, title: '5★', subtitle: 'RATING AIRBNB' },
             { icon: <Users size={34} strokeWidth={1.5} />, title: '+100', subtitle: lang === 'EN' ? 'HAPPY GUESTS' : 'HUÉSPEDES SATISFECHOS' },
@@ -613,12 +623,13 @@ export default function Landing() {
             { icon: <Zap size={34} strokeWidth={1.5} />, title: lang === 'EN' ? 'WE RESPOND' : 'RESPONDEMOS', subtitle: lang === 'EN' ? 'IN MINUTES' : 'EN MINUTOS' },
             { icon: <MapPin size={34} strokeWidth={1.5} />, title: lang === 'EN' ? 'LOCATION' : 'UBICACIÓN', subtitle: lang === 'EN' ? 'PREMIUM' : 'PREMIUM' },
             { icon: <Key size={34} strokeWidth={1.5} />, title: 'CHECK-IN', subtitle: lang === 'EN' ? 'SELF CHECK-IN' : 'AUTÓNOMO' },
-            { icon: <Wifi size={34} strokeWidth={1.5} />, title: 'WIFI', subtitle: lang === 'EN' ? 'HIGH-SPEED' : 'ALTA VELOCIDAD' }
+            { icon: <Wifi size={34} strokeWidth={1.5} />, title: 'WIFI', subtitle: lang === 'EN' ? 'HIGH-SPEED' : 'ALTA VELOCIDAD' },
+            { icon: <PawPrint size={34} strokeWidth={1.5} />, title: 'PET', subtitle: 'FRIENDLY' }
           ].map((s, i) => (
             <div key={i} className="stats-col">
               <div className="stats-icon">{s.icon}</div>
-              <div className="stats-val-7">{s.title}</div>
-              <div className="stats-lbl-7">{s.subtitle}</div>
+              <div className="stats-val-8">{s.title}</div>
+              <div className="stats-lbl-8">{s.subtitle}</div>
             </div>
           ))}
         </div>
