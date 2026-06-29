@@ -438,10 +438,10 @@ export default function Landing() {
                 text-align: center;
                 padding: 6rem 2rem 2rem !important;
               }
-              .hero-grid > div:first-child {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
+              .hero-grid > div:first-child { display: flex; flex-direction: column; align-items: center; }
+              .hero-grid p {
+                margin: 0 auto 2.5rem !important;
+                text-align: center !important;
               }
               .hero-stars { justify-content: center !important; width: 100% !important; }
               .hero-badges { justify-content: center !important; }

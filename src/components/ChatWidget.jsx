@@ -34,6 +34,41 @@ export default function ChatWidget() {
     scrollToBottom();
   }, [messages]);
 
+  // Disparador automático de saludo / CTA (tiempo o scroll a la mitad)
+  useEffect(() => {
+    const hasTriggered = sessionStorage.getItem('chat_auto_triggered');
+    if (hasTriggered) return;
+
+    let triggered = false;
+
+    const triggerChat = () => {
+      if (triggered) return;
+      triggered = true;
+      sessionStorage.setItem('chat_auto_triggered', 'true');
+      setIsOpen(true);
+    };
+
+    // 1. Disparador por tiempo (12 segundos)
+    const timer = setTimeout(() => {
+      triggerChat();
+    }, 12000);
+
+    // 2. Disparador por scroll (45% de la página)
+    const handleScroll = () => {
+      const scrollPercent = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
+      if (scrollPercent >= 0.45) {
+        triggerChat();
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   // Construir el contexto dinámico desde la DB para la IA
   const buildSystemPrompt = () => {
     const props = config?.properties || [];
