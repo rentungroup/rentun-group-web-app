@@ -389,7 +389,7 @@ export default function Landing() {
           <rect x="1340" y="200" width="110" height="400" fill="none" stroke="url(#accentGrad)" strokeWidth="2" />
           <line x1="1395" y1="120" x2="1395" y2="200" stroke="url(#accentGrad)" strokeWidth="2" />
 
-          {/* Edificio final */}
+        {/* Edificio final */}
           <path d="M 1490 600 L 1550 320 L 1610 600" fill="none" stroke="url(#skylineGrad)" strokeWidth="1.5" />
         </svg>
         <div style={{
@@ -404,8 +404,14 @@ export default function Landing() {
         <div className="s-inner hero-grid" style={{ position:'relative', zIndex:10, display:'grid', gridTemplateColumns:'1.1fr 0.9fr', gap:'3rem', alignItems:'center', width:'100%', padding:'6rem 4rem 4rem' }}>
           <style>{`
             .hero-grid { margin-top: 4rem; }
-            .hero-stars { justify-content: flex-start !important; width: auto !important; }
-            .hero-badges { justify-content: flex-start !important; }
+            .hero-top-line { --justify-hero: flex-start; }
+            .hero-micro-features { --justify-hero: flex-start; }
+            .hero-btns {
+              display: flex;
+              gap: 1rem;
+              flex-wrap: wrap;
+              justify-content: flex-start;
+            }
             
             .stats-grid {
               display: grid;
@@ -413,6 +419,23 @@ export default function Landing() {
               gap: 2rem;
               justify-content: center;
               width: 100%;
+            }
+            
+            .stats-val {
+              font-size: 2.4rem;
+              font-weight: 900;
+              color: var(--white);
+              line-height: 1;
+              letter-spacing: -0.04em;
+            }
+            
+            .stats-lbl {
+              font-size: 0.72rem;
+              font-weight: 600;
+              color: rgba(255,255,255,0.7);
+              text-transform: uppercase;
+              letter-spacing: 0.1em;
+              margin-top: 0.25rem;
             }
             
             .prop-header-grid {
@@ -423,13 +446,6 @@ export default function Landing() {
               gap: 1.5rem;
               margin-bottom: 3.5rem;
               width: 100%;
-            }
-            
-            .hero-btns {
-              display: flex;
-              gap: 1rem;
-              flex-wrap: wrap;
-              justify-content: flex-start;
             }
             
             @media (max-width: 990px) {
@@ -443,15 +459,22 @@ export default function Landing() {
                 margin: 0 auto 2.5rem !important;
                 text-align: center !important;
               }
-              .hero-stars { justify-content: center !important; width: 100% !important; }
-              .hero-badges { justify-content: center !important; }
+              .hero-top-line { --justify-hero: center !important; }
+              .hero-micro-features { --justify-hero: center !important; }
               .hero-btns { justify-content: center !important; width: 100% !important; }
             }
             
             @media (max-width: 768px) {
               .stats-grid {
-                grid-template-columns: 1fr !important;
-                gap: 1.8rem !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 0.8rem !important;
+              }
+              .stats-val {
+                font-size: 1.5rem !important;
+              }
+              .stats-lbl {
+                font-size: 0.58rem !important;
+                letter-spacing: 0.05em !important;
               }
               .prop-header-grid {
                 flex-direction: column !important;
@@ -472,14 +495,37 @@ export default function Landing() {
           
           {/* Left: Text content */}
           <div>
-            <Tag>{t.heroTag}</Tag>
-            <div className="hero-stars" style={{ display:'flex', gap:'0.3rem', marginTop: '0.8rem', marginBottom: '1.2rem' }}>
-              {[1,2,3,4,5].map(i => (
-                <svg key={i} width="18" height="18" viewBox="0 0 24 24" fill="var(--orange)">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                </svg>
-              ))}
+            {/* Top Badge & Rating Line */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '1rem', justifyContent: 'var(--justify-hero)' }} className="hero-top-line">
+              <Tag>{t.heroTag}</Tag>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                <div style={{ display: 'flex', gap: '0.15rem' }}>
+                  {[1,2,3,4,5].map(i => (
+                    <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="var(--orange)">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  ))}
+                </div>
+                <span style={{ fontSize: '0.82rem', color: 'var(--orange)', fontWeight: 800 }}>5.0</span>
+              </div>
             </div>
+
+            {/* Micro Features Row */}
+            <div className="hero-micro-features" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem 1.2rem', marginBottom: '1.8rem', justifyContent: 'var(--justify-hero)' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.78rem', color: 'rgba(230,231,232,0.85)', fontWeight: 600 }}>
+                <span>⚡</span> <span>{lang === 'EN' ? 'Response < 15m' : 'Respuesta < 15 min'}</span>
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.78rem', color: 'rgba(230,231,232,0.85)', fontWeight: 600 }}>
+                <span>📍</span> <span>{lang === 'EN' ? 'Premium Location' : 'Ubicación Premium'}</span>
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.78rem', color: 'rgba(230,231,232,0.85)', fontWeight: 600 }}>
+                <span>🔑</span> <span>{lang === 'EN' ? 'Self Check-in' : 'Check-in Autónomo'}</span>
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.78rem', color: 'rgba(230,231,232,0.85)', fontWeight: 600 }}>
+                <span>📡</span> <span>{lang === 'EN' ? 'High-speed WiFi' : 'WiFi Alta Velocidad'}</span>
+              </span>
+            </div>
+
             <h1 style={{ fontSize:'clamp(2.4rem,5vw,3.8rem)', fontWeight:900, color:'white', letterSpacing:'-0.035em', lineHeight:1.06, marginBottom:'1.5rem' }}>
               {heroTitle}<br />
               <span style={{ color:'var(--orange)' }}>
@@ -501,27 +547,6 @@ export default function Landing() {
                  style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'0.55rem', background:'rgba(255,255,255,0.08)', color:'white', textDecoration:'none', padding:'0.9rem 1.8rem', borderRadius:50, fontWeight:700, fontSize:'0.88rem', border:'1px solid rgba(255,255,255,0.18)', transition:'all 0.2s' }}>
                 {t.btnAvailability}
               </a>
-            </div>
-
-            {/* Feature badges */}
-            <div className="hero-badges" style={{ display:'flex', flexWrap:'wrap', gap:'0.6rem', marginTop:'2rem' }}>
-              {[
-                { icon:'⚡', text: lang === 'EN' ? 'Response < 15 min' : 'Respondemos < 15 min' },
-                { icon:'📍', text: lang === 'EN' ? 'Premium location' : 'Ubicación premium' },
-                { icon:'🔑', text: lang === 'EN' ? 'Self check-in' : 'Check-in autónomo' },
-                { icon:'📡', text: lang === 'EN' ? 'High-speed WiFi' : 'WiFi alta velocidad' },
-                { icon:'⭐', text: lang === 'EN' ? 'Happy guests ★ 5.0' : 'Huéspedes satisfechos ★ 5.0' },
-              ].map((b, i) => (
-                <span key={i} style={{
-                  display:'inline-flex', alignItems:'center', gap:'0.35rem',
-                  background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.15)',
-                  borderRadius:50, padding:'0.32rem 0.9rem',
-                  fontSize:'0.72rem', fontWeight:600, color:'rgba(230,231,232,0.9)',
-                  backdropFilter:'blur(8px)'
-                }}>
-                  <span style={{ fontSize:'0.85rem' }}>{b.icon}</span> {b.text}
-                </span>
-              ))}
             </div>
           </div>
 
@@ -575,10 +600,10 @@ export default function Landing() {
             return (
               <div key={i} className={`rv${i > 0 ? ` d${i}` : ''}`}
                    style={{ display:'flex', flexDirection:'column', alignItems:'center', textAlign:'center', position:'relative' }}>
-                <div style={{ fontSize:'2.4rem', fontWeight:900, color:'var(--white)', lineHeight:1, letterSpacing:'-0.04em' }}>
+                <div className="stats-val">
                   {s.value}<span style={{ color:'var(--orange)' }}>{s.suffix}</span>
                 </div>
-                <div style={{ fontSize:'0.72rem', fontWeight:600, color:'rgba(255,255,255,0.7)', textTransform:'uppercase', letterSpacing:'0.1em', marginTop:'0.25rem' }}>
+                <div className="stats-lbl">
                   {translateStatLabel(s.label)}
                 </div>
               </div>
