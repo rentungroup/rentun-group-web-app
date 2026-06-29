@@ -406,6 +406,25 @@ export default function Landing() {
             .hero-grid { margin-top: 4rem; }
             .hero-stars { justify-content: flex-start !important; width: auto !important; }
             .hero-badges { justify-content: flex-start !important; }
+            
+            .stats-grid {
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+              gap: 2rem;
+              justify-content: center;
+              width: 100%;
+            }
+            
+            .prop-header-grid {
+              display: flex;
+              align-items: flex-end;
+              justify-content: space-between;
+              flex-wrap: wrap;
+              gap: 1.5rem;
+              margin-bottom: 3.5rem;
+              width: 100%;
+            }
+            
             @media (max-width: 990px) {
               .hero-grid {
                 grid-template-columns: 1fr !important;
@@ -415,6 +434,27 @@ export default function Landing() {
               .hero-grid > div:first-child { display: flex; flexDirection: column; alignItems: center; }
               .hero-stars { justify-content: center !important; width: 100% !important; }
               .hero-badges { justify-content: center !important; }
+            }
+            
+            @media (max-width: 768px) {
+              .stats-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1.8rem !important;
+              }
+              .prop-header-grid {
+                flex-direction: column !important;
+                align-items: center !important;
+                text-align: center !important;
+                justify-content: center !important;
+              }
+              .prop-header-grid > div {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              }
+              .prop-header-grid p {
+                text-align: center !important;
+              }
             }
           `}</style>
           
@@ -509,7 +549,7 @@ export default function Landing() {
 
       {/* ── STATS STRIP ─────────────────────────────── */}
       <div style={{ background:'var(--navy-dark)', borderBottom:'1px solid rgba(196,154,60,0.3)', padding:'2.2rem 4rem' }}>
-        <div style={{ maxWidth:1100, margin:'0 auto', display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:'2rem' }}>
+        <div className="stats-grid" style={{ maxWidth:1100, margin:'0 auto' }}>
           {(cfg.stats || SITE.stats).map((s, i) => {
             const translateStatLabel = (label) => {
               if (!label) return '';
@@ -539,7 +579,7 @@ export default function Landing() {
       <section id="propiedades" className="section-pad" style={{ background:'var(--bg)' }}>
         <div className="s-inner">
           {/* Header */}
-          <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', flexWrap:'wrap', gap:'1.5rem', marginBottom:'3.5rem' }}>
+          <div className="prop-header-grid">
             <div>
               <div className="rv"><Tag dark={true}>{lang === 'EN' ? '🏠 Our properties' : '🏠 Nuestras propiedades'}</Tag></div>
               <h2 className="rv d1" style={{ fontSize:'clamp(1.8rem,3.5vw,2.6rem)', fontWeight:800, color:'var(--text)', letterSpacing:'-0.03em', lineHeight:1.1, marginBottom:'0.9rem' }}>
