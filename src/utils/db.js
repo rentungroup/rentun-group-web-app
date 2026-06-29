@@ -497,7 +497,7 @@ const TRANSLATIONS = {
     // Stats
     statReviews: 'Valoraciones',
     statApartments: 'Apartamentos',
-    statGuests: 'Huéspedes',
+    statGuests: 'Satisfechos',
     statReturn: 'Retorno',
 
     // Properties section
@@ -566,7 +566,7 @@ const TRANSLATIONS = {
     // Stats
     statReviews: 'Reviews',
     statApartments: 'Apartments',
-    statGuests: 'Guests',
+    statGuests: 'Happy Guests',
     statReturn: 'Return',
 
     // Properties section

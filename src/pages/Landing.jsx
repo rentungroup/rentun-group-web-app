@@ -404,6 +404,8 @@ export default function Landing() {
         <div className="s-inner hero-grid" style={{ position:'relative', zIndex:10, display:'grid', gridTemplateColumns:'1.1fr 0.9fr', gap:'3rem', alignItems:'center', width:'100%', padding:'6rem 4rem 4rem' }}>
           <style>{`
             .hero-grid { margin-top: 4rem; }
+            .hero-stars { justify-content: flex-start !important; width: auto !important; }
+            .hero-badges { justify-content: flex-start !important; }
             @media (max-width: 990px) {
               .hero-grid {
                 grid-template-columns: 1fr !important;
@@ -411,13 +413,15 @@ export default function Landing() {
                 padding: 6rem 2rem 2rem !important;
               }
               .hero-grid > div:first-child { display: flex; flexDirection: column; alignItems: center; }
+              .hero-stars { justify-content: center !important; width: 100% !important; }
+              .hero-badges { justify-content: center !important; }
             }
           `}</style>
           
           {/* Left: Text content */}
           <div>
             <Tag>{t.heroTag}</Tag>
-            <div className="hero-stars" style={{ display:'flex', justifyContent: 'center', width: '100%', gap:'0.3rem', marginTop: '0.8rem', marginBottom: '1.2rem' }}>
+            <div className="hero-stars" style={{ display:'flex', gap:'0.3rem', marginTop: '0.8rem', marginBottom: '1.2rem' }}>
               {[1,2,3,4,5].map(i => (
                 <svg key={i} width="18" height="18" viewBox="0 0 24 24" fill="var(--orange)">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -448,7 +452,7 @@ export default function Landing() {
             </div>
 
             {/* Feature badges */}
-            <div style={{ display:'flex', flexWrap:'wrap', gap:'0.6rem', marginTop:'2rem' }}>
+            <div className="hero-badges" style={{ display:'flex', flexWrap:'wrap', gap:'0.6rem', marginTop:'2rem' }}>
               {[
                 { icon:'⚡', text: lang === 'EN' ? 'Response < 15 min' : 'Respondemos < 15 min' },
                 { icon:'📍', text: lang === 'EN' ? 'Premium location' : 'Ubicación premium' },
@@ -576,14 +580,17 @@ export default function Landing() {
                   <span style={{ display:'block', fontSize:'0.82rem', color:'var(--orange)', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:'1.5rem' }}>
                     📍 {lang === 'EN' ? (mainProp.locationEn || mainProp.location) : mainProp.location}
                   </span>
-                  <p style={{ fontSize:'0.94rem', color:'var(--text-muted)', lineHeight:1.7, marginBottom:'2rem' }}>
+                  <p style={{ fontSize:'0.94rem', color:'var(--text-muted)', lineHeight:1.7, marginBottom:'2rem', textAlign:'justify' }}>
                     {lang === 'EN' ? (mainProp.descriptionEn || mainProp.description) : mainProp.description}
                   </p>
 
-                  <div style={{ display:'flex', flexWrap:'wrap', gap:'1.5rem', borderTop:'1px solid #E6E7E8', borderBottom:'1px solid #E6E7E8', padding:'1.2rem 0', marginBottom:'2rem' }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.88rem', fontWeight:600, color:'var(--text)' }}><span>🛏️</span><span>{mainProp.bedrooms} {lang === 'EN' ? (mainProp.bedrooms === 1 ? 'Bedroom' : 'Bedrooms') : (mainProp.bedrooms === 1 ? 'Habitación' : 'Habitaciones')}</span></div>
-                    <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.88rem', fontWeight:600, color:'var(--text)' }}><span>🛏</span><span>{mainProp.beds} {lang === 'EN' ? (mainProp.beds === 1 ? 'Bed' : 'Beds') : (mainProp.beds === 1 ? 'Cama' : 'Camas')}</span></div>
-                    <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.88rem', fontWeight:600, color:'var(--text)' }}><span>🚿</span><span>{mainProp.baths} {lang === 'EN' ? (mainProp.baths === 1 ? 'Bathroom' : 'Bathrooms') : (mainProp.baths === 1 ? 'Baño' : 'Baños')}</span></div>
+                  <div style={{ display:'flex', flexWrap:'wrap', gap:'1rem 1.5rem', borderTop:'1px solid #E6E7E8', borderBottom:'1px solid #E6E7E8', padding:'1.2rem 0', marginBottom:'2rem' }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.85rem', fontWeight:600, color:'var(--text)' }}><span>🛏️</span><span>{mainProp.bedrooms} {lang === 'EN' ? (mainProp.bedrooms === 1 ? 'Bedroom' : 'Bedrooms') : (mainProp.bedrooms === 1 ? 'Habitación' : 'Habitaciones')}</span></div>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.85rem', fontWeight:600, color:'var(--text)' }}><span>🛏</span><span>{mainProp.beds} {lang === 'EN' ? (mainProp.beds === 1 ? 'Bed' : 'Beds') : (mainProp.beds === 1 ? 'Cama' : 'Camas')}</span></div>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.85rem', fontWeight:600, color:'var(--text)' }}><span>🚿</span><span>{mainProp.baths} {lang === 'EN' ? (mainProp.baths === 1 ? 'Bathroom' : 'Bathrooms') : (mainProp.baths === 1 ? 'Baño' : 'Baños')}</span></div>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.85rem', fontWeight:600, color:'var(--text)' }}><span>📡</span><span>{lang === 'EN' ? 'High-speed WiFi' : 'WiFi alta velocidad'}</span></div>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.85rem', fontWeight:600, color:'var(--text)' }}><span>💻</span><span>{lang === 'EN' ? 'Workspace' : 'Zona de trabajo'}</span></div>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.4rem', fontSize:'0.85rem', fontWeight:600, color:'var(--text)' }}><span>🍳</span><span>{lang === 'EN' ? 'Full Kitchen' : 'Cocina equipada'}</span></div>
                   </div>
 
                   <div style={{ display:'flex', gap:'0.8rem', flexWrap:'wrap' }}>
