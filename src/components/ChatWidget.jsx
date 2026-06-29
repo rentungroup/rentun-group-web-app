@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Bot, Loader2 } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Loader2, Minus } from 'lucide-react';
 import { useConfig } from '../context/ConfigContext';
 
 export default function ChatWidget() {
@@ -68,6 +68,14 @@ export default function ChatWidget() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    // Reiniciar conversación al mensaje de bienvenida
+    setMessages([
+      { role: 'assistant', content: chatWelcome }
+    ]);
+  };
 
   // Construir el contexto dinámico desde la DB para la IA
   const buildSystemPrompt = () => {
@@ -185,7 +193,14 @@ PROPIEDADES DISPONIBLES:\n`;
               <p>{chatSubtitle}</p>
             </div>
           </div>
-          <button className="chat-close" onClick={() => setIsOpen(false)}><X size={20}/></button>
+          <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+            <button className="chat-close" onClick={() => setIsOpen(false)} title="Minimizar (conservar historial)" style={{ padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Minus size={18} />
+            </button>
+            <button className="chat-close" onClick={handleClose} title="Cerrar y reiniciar chat" style={{ padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         <div className="chat-messages">
