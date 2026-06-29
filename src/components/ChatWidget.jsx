@@ -77,6 +77,61 @@ export default function ChatWidget() {
     ]);
   };
 
+  // Función para parsear enlaces de Markdown [texto](url) y convertirlos en elementos React clickeables y estéticos
+  const renderMessageContent = (text) => {
+    if (!text) return '';
+    
+    // Regex para detectar [texto](url)
+    const regex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+    
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+    
+    while ((match = regex.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(text.substring(lastIndex, match.index));
+      }
+      
+      const linkText = match[1];
+      const linkUrl = match[2];
+      
+      parts.push(
+        <a 
+          key={match.index} 
+          href={linkUrl} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          style={{ 
+            background: '#FF385C', 
+            color: 'white', 
+            textDecoration: 'none',
+            padding: '0.3rem 0.7rem',
+            borderRadius: '6px',
+            fontWeight: 700,
+            fontSize: '0.78rem',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.3rem',
+            margin: '0.2rem 0.4rem',
+            boxShadow: '0 2px 8px rgba(255,56,92,0.25)',
+            transition: 'all 0.2s'
+          }}
+        >
+          {linkText}
+        </a>
+      );
+      
+      lastIndex = regex.lastIndex;
+    }
+    
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+    
+    return parts.length > 0 ? parts : text;
+  };
+
   // Construir el contexto dinámico desde la DB para la IA
   const buildSystemPrompt = () => {
     const props = config?.properties || [];
@@ -94,7 +149,7 @@ TU TONO DEBE SER AMABLE, PROFESIONAL, Y SERVICIAL. RESPONDERÁS DUDAS SOBRE LOS 
 
 [RESTRICCIÓN DE DISPONIBILIDAD Y RESERVAS]
 - NO PUEDES CONFIRMAR DISPONIBILIDAD NI FECHAS LIBRES (NO ESTÁS CONECTADO AL CALENDARIO EN TIEMPO REAL).
-- SI TE PREGUNTAN SI HAY ESPACIO O CÓMO RESERVAR, DEBES RESPONDER: "Para consultar la disponibilidad exacta y realizar tu reservación de forma segura, por favor verifica directamente en nuestro calendario oficial en Airbnb: " Y LUEGO PROPORCIONA EL ENLACE DE AIRBNB DEL APARTAMENTO EN CUESTIÓN.
+- SI TE PREGUNTAN SI HAY ESPACIO O CÓMO RESERVAR, DEBES RESPONDER SIEMPRE QUE VERIFIQUEN EL CALENDARIO OFICIAL EN AIRBNB USANDO EL ENLACE DEL APARTAMENTO EN FORMATO DE LINK DE MARKDOWN. EJEMPLO: "Para consultar la disponibilidad exacta y realizar tu reservación de forma segura, por favor verifica directamente en nuestro [📅 Calendario de Airbnb](ENLACE_DE_AIRBNB_AQUÍ)".
 
 [INFORMACIÓN DE LA BASE DE DATOS (SUPABASE)]
 PROPIEDADES DISPONIBLES:\n`;
@@ -114,6 +169,11 @@ PROPIEDADES DISPONIBLES:\n`;
         prompt += `P: ${f.question}\nR: ${f.answer}\n`;
       });
     }
+
+    prompt += `\n[REGLAS DE FORMATO Y RESPUESTA]
+1. NUNCA escribas una URL larga o cruda directamente en el texto.
+2. Cuando menciones un enlace (de Airbnb, WhatsApp, etc.), debes formatearlo SIEMPRE como un enlace de Markdown con un nombre amigable y descriptivo, por ejemplo: [📅 Ver Calendario en Airbnb](URL_DE_AIRBNB) o [💬 Escríbenos por WhatsApp](URL_DE_WHATSAPP).
+3. Mantén tus respuestas breves y directas.`;
 
     return prompt;
   };
@@ -207,7 +267,7 @@ PROPIEDADES DISPONIBLES:\n`;
           {messages.map((msg, idx) => (
             <div key={idx} className={`chat-msg-row ${msg.role === 'user' ? 'user-row' : 'bot-row'}`}>
               <div className={`chat-bubble ${msg.role === 'user' ? 'user-bubble' : 'bot-bubble'}`}>
-                {msg.content}
+                {renderMessageContent(msg.content)}
               </div>
             </div>
           ))}
