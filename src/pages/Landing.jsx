@@ -425,15 +425,27 @@ export default function Landing() {
               width: 100%;
             }
             
+            .hero-btns {
+              display: flex;
+              gap: 1rem;
+              flex-wrap: wrap;
+              justify-content: flex-start;
+            }
+            
             @media (max-width: 990px) {
               .hero-grid {
                 grid-template-columns: 1fr !important;
                 text-align: center;
                 padding: 6rem 2rem 2rem !important;
               }
-              .hero-grid > div:first-child { display: flex; flexDirection: column; alignItems: center; }
+              .hero-grid > div:first-child {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              }
               .hero-stars { justify-content: center !important; width: 100% !important; }
               .hero-badges { justify-content: center !important; }
+              .hero-btns { justify-content: center !important; width: 100% !important; }
             }
             
             @media (max-width: 768px) {
@@ -478,7 +490,7 @@ export default function Landing() {
               {heroSub}
             </p>
             
-            <div style={{ display:'flex', gap:'1rem', flexWrap:'wrap' }}>
+            <div className="hero-btns" style={{ display:'flex', gap:'1rem', flexWrap:'wrap' }}>
               {mainProp.isAirbnb ? (
                 <BtnAirbnb href={ab.booking} id="hero-reserve-airbnb">{t.btnAirbnb}</BtnAirbnb>
               ) : (
