@@ -38,10 +38,17 @@ body {
   width: 100%;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  text-align: justify;
+}
+
+p {
+  text-align: justify !important;
+  text-justify: inter-word;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-header, 'Outfit', sans-serif);
+  text-align: left; /* Keep headings left-aligned so they don't stretch weirdly */
 }
 
 a { color: inherit; }
