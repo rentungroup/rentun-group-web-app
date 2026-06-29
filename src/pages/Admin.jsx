@@ -147,6 +147,9 @@ export default function Admin() {
   const [taskForm, setTaskForm] = useState({ id:'', task:'' });
   const [isEditingTask, setIsEditingTask] = useState(false);
 
+  // Estados para CRUD de páginas legales dinámicas
+  const [legalPageForm, setLegalPageForm] = useState({ id:'', title:'', icon:'📄', content:'', is_active:true, sort_order:0 });
+  const [isEditingLegalPage, setIsEditingLegalPage] = useState(false);
 
   // Estados para CRUD de emergencias dinámicas
   const [emergencyForm, setEmergencyForm] = useState({ id: '', title: '', value: '' });
@@ -474,6 +477,48 @@ export default function Admin() {
     setIsEditingEmergency(false);
   };
 
+  // ── Legal Pages CRUD ──
+  const saveLegalPage = (e) => {
+    if (e) e.preventDefault();
+    if (!legalPageForm.title) return;
+    const currentPages = cfg.legalPages || [];
+    let updatedPages;
+    if (isEditingLegalPage) {
+      updatedPages = currentPages.map(p => p.id === legalPageForm.id ? { ...legalPageForm } : p);
+    } else {
+      const newPage = { ...legalPageForm, id: 'lp-' + Date.now(), sort_order: currentPages.length };
+      updatedPages = [...currentPages, newPage];
+    }
+    const newCfg = { ...cfg, legalPages: updatedPages };
+    handleSave(newCfg);
+    clearLegalPageForm();
+  };
+
+  const startEditLegalPage = (p) => {
+    setLegalPageForm(p);
+    setIsEditingLegalPage(true);
+  };
+
+  const deleteLegalPage = (id) => {
+    if (!window.confirm('¿Eliminar esta página legal?')) return;
+    const updated = (cfg.legalPages || []).filter(p => p.id !== id);
+    const newCfg = { ...cfg, legalPages: updated };
+    handleSave(newCfg);
+  };
+
+  const toggleLegalPage = (id) => {
+    const updated = (cfg.legalPages || []).map(p =>
+      p.id === id ? { ...p, is_active: !p.is_active } : p
+    );
+    const newCfg = { ...cfg, legalPages: updated };
+    handleSave(newCfg);
+  };
+
+  const clearLegalPageForm = () => {
+    setLegalPageForm({ id:'', title:'', icon:'📄', content:'', is_active:true, sort_order:0 });
+    setIsEditingLegalPage(false);
+  };
+
   return (
     <div style={{ minHeight:'100vh', background:'#F3F5F8', fontFamily:'Outfit,sans-serif' }}>
 
@@ -518,7 +563,7 @@ export default function Admin() {
           </Link>
           <Link to="/guia" target="_blank"
             style={{ display:'inline-flex', alignItems:'center', gap:'0.4rem', background:'rgba(255,255,255,0.1)', color:'white', textDecoration:'none', padding:'0.55rem 1.2rem', borderRadius:50, fontSize:'0.82rem', fontWeight:600, border:'1px solid rgba(255,255,255,0.2)' }}>
-            📖 Vista previa de Guía
+            📖 Vista previa de Estadía
           </Link>
           <button onClick={handleReset}
             style={{ display:'inline-flex', alignItems:'center', gap:'0.4rem', background:'rgba(255,56,92,0.15)', color:'#FF8099', border:'1px solid rgba(255,56,92,0.3)', padding:'0.55rem 1.2rem', borderRadius:50, fontSize:'0.82rem', fontWeight:600, cursor:'pointer', fontFamily:'inherit' }}>
@@ -1084,6 +1129,7 @@ export default function Admin() {
 
         {activeTab === 'guide-info' && (
           /* TAB 2: GENERAL GUIDE INFO & RULES */
+          <>
           <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(480px, 1fr))', gap:'2rem' }}>
             <div>
               <AdminSection title={isEditingEmergency ? 'Editar Contacto de Emergencia' : 'Añadir Contacto de Emergencia'} icon="🚨">
@@ -1186,9 +1232,40 @@ export default function Admin() {
                     ))
                   )}
                 </div>
-              </AdminSection>
+                </AdminSection>
             </div>
           </div>
+
+          {/* Texto libre de reglas adicionales de la casa */}
+          <div style={{ marginTop: '2rem' }}>
+            <AdminSection title="Texto Libre de Reglas Adicionales" icon="📝">
+              <p style={{ fontSize:'0.78rem', color:'#5c6d80', marginBottom:'1rem', lineHeight:1.5 }}>
+                Escribe aquí reglas adicionales en formato libre (como en Airbnb). Se mostrarán en la guía del huésped como bloque de texto.
+              </p>
+              <textarea
+                value={cfg.houseRulesText || ''}
+                onChange={e => {
+                  const newCfg = { ...cfg, houseRulesText: e.target.value };
+                  setCfg(newCfg);
+                }}
+                placeholder={`Ej:\n• Los huéspedes deben registrarse en la portería al llegar.\n• Está prohibido el ingreso de mascotas.\n• Silencio a partir de las 10 PM.\n• Los visitantes deben retirarse antes de las 10 PM.`}
+                rows={10}
+                style={{
+                  width:'100%', padding:'0.9rem 1rem', border:'1.5px solid #E6E7E8', borderRadius:12,
+                  fontSize:'0.88rem', fontFamily:'Outfit,sans-serif', color:'#0d1724',
+                  outline:'none', resize:'vertical', lineHeight:1.6
+                }}
+              />
+              <div style={{ display:'flex', justifyContent:'flex-end', marginTop:'0.8rem' }}>
+                <button
+                  onClick={() => handleSave()}
+                  style={{ padding:'0.6rem 1.5rem', borderRadius:50, border:'none', background:'linear-gradient(135deg,#0a3560,#0F4C81)', color:'white', fontWeight:700, cursor:'pointer' }}>
+                  💾 Guardar Texto de Reglas
+                </button>
+              </div>
+            </AdminSection>
+          </div>
+          </>
         )}
 
         {activeTab === 'guide-places' && (
@@ -1438,28 +1515,121 @@ export default function Admin() {
         )}
 
         {activeTab === 'legal' && (
-          /* TAB: EDITAR PAGINA LEGAL */
-          <div style={{ maxWidth: 800, margin: '0 auto' }}>
-            <AdminSection title="Encabezado y Datos de Página Legal" icon="⚖️">
-              <Field label="Tag Superior" name="legalTag" value={cfg.legalTag || ''} onChange={handle} />
-              <Field label="Título de la Página" name="legalTitle" value={cfg.legalTitle || ''} onChange={handle} />
-              <Field label="Subtítulo / Introducción" name="legalSubtitle" value={cfg.legalSubtitle || ''} onChange={handle} multiline />
-            </AdminSection>
+          /* TAB: EDITAR PÁGINAS LEGALES DINÁMICAS */
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(480px, 1fr))', gap:'2rem' }}>
 
-            <AdminSection title="Sección 1: Advertencia de Protección a Menores (ESCNNA)" icon="🚨">
-              <Field label="Título de la Sección" name="legalEscnnaTitle" value={cfg.legalEscnnaTitle || ''} onChange={handle} />
-              <Field label="Contenido Legal (ESCNNA)" name="legalEscnna" value={cfg.legalEscnna || ''} onChange={handle} multiline hint="Leyes sobre explotación sexual de menores (Ley 679 de 2001, Ley 1098 de 2006 y Ley 1336 de 2009)." />
-            </AdminSection>
+            {/* Formulario para agregar/editar página */}
+            <div>
+              <AdminSection title={isEditingLegalPage ? 'Editar Página Legal' : 'Agregar Página Legal'} icon="⚖️">
+                <form onSubmit={saveLegalPage} style={{ display:'flex', flexDirection:'column', gap:'1.2rem' }}>
+                  <div style={{ display:'grid', gridTemplateColumns:'80px 1fr', gap:'0.8rem', alignItems:'end' }}>
+                    <Field label="Icono" value={legalPageForm.icon} onChange={e => setLegalPageForm(p => ({ ...p, icon: e.target.value }))} placeholder="📄" />
+                    <Field label="Título de la página *" value={legalPageForm.title} onChange={e => setLegalPageForm(p => ({ ...p, title: e.target.value }))} placeholder="Ej: Política de Cancelación" />
+                  </div>
 
-            <AdminSection title="Sección 2: Protección de Datos Personales (Habeas Data)" icon="📂">
-              <Field label="Título de la Sección" name="legalHabeasTitle" value={cfg.legalHabeasTitle || ''} onChange={handle} />
-              <Field label="Contenido Legal (Habeas Data)" name="legalHabeasData" value={cfg.legalHabeasData || ''} onChange={handle} multiline hint="Ley 1581 de 2012 y Decreto 1377 de 2013." />
-            </AdminSection>
+                  <div>
+                    <label style={{ display:'block', fontSize:'0.72rem', fontWeight:700, color:'#5c6d80', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'0.4rem' }}>Contenido *</label>
+                    <textarea
+                      value={legalPageForm.content}
+                      onChange={e => setLegalPageForm(p => ({ ...p, content: e.target.value }))}
+                      rows={8}
+                      placeholder="Escribe aquí el contenido legal de esta página..."
+                      style={{ width:'100%', padding:'0.9rem 1rem', border:'1.5px solid #E6E7E8', borderRadius:12, fontSize:'0.88rem', fontFamily:'Outfit,sans-serif', color:'#0d1724', outline:'none', resize:'vertical', lineHeight:1.6 }}
+                    />
+                  </div>
 
-            <AdminSection title="Sección 3: Conservación del Patrimonio Natural y Cultural" icon="🌱">
-              <Field label="Título de la Sección" name="legalFloraTitle" value={cfg.legalFloraTitle || ''} onChange={handle} />
-              <Field label="Contenido Legal (Patrimonio, Flora y Fauna)" name="legalFloraFauna" value={cfg.legalFloraFauna || ''} onChange={handle} multiline hint="Leyes sobre fauna y flora (Ley 17 de 1981, 299 de 1996) y bienes de interés cultural (Ley 397 de 1997)." />
-            </AdminSection>
+                  <div style={{ display:'flex', alignItems:'center', gap:'0.8rem' }}>
+                    <label style={{ display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.85rem', fontWeight:600, color:'#0d1724', cursor:'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={legalPageForm.is_active}
+                        onChange={e => setLegalPageForm(p => ({ ...p, is_active: e.target.checked }))}
+                        style={{ width:16, height:16, accentColor:'#F57C00' }}
+                      />
+                      Página activa (visible en el sitio)
+                    </label>
+                  </div>
+
+                  <div style={{ display:'flex', gap:'0.8rem', justifyContent:'flex-end' }}>
+                    {(isEditingLegalPage || legalPageForm.title) && (
+                      <button type="button" onClick={clearLegalPageForm} style={{ padding:'0.6rem 1.2rem', borderRadius:50, border:'1.5px solid #E6E7E8', background:'white', color:'#5c6d80', fontWeight:600, cursor:'pointer' }}>
+                        Cancelar
+                      </button>
+                    )}
+                    <button type="submit" style={{ padding:'0.6rem 1.5rem', borderRadius:50, border:'none', background:'linear-gradient(135deg,#0a3560,#0F4C81)', color:'white', fontWeight:700, cursor:'pointer' }}>
+                      {isEditingLegalPage ? 'Guardar Cambios' : 'Agregar Página'}
+                    </button>
+                  </div>
+                </form>
+              </AdminSection>
+
+              <div style={{ marginTop:'1.5rem' }}>
+                <AdminSection title="Encabezado de la Página Legal" icon="🏷️">
+                  <Field label="Tag Superior" name="legalTag" value={cfg.legalTag || ''} onChange={handle} />
+                  <Field label="Título de la Página" name="legalTitle" value={cfg.legalTitle || ''} onChange={handle} />
+                  <Field label="Subtítulo / Introducción" name="legalSubtitle" value={cfg.legalSubtitle || ''} onChange={handle} multiline />
+                  <div style={{ display:'flex', justifyContent:'flex-end', marginTop:'0.5rem' }}>
+                    <button onClick={() => handleSave()} style={{ padding:'0.6rem 1.5rem', borderRadius:50, border:'none', background:'linear-gradient(135deg,#0a3560,#0F4C81)', color:'white', fontWeight:700, cursor:'pointer' }}>
+                      Guardar Encabezado
+                    </button>
+                  </div>
+                </AdminSection>
+              </div>
+            </div>
+
+            {/* Lista de páginas registradas */}
+            <div>
+              <AdminSection title="Páginas Legales Registradas" icon="📚">
+                <p style={{ fontSize:'0.78rem', color:'#5c6d80', margin:'0 0 1rem', lineHeight:1.5 }}>
+                  Activa o desactiva páginas para que aparezcan o no en <strong>/legal</strong>. Puedes editar el contenido o agregar nuevas.
+                </p>
+                <div style={{ display:'flex', flexDirection:'column', gap:'0.8rem' }}>
+                  {(cfg.legalPages || []).length === 0 ? (
+                    <p style={{ fontSize:'0.85rem', color:'#5c6d80', fontStyle:'italic' }}>No hay páginas legales registradas.</p>
+                  ) : (
+                    (cfg.legalPages || []).map(p => (
+                      <div key={p.id} style={{ display:'flex', alignItems:'flex-start', gap:'0.8rem', background:'#f8fafc', padding:'1rem 1.2rem', borderRadius:16, border:`1px solid ${p.is_active ? '#E6E7E8' : 'rgba(239,68,68,0.2)'}` }}>
+                        <div style={{ flex:1, minWidth:0 }}>
+                          <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', marginBottom:'0.25rem' }}>
+                            <span style={{ fontSize:'1.1rem' }}>{p.icon}</span>
+                            <h4 style={{ fontSize:'0.88rem', fontWeight:700, color:'#0d1724', margin:0 }}>{p.title}</h4>
+                            <span style={{
+                              display:'inline-flex', alignItems:'center', fontSize:'0.6rem', fontWeight:800,
+                              background: p.is_active ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)',
+                              color: p.is_active ? '#059669' : '#dc2626',
+                              border: `1px solid ${p.is_active ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}`,
+                              borderRadius:50, padding:'0.15rem 0.5rem'
+                            }}>
+                              {p.is_active ? 'Activa' : 'Oculta'}
+                            </span>
+                          </div>
+                          <p style={{ fontSize:'0.75rem', color:'#5c6d80', margin:0, overflow:'hidden', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical' }}>
+                            {p.content || '(Sin contenido)'}
+                          </p>
+                        </div>
+                        <div style={{ display:'flex', flexDirection:'column', gap:'0.4rem', flexShrink:0 }}>
+                          <button
+                            onClick={() => toggleLegalPage(p.id)}
+                            style={{ border:'none', background: p.is_active ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)', color: p.is_active ? '#dc2626' : '#059669', padding:'0.35rem 0.7rem', borderRadius:8, fontSize:'0.7rem', fontWeight:700, cursor:'pointer', whiteSpace:'nowrap' }}>
+                            {p.is_active ? '🚫 Ocultar' : '✅ Activar'}
+                          </button>
+                          <button
+                            onClick={() => startEditLegalPage(p)}
+                            style={{ border:'none', background:'rgba(15,76,129,0.1)', color:'#0F4C81', padding:'0.35rem 0.7rem', borderRadius:8, fontSize:'0.7rem', fontWeight:600, cursor:'pointer' }}>
+                            ✏️ Editar
+                          </button>
+                          <button
+                            onClick={() => deleteLegalPage(p.id)}
+                            style={{ border:'none', background:'rgba(255,56,92,0.1)', color:'#FF385C', padding:'0.35rem 0.7rem', borderRadius:8, fontSize:'0.7rem', fontWeight:600, cursor:'pointer' }}>
+                            🗑️ Eliminar
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </AdminSection>
+            </div>
           </div>
         )}
 

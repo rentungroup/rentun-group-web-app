@@ -164,6 +164,23 @@ export const DEFAULTS = {
     { id: 3, task: 'Dejar las llaves en el lugar indicado por el anfitrión.' },
     { id: 4, task: 'Depositar la basura en el lugar designado.' },
     { id: 5, task: 'Informar al anfitrión por WhatsApp que ya estás listo para salir.' }
+  ],
+
+  // ── Texto libre de reglas de la casa ──
+  houseRulesText: '',
+
+  // ── Páginas Legales Dinámicas ──
+  legalPages: [
+    { id: 'lp-cancel', title: 'Política de Cancelación', icon: '📅', content: 'Nuestra política de cancelación permite cancelaciones gratuitas hasta 48 horas antes del check-in. Cancelaciones posteriores pueden incurrir en cargos según las condiciones de la plataforma de reserva.', is_active: true, sort_order: 1 },
+    { id: 'lp-terms', title: 'Términos y Condiciones', icon: '📋', content: 'Al hacer una reserva en Rentun Group, el huésped acepta cumplir con todas las normas de convivencia, horarios de silencio y condiciones del alojamiento. Rentun Group se reserva el derecho de cancelar reservas que incumplan estas condiciones.', is_active: true, sort_order: 2 },
+    { id: 'lp-lost', title: 'Objetos Perdidos', icon: '🔍', content: 'Si olvidaste algún objeto en el alojamiento, contáctanos por WhatsApp dentro de los 7 días siguientes a tu salida. Haremos el mejor esfuerzo por recuperarlo y coordinamos su envío si es necesario. Rentun Group no se responsabiliza por objetos no reportados después de este período.', is_active: true, sort_order: 3 },
+    { id: 'lp-guest-resp', title: 'Responsabilidad del Huésped', icon: '🙋', content: 'El huésped es responsable del cuidado del inmueble y sus enseres durante su estadía. Cualquier daño causado por mal uso será cobrado al responsable de la reserva. El huésped debe respetar las normas del edificio y no causar molestias a vecinos.', is_active: true, sort_order: 4 },
+    { id: 'lp-rentun-resp', title: 'Responsabilidad de Rentun Group', icon: '🏢', content: 'Rentun Group se compromete a entregar el alojamiento en perfectas condiciones de limpieza y funcionamiento. Ante cualquier fallo de equipos o instalaciones, atenderemos el reporte en menos de 24 horas. No nos responsabilizamos por eventos de fuerza mayor, cortes de servicios públicos o situaciones fuera de nuestro control.', is_active: true, sort_order: 5 },
+    { id: 'lp-convivencia', title: 'Política de Convivencia', icon: '🤝', content: 'Promovemos un ambiente de respeto y tranquilidad. Horario de silencio: 10PM – 7AM. No se permiten fiestas ni eventos sin autorización previa. El número máximo de huéspedes debe respetarse en todo momento. Las visitas deben retirarse antes de las 11PM.', is_active: true, sort_order: 6 },
+    { id: 'lp-privacy', title: 'Política de Privacidad', icon: '🔐', content: 'En cumplimiento de la Ley 1581 de 2012, los datos personales recolectados (nombres, correos, teléfonos) son utilizados exclusivamente para la gestión de la reserva y comunicación relacionada con el alojamiento. No compartimos tu información con terceros. Puedes solicitar la eliminación de tus datos contactándonos directamente.', is_active: true, sort_order: 7 },
+    { id: 'lp-escnna', title: 'Protección a Menores (ESCNNA)', icon: '🚨', content: 'En Rentun Group rechazamos rotundamente cualquier tipo de abuso o explotación sexual de niños, niñas y adolescentes. Prohibimos el ingreso a nuestras instalaciones de personas que pretendan realizar conductas asociadas a la explotación sexual de menores. Advertimos a todos nuestros huéspedes que en desarrollo de lo dispuesto en el artículo 17 de la Ley 679 de 2001, la Ley 1098 de 2006 y la Ley 1336 de 2009, la explotación y el abuso sexual de niños, niñas y adolescentes en el territorio nacional son sancionados penal y administrativamente conforme a las leyes colombianas vigentes.', is_active: true, sort_order: 8 },
+    { id: 'lp-habeas', title: 'Habeas Data', icon: '📂', content: 'En cumplimiento de la Ley 1581 de 2012 y el Decreto 1377 de 2013, Rentun Group informa que los datos personales recolectados serán almacenados con absoluta confidencialidad. Como titular de la información, tienes derecho a conocer, actualizar, rectificar y suprimir tus datos personales comunicándote a través de nuestro correo oficial.', is_active: true, sort_order: 9 },
+    { id: 'lp-patrimonio', title: 'Conservación del Patrimonio', icon: '🌱', content: 'Rentun Group está comprometido con la preservación del patrimonio natural y cultural de Colombia. Rechazamos el tráfico ilegal de especies silvestres de flora y fauna (Ley 17 de 1981, Ley 299 de 1996) y la comercialización ilícita de bienes culturales e históricos nacionales (Ley 397 de 1997).', is_active: true, sort_order: 10 }
   ]
 };
 
@@ -174,7 +191,7 @@ export const fetchConfig = async () => {
   try {
     const [
       settingsRes, propertiesRes, placesRes,
-      manualsRes, rulesRes, emergenciesRes, faqsRes
+      manualsRes, rulesRes, emergenciesRes, faqsRes, legalPagesRes
     ] = await Promise.all([
       supabase.from('site_settings').select('*').eq('id', 1).single(),
       supabase.from('properties').select('*'),
@@ -182,7 +199,8 @@ export const fetchConfig = async () => {
       supabase.from('manuals').select('*'),
       supabase.from('house_rules').select('*'),
       supabase.from('emergencies').select('*'),
-      supabase.from('faqs').select('*')
+      supabase.from('faqs').select('*'),
+      supabase.from('legal_pages').select('*').order('sort_order', { ascending: true })
     ]);
 
     const settings = settingsRes.data || {};
@@ -251,7 +269,23 @@ export const fetchConfig = async () => {
         id: e.id, title: e.title, value: e.phone || e.value || '', icon: e.icon || ''
       })) : DEFAULTS.emergencies,
       
-      faqs: faqsRes.data?.length ? faqsRes.data : DEFAULTS.faqs
+      faqs: faqsRes.data?.length ? faqsRes.data : DEFAULTS.faqs,
+
+      checkoutTasks: (() => {
+        // First try from site_settings column
+        if (settings.checkout_tasks && Array.isArray(settings.checkout_tasks) && settings.checkout_tasks.length > 0) {
+          return settings.checkout_tasks;
+        }
+        return DEFAULTS.checkoutTasks;
+      })(),
+
+      houseRulesText: settings.house_rules_text || DEFAULTS.houseRulesText,
+
+      legalPages: legalPagesRes.data?.length ? legalPagesRes.data.map(p => ({
+        id: p.id, title: p.title, icon: p.icon || '📄',
+        content: p.content || '', is_active: p.is_active !== false,
+        sort_order: p.sort_order || 0
+      })) : DEFAULTS.legalPages
     };
   } catch (err) {
     console.error('Error fetching config from Supabase:', err);
@@ -281,7 +315,9 @@ export const saveConfig = async (newData) => {
       chat_assistant_name: newData.chatAssistant?.name || '',
       chat_assistant_subtitle: newData.chatAssistant?.subtitle || '',
       chat_assistant_welcome: newData.chatAssistant?.welcome || '',
-      chat_assistant_avatar: newData.chatAssistant?.avatar || ''
+      chat_assistant_avatar: newData.chatAssistant?.avatar || '',
+      checkout_tasks: Array.isArray(newData.checkoutTasks) ? newData.checkoutTasks : [],
+      house_rules_text: newData.houseRulesText || ''
     });
     if (settingsError) {
       console.error('SUPABASE ERROR IN SITE_SETTINGS:', settingsError);
@@ -368,6 +404,22 @@ export const saveConfig = async (newData) => {
       if (insManuals) { console.error('INS manuals:', insManuals); throw insManuals; }
     }
 
+    // ── Legal Pages (delete + re-insert) ──
+    if (newData.legalPages) {
+      const { error: delLegal } = await supabase.from('legal_pages').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      if (delLegal) { console.error('DEL legal_pages:', delLegal); throw delLegal; }
+      if (newData.legalPages.length > 0) {
+        const { error: insLegal } = await supabase.from('legal_pages').insert(newData.legalPages.map((p, idx) => ({
+          title: p.title || '',
+          icon: p.icon || '📄',
+          content: p.content || '',
+          is_active: p.is_active !== false,
+          sort_order: p.sort_order ?? idx
+        })));
+        if (insLegal) { console.error('INS legal_pages:', insLegal); throw insLegal; }
+      }
+    }
+
     return true;
   } catch (err) {
     console.error('Error saving to Supabase:', err);
@@ -430,7 +482,7 @@ const TRANSLATIONS = {
     // Navbar
     navProps: 'Propiedades',
     navNosotros: 'Nosotros',
-    navGuia: 'Guía de huésped',
+    navGuia: 'Información de la Estadía',
     navReservar: 'Reservar ahora →',
 
     // Hero
@@ -471,7 +523,7 @@ const TRANSLATIONS = {
     aboutFeature3Desc: 'Más de 500 reseñas positivas avalan nuestra hospitalidad y compromiso.',
 
     // Guest Guide
-    guideTitle: 'Guía del Huésped',
+    guideTitle: 'Información de la Estadía',
     guideWifiTitle: '📶 WiFi de la Casa',
     guideWifiSSID: 'Red',
     guideWifiPass: 'Contraseña',
@@ -499,7 +551,7 @@ const TRANSLATIONS = {
     // Navbar
     navProps: 'Properties',
     navNosotros: 'About Us',
-    navGuia: 'Guest Guide',
+    navGuia: 'Stay Information',
     navReservar: 'Book Now →',
 
     // Hero
@@ -540,7 +592,7 @@ const TRANSLATIONS = {
     aboutFeature3Desc: 'More than 500 positive reviews back our hospitality and commitment.',
 
     // Guest Guide
-    guideTitle: 'Guest Guide',
+    guideTitle: 'Stay Information',
     guideWifiTitle: '📶 House WiFi',
     guideWifiSSID: 'Network',
     guideWifiPass: 'Password',

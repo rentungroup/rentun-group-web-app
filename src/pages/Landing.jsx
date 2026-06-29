@@ -446,6 +446,27 @@ export default function Landing() {
                 {t.btnAvailability}
               </a>
             </div>
+
+            {/* Feature badges */}
+            <div style={{ display:'flex', flexWrap:'wrap', gap:'0.6rem', marginTop:'2rem' }}>
+              {[
+                { icon:'⚡', text: lang === 'EN' ? 'Response < 15 min' : 'Respondemos < 15 min' },
+                { icon:'📍', text: lang === 'EN' ? 'Premium location' : 'Ubicación premium' },
+                { icon:'🔑', text: lang === 'EN' ? 'Self check-in' : 'Check-in autónomo' },
+                { icon:'📡', text: lang === 'EN' ? 'High-speed WiFi' : 'WiFi alta velocidad' },
+                { icon:'⭐', text: lang === 'EN' ? 'Happy guests ★ 5.0' : 'Huéspedes satisfechos ★ 5.0' },
+              ].map((b, i) => (
+                <span key={i} style={{
+                  display:'inline-flex', alignItems:'center', gap:'0.35rem',
+                  background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.15)',
+                  borderRadius:50, padding:'0.32rem 0.9rem',
+                  fontSize:'0.72rem', fontWeight:600, color:'rgba(230,231,232,0.9)',
+                  backdropFilter:'blur(8px)'
+                }}>
+                  <span style={{ fontSize:'0.85rem' }}>{b.icon}</span> {b.text}
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* Right: Images Carousel */}
@@ -532,43 +553,22 @@ export default function Landing() {
           </div>
 
           {properties.length === 1 ? (
-            /* ── Single property: Airbnb embed + rotating property images ── */
+            /* ── Single property: always shows real property images ── */
             <div className="rv property-card" style={{ background:'white', borderRadius:16, overflow:'hidden', border:'none', boxShadow:'var(--shadow-md)', marginTop:'3rem', display:'grid', gridTemplateColumns:'1fr 1fr', minHeight:480 }}>
-              {/* Left: Airbnb widget if has embed, otherwise rotating images */}
-              <div style={{ position:'relative', overflow:'hidden', background:'#fafafa', display:'flex', alignItems:'stretch' }}>
-                {mainProp.isAirbnb && (mainProp.airbnbEmbedId || SITE.airbnb.embedId) ? (
-                  <div style={{ width:'100%', position:'relative' }}>
-                    <div className="airbnb-embed-frame"
-                         data-id={mainProp.airbnbEmbedId || SITE.airbnb.embedId}
-                         data-view="home"
-                         data-hide-price="true"
-                         style={{ width:'100%', height:'100%', margin:'auto', display:'block', border:'none', borderRadius:0, overflow:'hidden', background:'white' }}>
-                      <a href={mainProp.airbnbListing || SITE.airbnb.listing}>{lang === 'EN' ? 'View on Airbnb' : 'Ver en Airbnb'}</a>
-                      <a href={mainProp.airbnbListing || SITE.airbnb.listing} rel="nofollow">Vivienda rentada · Bogotá · ★5.0 · {mainProp.bedrooms} {t.propBedrooms} · {mainProp.beds} {t.propBeds} · {mainProp.baths} {t.propBaths}</a>
-                    </div>
-                    <span style={{ position:'absolute', top:'1rem', left:'1rem', background:'var(--orange)', color:'var(--text)', fontSize:'0.65rem', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em', padding:'0.28rem 0.8rem', borderRadius:50, boxShadow:'var(--shadow-sm)', zIndex:2 }}>{lang === 'EN' ? '✨ Available' : '✨ Disponible'}</span>
-                    <span style={{ position:'absolute', top:'1rem', right:'1rem', background:'rgba(255,255,255,0.96)', borderRadius:50, padding:'0.3rem 0.75rem', display:'flex', alignItems:'center', gap:'0.25rem', fontSize:'0.75rem', fontWeight:800, color:'#1a2332', boxShadow:'0 2px 10px rgba(0,0,0,0.12)', zIndex:2 }}>⭐ 5.0</span>
-                  </div>
-                ) : (
-                  /* No Airbnb embed — show rotating images */
-                  <div style={{ width:'100%', height:'100%', minHeight:480, position:'relative' }}>
-                    <ImageSlider images={mainProp.images?.length ? mainProp.images : null} />
-                    <span style={{ position:'absolute', top:'1rem', left:'1rem', background:'var(--orange)', color:'var(--text)', fontSize:'0.65rem', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em', padding:'0.28rem 0.8rem', borderRadius:50, boxShadow:'var(--shadow-sm)', zIndex:2 }}>{lang === 'EN' ? '✨ Available' : '✨ Disponible'}</span>
-                    <span style={{ position:'absolute', top:'1rem', right:'1rem', background:'rgba(255,255,255,0.96)', borderRadius:50, padding:'0.3rem 0.75rem', display:'flex', alignItems:'center', gap:'0.25rem', fontSize:'0.75rem', fontWeight:800, color:'#1a2332', boxShadow:'0 2px 10px rgba(0,0,0,0.12)', zIndex:2 }}>⭐ 5.0</span>
-                  </div>
-                )}
+              {/* Left: Property images slider */}
+              <div style={{ position:'relative', overflow:'hidden', background:'#0d1724' }}>
+                <div style={{ width:'100%', height:'100%', minHeight:480, position:'relative' }}>
+                  <ImageSlider images={mainProp.images?.length ? mainProp.images : (cfg.heroImages?.length ? cfg.heroImages : null)} />
+                  <span style={{ position:'absolute', top:'1rem', left:'1rem', background:'var(--orange)', color:'var(--text)', fontSize:'0.65rem', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em', padding:'0.28rem 0.8rem', borderRadius:50, boxShadow:'var(--shadow-sm)', zIndex:2 }}>{lang === 'EN' ? '✨ Available' : '✨ Disponible'}</span>
+                  <span style={{ position:'absolute', top:'1rem', right:'1rem', background:'rgba(255,255,255,0.96)', borderRadius:50, padding:'0.3rem 0.75rem', display:'flex', alignItems:'center', gap:'0.25rem', fontSize:'0.75rem', fontWeight:800, color:'#1a2332', boxShadow:'0 2px 10px rgba(0,0,0,0.12)', zIndex:2 }}>⭐ 5.0</span>
+                  {mainProp.images?.length > 1 && (
+                    <span style={{ position:'absolute', bottom:'1rem', right:'1rem', background:'rgba(0,0,0,0.55)', color:'white', fontSize:'0.6rem', fontWeight:700, padding:'0.2rem 0.6rem', borderRadius:50, zIndex:2 }}>📸 {mainProp.images.length} fotos</span>
+                  )}
+                </div>
               </div>
 
-              {/* Right: details + images carousel (always shows property images) */}
+              {/* Right: details */}
               <div style={{ padding:'2.5rem 3rem', display:'flex', flexDirection:'column', justifyContent:'space-between', gap:'1.5rem' }}>
-                {/* Property photo mini-carousel when Airbnb embed is active */}
-                {mainProp.isAirbnb && mainProp.images?.length > 0 && (
-                  <div style={{ borderRadius:12, overflow:'hidden', height:160, flexShrink:0, position:'relative' }}>
-                    <PropImageCycle images={mainProp.images} />
-                    <span style={{ position:'absolute', bottom:8, right:10, background:'rgba(0,0,0,0.5)', color:'white', fontSize:'0.6rem', fontWeight:700, padding:'0.15rem 0.5rem', borderRadius:50, zIndex:2 }}>📸 {mainProp.images.length} fotos</span>
-                  </div>
-                )}
-
                 <div>
                   <h3 style={{ fontSize:'1.6rem', fontWeight:900, color:'var(--text)', marginBottom:'0.3rem', letterSpacing:'-0.02em' }}>
                     {lang === 'EN' ? (mainProp.nameEn || mainProp.name) : mainProp.name}
@@ -582,7 +582,7 @@ export default function Landing() {
 
                   <div style={{ display:'flex', flexWrap:'wrap', gap:'1.5rem', borderTop:'1px solid #E6E7E8', borderBottom:'1px solid #E6E7E8', padding:'1.2rem 0', marginBottom:'2rem' }}>
                     <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.88rem', fontWeight:600, color:'var(--text)' }}><span>🛏️</span><span>{mainProp.bedrooms} {lang === 'EN' ? (mainProp.bedrooms === 1 ? 'Bedroom' : 'Bedrooms') : (mainProp.bedrooms === 1 ? 'Habitación' : 'Habitaciones')}</span></div>
-                    <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.88rem', fontWeight:600, color:'var(--text)' }}><span>🛌</span><span>{mainProp.beds} {lang === 'EN' ? (mainProp.beds === 1 ? 'Bed' : 'Beds') : (mainProp.beds === 1 ? 'Cama' : 'Camas')}</span></div>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.88rem', fontWeight:600, color:'var(--text)' }}><span>🛏</span><span>{mainProp.beds} {lang === 'EN' ? (mainProp.beds === 1 ? 'Bed' : 'Beds') : (mainProp.beds === 1 ? 'Cama' : 'Camas')}</span></div>
                     <div style={{ display:'flex', alignItems:'center', gap:'0.5rem', fontSize:'0.88rem', fontWeight:600, color:'var(--text)' }}><span>🚿</span><span>{mainProp.baths} {lang === 'EN' ? (mainProp.baths === 1 ? 'Bathroom' : 'Bathrooms') : (mainProp.baths === 1 ? 'Baño' : 'Baños')}</span></div>
                   </div>
 
@@ -605,6 +605,23 @@ export default function Landing() {
                       </a>
                     )}
                   </div>
+
+                  {/* Quick Airbnb links */}
+                  {mainProp.isAirbnb && (
+                    <div style={{ display:'flex', gap:'0.6rem', marginTop:'1.2rem', flexWrap:'wrap' }}>
+                      {[
+                        { label:'📅 Calendario', labelEn:'📅 Calendar', href: ab.calendar },
+                        { label:'⭐ Reseñas', labelEn:'⭐ Reviews', href: ab.reviews },
+                        { label:'📋 Reglas', labelEn:'📋 Rules', href: ab.houseRules },
+                        { label:'🛡️ Seguridad', labelEn:'🛡️ Safety', href: ab.safety },
+                      ].map(l => (
+                        <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer"
+                           style={{ fontSize:'0.7rem', color:'var(--text-muted)', textDecoration:'none', background:'#f8fafc', border:'1px solid #E6E7E8', borderRadius:50, padding:'0.28rem 0.8rem', fontWeight:600, transition:'all 0.2s' }}>
+                          {lang === 'EN' ? l.labelEn : l.label}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -5,10 +5,13 @@ import { SITE } from '../config/site';
 
 export default function Legal() {
   const { config: cfg } = useConfig();
+  const [openId, setOpenId] = useState(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
+
+  const legalPages = (cfg.legalPages || []).filter(p => p.is_active !== false);
 
   return (
     <div style={{ minHeight:'100vh', background:'#f8fafc', fontFamily:'Outfit, sans-serif', color:'#0f172a', paddingBottom:'4rem' }}>
@@ -29,7 +32,7 @@ export default function Legal() {
       </div>
 
       {/* ── Main Container ── */}
-      <div style={{ maxWidth: 800, margin: '3rem auto', padding: '0 1.5rem' }}>
+      <div style={{ maxWidth: 860, margin: '3rem auto', padding: '0 1.5rem' }}>
         
         {/* Title */}
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
@@ -39,46 +42,52 @@ export default function Legal() {
           <h2 style={{ fontSize: '2.2rem', fontWeight: 900, color: '#0F4C81', letterSpacing: '-0.02em', margin: '0 0 0.5rem' }}>
             {cfg.legalTitle || 'Términos Legales y Políticas'}
           </h2>
-          <p style={{ fontSize: '0.95rem', color: '#5c6d80', margin: 0 }}>
+          <p style={{ fontSize: '0.95rem', color: '#5c6d80', margin: 0, lineHeight: 1.6 }}>
             {cfg.legalSubtitle || 'Cumplimiento normativo y compromiso con la legalidad en el sector turístico de Colombia.'}
           </p>
         </div>
 
-        {/* Content sections */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          
-          {/* Card 1: ESCNNA */}
-          <div style={{ background: 'white', borderRadius: 24, border: '1px solid #E6E7E8', padding: '2rem', boxShadow: '0 4px 20px rgba(15,76,129,0.04)' }}>
-            <h3 style={{ display:'flex', alignItems:'center', gap:'0.6rem', fontSize: '1.15rem', fontWeight: 800, color: '#0F4C81', margin: '0 0 1rem' }}>
-              <span>🚨</span> {cfg.legalEscnnaTitle || 'Advertencia de Protección a Menores (ESCNNA)'}
-            </h3>
-            <p style={{ fontSize: '0.88rem', color: '#334155', lineHeight: 1.7, margin: 0, textAlign: 'justify', whiteSpace: 'pre-line' }}>
-              {cfg.legalEscnna || 'En Rentun Group rechazamos rotundamente cualquier tipo de abuso o explotación sexual de niños, niñas y adolescentes. Prohibimos el ingreso a nuestras instalaciones de personas que pretendan realizar conductas asociadas a la explotación sexual de menores. Advertimos a todos nuestros huéspedes y clientes que en desarrollo de lo dispuesto en el artículo 17 de la Ley 679 de 2001, la Ley 1098 de 2006 y la Ley 1336 de 2009, la explotación y el abuso sexual de niños, niñas y adolescentes en el territorio nacional son sancionados penal y administrativamente conforme a las leyes colombianas vigentes.'}
-            </p>
-          </div>
+        {/* Dynamic Legal Pages */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {legalPages.map((page) => (
+            <div key={page.id}
+              style={{ background: 'white', borderRadius: 20, border: '1px solid #E6E7E8', overflow: 'hidden', boxShadow: '0 4px 20px rgba(15,76,129,0.04)' }}>
+              
+              {/* Accordion header */}
+              <button
+                onClick={() => setOpenId(openId === page.id ? null : page.id)}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '1.4rem 2rem', border: 'none', background: 'none', cursor: 'pointer',
+                  fontFamily: 'Outfit, sans-serif', textAlign: 'left'
+                }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <span style={{ fontSize: '1.4rem' }}>{page.icon || '📄'}</span>
+                  <span style={{ fontSize: '1rem', fontWeight: 800, color: '#0F4C81' }}>{page.title}</span>
+                </div>
+                <span style={{
+                  width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  background: openId === page.id ? '#F57C00' : 'rgba(15,76,129,0.08)',
+                  color: openId === page.id ? 'white' : '#0F4C81',
+                  fontSize: '1rem', fontWeight: 800, flexShrink: 0, transition: 'all 0.2s'
+                }}>
+                  {openId === page.id ? '−' : '+'}
+                </span>
+              </button>
 
-          {/* Card 2: Políticas de Privacidad / Habeas Data */}
-          <div style={{ background: 'white', borderRadius: 24, border: '1px solid #E6E7E8', padding: '2rem', boxShadow: '0 4px 20px rgba(15,76,129,0.04)' }}>
-            <h3 style={{ display:'flex', alignItems:'center', gap:'0.6rem', fontSize: '1.15rem', fontWeight: 800, color: '#0F4C81', margin: '0 0 1rem' }}>
-              <span>🔐</span> {cfg.legalHabeasTitle || 'Políticas de Privacidad y Tratamiento de Datos Personales (Habeas Data)'}
-            </h3>
-            <p style={{ fontSize: '0.88rem', color: '#334155', lineHeight: 1.7, margin: 0, textAlign: 'justify', whiteSpace: 'pre-line' }}>
-              {cfg.legalHabeasData || 'En cumplimiento de la Ley 1581 de 2012 (Ley General de Protección de Datos Personales) y el Decreto 1377 de 2013, Rentun Group informa que los datos de carácter personal recolectados (nombres, correos, teléfonos) para efectos comerciales, consultas de disponibilidad, reservas o facturación, serán almacenados en nuestras bases de datos con absoluta confidencialidad y medidas de seguridad.\n\nEl uso de estos datos es exclusivamente para prestarte un servicio de alojamiento premium, enviarte notificaciones sobre tu reserva y mantenerte informado sobre nuestras novedades. Como titular de la información, tienes derecho a conocer, actualizar, rectificar y suprimir tus datos personales de nuestras bases de datos comunicándote directamente a través de nuestro correo oficial (admin@rentungroup.com) o WhatsApp.'}
-            </p>
-          </div>
+              {/* Accordion content */}
+              {openId === page.id && (
+                <div style={{ padding: '0 2rem 1.8rem', borderTop: '1px solid #f1f5f9' }}>
+                  <p style={{ fontSize: '0.9rem', color: '#334155', lineHeight: 1.75, margin: '1.2rem 0 0', textAlign: 'justify', whiteSpace: 'pre-line' }}>
+                    {page.content || 'Contenido próximamente disponible.'}
+                  </p>
+                </div>
+              )}
+            </div>
+          ))}
 
-          {/* Card 3: Flora y Fauna */}
-          <div style={{ background: 'white', borderRadius: 24, border: '1px solid #E6E7E8', padding: '2rem', boxShadow: '0 4px 20px rgba(15,76,129,0.04)' }}>
-            <h3 style={{ display:'flex', alignItems:'center', gap:'0.6rem', fontSize: '1.15rem', fontWeight: 800, color: '#0F4C81', margin: '0 0 1rem' }}>
-              <span>🌱</span> {cfg.legalFloraTitle || 'Conservación del Patrimonio Natural y Cultural'}
-            </h3>
-            <p style={{ fontSize: '0.88rem', color: '#334155', lineHeight: 1.7, margin: 0, textAlign: 'justify', whiteSpace: 'pre-line' }}>
-              {cfg.legalFloraFauna || 'Rentun Group está firmemente comprometido con la preservación del patrimonio nacional de Colombia:\n\n• Protección de Fauna y Flora Silvestre: De conformidad con la Ley 17 de 1981 y la Ley 299 de 1996, rechazamos y promovemos la prevención del tráfico ilegal de especies silvestres de flora y fauna colombiana.\n\n• Protección de Bienes de Interés Cultural: En concordancia con la Ley 397 de 1997 (Ley General de Cultura) y sus decretos reglamentarios, prevenimos y rechazamos la comercialización, exportación o tráfico ilícito de bienes culturales e históricos nacionales.'}
-            </p>
-          </div>
-
-          {/* Card 4: RNT Info */}
-          <div style={{ background: 'linear-gradient(135deg, rgba(15,76,129,0.05), rgba(245,124,0,0.04))', borderRadius: 24, border: '1.5px dashed rgba(15,76,129,0.2)', padding: '2rem', textAlign: 'center' }}>
+          {/* RNT Card */}
+          <div style={{ background: 'linear-gradient(135deg, rgba(15,76,129,0.05), rgba(245,124,0,0.04))', borderRadius: 24, border: '1.5px dashed rgba(15,76,129,0.2)', padding: '2rem', textAlign: 'center', marginTop: '1rem' }}>
             <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📄</div>
             <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0F4C81', margin: '0 0 0.5rem' }}>
               Registro Nacional de Turismo (RNT)
@@ -90,7 +99,6 @@ export default function Legal() {
               RNT: {cfg.rntNumber || 'En trámite'}
             </span>
           </div>
-
         </div>
 
         {/* Footer info inside legal page */}

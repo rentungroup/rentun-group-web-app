@@ -52,6 +52,7 @@ export default function GuestGuide() {
   const emergencies = cfg.emergencies || [];
   
   const rules = cfg.houseRules || [];
+  const houseRulesText = cfg.houseRulesText || '';
   const manuals = cfg.manuals || [];
   const faqs = cfg.faqs || [];
   const checkoutTasks = cfg.checkoutTasks || [];
@@ -87,7 +88,7 @@ export default function GuestGuide() {
           <img src="/logos/rentungroupwithe.webp" alt="Rentun Group" style={{ width:40, height:40, objectFit:'contain' }} />
           <div>
             <h1 className="guide-title" style={{ fontSize:'1.1rem', fontWeight:900, margin:0 }}>{cfg.propName || SITE.property.name}</h1>
-            <span className="guide-subtitle" style={{ fontSize:'0.7rem', color:'rgba(230,231,232,0.7)', fontWeight:600 }}>{lang === 'EN' ? 'Interactive Guest Guide' : 'Guía Interactiva del Huésped'}</span>
+            <span className="guide-subtitle" style={{ fontSize:'0.7rem', color:'rgba(230,231,232,0.7)', fontWeight:600 }}>{lang === 'EN' ? 'Stay Information' : 'Información de la Estadía'}</span>
           </div>
         </div>
         <Link to="/admin" className="guide-admin-btn"
@@ -382,7 +383,7 @@ export default function GuestGuide() {
           <div>
             <h2 style={{ fontSize:'1.3rem', fontWeight:800, color:'#0d1724', marginBottom:'1.2rem' }}>📋 {t.guideRulesTitle}</h2>
             <div style={{ display:'flex', flexDirection:'column', gap:'0.8rem', marginBottom:'1.5rem' }}>
-              {rules.map(r => (
+            {rules.map(r => (
                 <div key={r.id} style={{ background:'white', borderRadius:14, border:'1px solid #E6E7E8', padding:'1rem 1.2rem', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
                   <span style={{ fontSize:'0.9rem', fontWeight:600, color:'#0d1724' }}>{r.title}</span>
                   <span style={{
@@ -397,6 +398,19 @@ export default function GuestGuide() {
                 </div>
               ))}
             </div>
+
+            {/* Texto libre de reglas adicionales */}
+            {houseRulesText && (
+              <div style={{ background:'white', borderRadius:16, border:'1px solid #E6E7E8', padding:'1.5rem', marginBottom:'1.5rem', boxShadow:'0 2px 12px rgba(15,76,129,0.04)' }}>
+                <h3 style={{ fontSize:'0.95rem', fontWeight:800, color:'#0d1724', marginBottom:'1rem', margin:'0 0 1rem', display:'flex', alignItems:'center', gap:'0.5rem' }}>
+                  <span>📝</span> {lang === 'EN' ? 'Additional House Rules' : 'Reglas Adicionales'}
+                </h3>
+                <p style={{ fontSize:'0.88rem', color:'#334155', lineHeight:1.75, margin:0, whiteSpace:'pre-line' }}>
+                  {houseRulesText}
+                </p>
+              </div>
+            )}
+
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.8rem' }}>
               <a href={cfg.airbnbRules || SITE.airbnb.houseRules} target="_blank" rel="noopener noreferrer"
                  style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'rgba(15,76,129,0.06)', border:'1px solid rgba(15,76,129,0.14)', color:'#0F4C81', textDecoration:'none', borderRadius:50, padding:'0.7rem', fontSize:'0.8rem', fontWeight:700 }}>
