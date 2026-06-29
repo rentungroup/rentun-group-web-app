@@ -404,7 +404,12 @@ export default function Landing() {
         <div className="s-inner hero-grid" style={{ position:'relative', zIndex:10, display:'grid', gridTemplateColumns:'1.1fr 0.9fr', gap:'3rem', alignItems:'center', width:'100%', padding:'6rem 4rem 4rem' }}>
           <style>{`
             .hero-grid { margin-top: 4rem; }
-            .hero-top-line { --justify-hero: flex-start; }
+            .hero-top-line {
+              display: flex;
+              flex-direction: column;
+              gap: 0.8rem;
+              align-items: flex-start;
+            }
             .hero-btns {
               display: flex;
               gap: 1rem;
@@ -488,7 +493,7 @@ export default function Landing() {
                 margin: 0 auto 2.5rem !important;
                 text-align: center !important;
               }
-              .hero-top-line { --justify-hero: center !important; }
+              .hero-top-line { align-items: center !important; }
               .hero-btns { justify-content: center !important; width: 100% !important; }
               
               .stats-grid-8 {
@@ -541,7 +546,7 @@ export default function Landing() {
           {/* Left: Text content */}
           <div>
             {/* Top Badge & Stars */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '1.5rem', justifyContent: 'var(--justify-hero)' }} className="hero-top-line">
+            <div className="hero-top-line" style={{ marginBottom: '1.5rem' }}>
               <Tag>{t.heroTag}</Tag>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
                 <div style={{ display: 'flex', gap: '0.15rem' }}>
