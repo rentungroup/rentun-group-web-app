@@ -183,7 +183,7 @@ function PropCard({ p, idx, lang, t, waLink }) {
   return (
     <div className={`rv d${idx + 1}`} style={{ background:'white', borderRadius:28, overflow:'hidden', border:'1px solid #E6E7E8', boxShadow:'0 10px 30px rgba(0,0,0,0.04)', display:'flex', flexDirection:'column', height:'100%' }}>
       {/* Image with auto-rotation */}
-      <div style={{ height:240, overflow:'hidden', background:'#fafafa', position:'relative', flexShrink:0 }}>
+      <div style={{ aspectRatio: '1.25', width: '100%', overflow:'hidden', background:'#fafafa', position:'relative', flexShrink:0 }}>
         {p.images?.length > 0 ? (
           <img src={p.images[imgIdx]} alt={p.name}
                style={{ width:'100%', height:'100%', objectFit:'cover', transition:'opacity 0.5s' }} />
