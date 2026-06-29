@@ -4,7 +4,7 @@ import { useConfig } from '../context/ConfigContext';
 import { waLink, getTranslation, formatPrice } from '../utils/db';
 import { SITE } from '../config/site';
 import Navbar from '../components/Navbar';
-import { ArrowRight, Star, Home, Coffee, Info, Smartphone, ExternalLink, CalendarDays } from 'lucide-react';
+import { ArrowRight, Star, Home, Coffee, Info, Smartphone, ExternalLink, CalendarDays, Users, Clock, Zap, MapPin, Key, Wifi } from 'lucide-react';
 
 // ── Scroll Reveal Hook ──────────────────────────────────
 function useReveal() {
@@ -405,7 +405,6 @@ export default function Landing() {
           <style>{`
             .hero-grid { margin-top: 4rem; }
             .hero-top-line { --justify-hero: flex-start; }
-            .hero-micro-features { --justify-hero: flex-start; }
             .hero-btns {
               display: flex;
               gap: 1rem;
@@ -413,29 +412,52 @@ export default function Landing() {
               justify-content: flex-start;
             }
             
-            .stats-grid {
+            .stats-grid-7 {
               display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-              gap: 2rem;
-              justify-content: center;
+              grid-template-columns: repeat(7, 1fr);
+              gap: 1rem;
               width: 100%;
+              max-width: 1400px;
+              margin: 0 auto;
             }
             
-            .stats-val {
-              font-size: 2.4rem;
-              font-weight: 900;
+            .stats-col {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              text-align: center;
+              position: relative;
+              padding: 0.5rem 0.8rem;
+            }
+            
+            .stats-col:not(:last-child) {
+              border-right: 1px solid rgba(255, 255, 255, 0.15);
+            }
+            
+            .stats-icon {
+              color: #C49A3C;
+              margin-bottom: 0.8rem;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+            
+            .stats-val-7 {
+              font-size: 1.1rem;
+              font-weight: 800;
               color: var(--white);
-              line-height: 1;
-              letter-spacing: -0.04em;
+              line-height: 1.2;
+              letter-spacing: -0.02em;
+              text-transform: uppercase;
             }
             
-            .stats-lbl {
-              font-size: 0.72rem;
+            .stats-lbl-7 {
+              font-size: 0.68rem;
               font-weight: 600;
-              color: rgba(255,255,255,0.7);
+              color: rgba(255,255,255,0.6);
               text-transform: uppercase;
-              letter-spacing: 0.1em;
-              margin-top: 0.25rem;
+              letter-spacing: 0.08em;
+              margin-top: 0.15rem;
             }
             
             .prop-header-grid {
@@ -446,6 +468,13 @@ export default function Landing() {
               gap: 1.5rem;
               margin-bottom: 3.5rem;
               width: 100%;
+            }
+            
+            .hero-btns {
+              display: flex;
+              gap: 1rem;
+              flex-wrap: wrap;
+              justify-content: flex-start;
             }
             
             @media (max-width: 990px) {
@@ -460,19 +489,35 @@ export default function Landing() {
                 text-align: center !important;
               }
               .hero-top-line { --justify-hero: center !important; }
-              .hero-micro-features { --justify-hero: center !important; }
               .hero-btns { justify-content: center !important; width: 100% !important; }
+              
+              .stats-grid-7 {
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 1.5rem 1rem !important;
+              }
+              .stats-col {
+                border-right: none !important;
+                padding: 0.5rem;
+              }
             }
             
             @media (max-width: 768px) {
-              .stats-grid {
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 0.8rem !important;
+              .stats-grid-7 {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 1.5rem 0.5rem !important;
               }
-              .stats-val {
-                font-size: 1.5rem !important;
+              .stats-col {
+                border-right: none !important;
+                padding: 0.4rem;
               }
-              .stats-lbl {
+              .stats-icon svg {
+                width: 28px !important;
+                height: 28px !important;
+              }
+              .stats-val-7 {
+                font-size: 0.95rem !important;
+              }
+              .stats-lbl-7 {
                 font-size: 0.58rem !important;
                 letter-spacing: 0.05em !important;
               }
@@ -495,35 +540,9 @@ export default function Landing() {
           
           {/* Left: Text content */}
           <div>
-            {/* Top Badge & Rating Line */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '1rem', justifyContent: 'var(--justify-hero)' }} className="hero-top-line">
+            {/* Top Badge */}
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1.5rem', justifyContent: 'var(--justify-hero)' }} className="hero-top-line">
               <Tag>{t.heroTag}</Tag>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                <div style={{ display: 'flex', gap: '0.15rem' }}>
-                  {[1,2,3,4,5].map(i => (
-                    <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="var(--orange)">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                  ))}
-                </div>
-                <span style={{ fontSize: '0.82rem', color: 'var(--orange)', fontWeight: 800 }}>5.0</span>
-              </div>
-            </div>
-
-            {/* Micro Features Row */}
-            <div className="hero-micro-features" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem 1.2rem', marginBottom: '1.8rem', justifyContent: 'var(--justify-hero)' }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.78rem', color: 'rgba(230,231,232,0.85)', fontWeight: 600 }}>
-                <span>⚡</span> <span>{lang === 'EN' ? 'Response < 15m' : 'Respuesta < 15 min'}</span>
-              </span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.78rem', color: 'rgba(230,231,232,0.85)', fontWeight: 600 }}>
-                <span>📍</span> <span>{lang === 'EN' ? 'Premium Location' : 'Ubicación Premium'}</span>
-              </span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.78rem', color: 'rgba(230,231,232,0.85)', fontWeight: 600 }}>
-                <span>🔑</span> <span>{lang === 'EN' ? 'Self Check-in' : 'Check-in Autónomo'}</span>
-              </span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.78rem', color: 'rgba(230,231,232,0.85)', fontWeight: 600 }}>
-                <span>📡</span> <span>{lang === 'EN' ? 'High-speed WiFi' : 'WiFi Alta Velocidad'}</span>
-              </span>
             </div>
 
             <h1 style={{ fontSize:'clamp(2.4rem,5vw,3.8rem)', fontWeight:900, color:'white', letterSpacing:'-0.035em', lineHeight:1.06, marginBottom:'1.5rem' }}>
@@ -585,30 +604,23 @@ export default function Landing() {
 
 
       {/* ── STATS STRIP ─────────────────────────────── */}
-      <div style={{ background:'var(--navy-dark)', borderBottom:'1px solid rgba(196,154,60,0.3)', padding:'2.2rem 4rem' }}>
-        <div className="stats-grid" style={{ maxWidth:1100, margin:'0 auto' }}>
-          {(cfg.stats || SITE.stats).map((s, i) => {
-            const translateStatLabel = (label) => {
-              if (!label) return '';
-              const l = label.toLowerCase();
-              if (l.includes('valoraci')) return t.statReviews;
-              if (l.includes('apartamento')) return t.statApartments;
-              if (l.includes('huésped') || l.includes('huesped')) return t.statGuests;
-              if (l.includes('retorno')) return t.statReturn;
-              return label;
-            };
-            return (
-              <div key={i} className={`rv${i > 0 ? ` d${i}` : ''}`}
-                   style={{ display:'flex', flexDirection:'column', alignItems:'center', textAlign:'center', position:'relative' }}>
-                <div className="stats-val">
-                  {s.value}<span style={{ color:'var(--orange)' }}>{s.suffix}</span>
-                </div>
-                <div className="stats-lbl">
-                  {translateStatLabel(s.label)}
-                </div>
-              </div>
-            );
-          })}
+      <div style={{ background:'var(--navy-dark)', borderBottom:'1px solid rgba(196,154,60,0.3)', padding:'2.5rem 2rem' }}>
+        <div className="stats-grid-7">
+          {[
+            { icon: <Star size={34} strokeWidth={1.5} />, title: '5★', subtitle: 'RATING AIRBNB' },
+            { icon: <Users size={34} strokeWidth={1.5} />, title: '+100', subtitle: lang === 'EN' ? 'HAPPY GUESTS' : 'HUÉSPEDES SATISFECHOS' },
+            { icon: <Clock size={34} strokeWidth={1.5} />, title: '24h', subtitle: lang === 'EN' ? 'CONTINUOUS CARE' : 'ATENCIÓN CONTINUA' },
+            { icon: <Zap size={34} strokeWidth={1.5} />, title: lang === 'EN' ? 'WE RESPOND' : 'RESPONDEMOS', subtitle: lang === 'EN' ? 'IN MINUTES' : 'EN MINUTOS' },
+            { icon: <MapPin size={34} strokeWidth={1.5} />, title: lang === 'EN' ? 'LOCATION' : 'UBICACIÓN', subtitle: lang === 'EN' ? 'PREMIUM' : 'PREMIUM' },
+            { icon: <Key size={34} strokeWidth={1.5} />, title: 'CHECK-IN', subtitle: lang === 'EN' ? 'SELF CHECK-IN' : 'AUTÓNOMO' },
+            { icon: <Wifi size={34} strokeWidth={1.5} />, title: 'WIFI', subtitle: lang === 'EN' ? 'HIGH-SPEED' : 'ALTA VELOCIDAD' }
+          ].map((s, i) => (
+            <div key={i} className="stats-col">
+              <div className="stats-icon">{s.icon}</div>
+              <div className="stats-val-7">{s.title}</div>
+              <div className="stats-lbl-7">{s.subtitle}</div>
+            </div>
+          ))}
         </div>
       </div>
 
