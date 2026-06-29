@@ -586,7 +586,7 @@ export default function Landing() {
 
           {/* Right: Images Carousel */}
           <div>
-            <div style={{ height:520, borderRadius:24, overflow:'hidden', boxShadow:'var(--shadow-lg)', position:'relative' }}>
+            <div className="hero-image-container">
               <ImageSlider images={(cfg.heroImages && cfg.heroImages.length > 0) ? cfg.heroImages : mainProp.images} />
             </div>
 
@@ -663,10 +663,10 @@ export default function Landing() {
 
           {properties.length === 1 ? (
             /* ── Single property: always shows real property images ── */
-            <div className="rv property-card" style={{ background:'white', borderRadius:16, overflow:'hidden', border:'none', boxShadow:'var(--shadow-md)', marginTop:'3rem', display:'grid', gridTemplateColumns:'1fr 1fr', minHeight:480 }}>
+            <div className="rv property-card" style={{ background:'white', borderRadius:16, overflow:'hidden', border:'none', boxShadow:'var(--shadow-md)', marginTop:'3rem', minHeight:480 }}>
               {/* Left: Property images slider */}
               <div style={{ position:'relative', overflow:'hidden', background:'#0d1724' }}>
-                <div style={{ width:'100%', height:'100%', minHeight:480, position:'relative' }}>
+                <div className="property-image-container">
                   <ImageSlider images={mainProp.images?.length ? mainProp.images : (cfg.heroImages?.length ? cfg.heroImages : null)} />
                   <span style={{ position:'absolute', top:'1rem', left:'1rem', background:'var(--orange)', color:'var(--text)', fontSize:'0.65rem', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em', padding:'0.28rem 0.8rem', borderRadius:50, boxShadow:'var(--shadow-sm)', zIndex:2 }}>{lang === 'EN' ? '✨ Available' : '✨ Disponible'}</span>
                   <span style={{ position:'absolute', top:'1rem', right:'1rem', background:'rgba(255,255,255,0.96)', borderRadius:50, padding:'0.3rem 0.75rem', display:'flex', alignItems:'center', gap:'0.25rem', fontSize:'0.75rem', fontWeight:800, color:'#1a2332', boxShadow:'0 2px 10px rgba(0,0,0,0.12)', zIndex:2 }}>⭐ 5.0</span>
