@@ -782,11 +782,11 @@ export default function Landing() {
                   alt={cfg.hostName || SITE.hostName} 
                   style={{ width: 140, height: 140, borderRadius: '50%', objectFit: 'cover', border: '4px solid rgba(255,255,255,0.2)', boxShadow: '0 8px 24px rgba(0,0,0,0.25)' }} 
                 />
-                <div style={{ textAlign: 'center' }}>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'white', marginBottom: '0.15rem' }}>
+                <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'white', marginBottom: '0.15rem', textAlign: 'center' }}>
                     {cfg.hostName || SITE.hostName}
                   </h3>
-                  <span style={{ fontSize: '0.75rem', color: '#FF9A2F', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#FF9A2F', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', textAlign: 'center', display: 'block' }}>
                     {lang === 'EN' ? 'Superhost' : 'Anfitrión Superhost'}
                   </span>
                 </div>
@@ -794,17 +794,17 @@ export default function Landing() {
             </div>
             
             {/* Title and text moved below blue box */}
-            <div style={{ marginTop: '1.8rem', paddingLeft: '0.5rem', paddingRight: '2rem' }}>
-              <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text)', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
+            <div style={{ marginTop: '1.8rem', paddingLeft: 0, paddingRight: 0, textAlign: 'center' }}>
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text)', marginBottom: '0.5rem', letterSpacing: '-0.02em', textAlign: 'center' }}>
                 {lang === 'EN' ? 'Experience that makes the difference' : 'Experiencia que marca la diferencia'}
               </h3>
-              <p style={{ fontSize: '0.92rem', color: 'var(--text-muted)', lineHeight: 1.7 }}>
+              <p style={{ fontSize: '0.92rem', color: 'var(--text-muted)', lineHeight: 1.7, textAlign: 'center' }}>
                 {lang === 'EN' ? 'At Rentun Group every detail matters. Our apartments are carefully selected, equipped, and verified so that your stay is perfect from the very first moment.' : 'En Rentun Group cada detalle importa. Nuestros apartamentos están cuidadosamente seleccionados, equipados y verificados para que tu estadía sea perfecta desde el primer momento.'}
               </p>
             </div>
 
             {/* Float badge */}
-            <div style={{ position:'relative', marginTop:'1.5rem', width:'fit-content', background:'white', borderRadius:20, padding:'1.2rem 1.6rem', boxShadow:'0 20px 55px rgba(15,76,129,0.2)', display:'flex', alignItems:'center', gap:'1rem', border:'1px solid #E6E7E8', zIndex: 2 }}>
+            <div style={{ position:'relative', marginTop:'1.5rem', width:'fit-content', background:'white', borderRadius:20, padding:'1.2rem 1.6rem', boxShadow:'0 20px 55px rgba(15,76,129,0.2)', display:'flex', alignItems:'center', gap:'1rem', border:'1px solid #E6E7E8', zIndex: 2, margin: '1.5rem auto 0' }}>
               <div style={{ width:48, height:48, background:'rgba(245,124,0,0.1)', borderRadius:14, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.5rem' }}>⭐</div>
               <div>
                 <strong style={{ display:'block', fontSize:'1.3rem', fontWeight:900, color:'var(--navy)', lineHeight:1 }}>5.0 / 5.0</strong>
@@ -815,10 +815,12 @@ export default function Landing() {
 
           {/* Features */}
           <div>
-            <div className="rv"><Tag dark={true}>{t.aboutTitle}</Tag></div>
-            <h2 className="rv d1" style={{ fontSize:'clamp(1.8rem,3.5vw,2.6rem)', fontWeight:800, color:'var(--text)', letterSpacing:'-0.03em', lineHeight:1.1, marginBottom:'2rem', marginTop:'0.6rem' }}>
-              {lang === 'EN' ? 'Your comfort,' : 'Tu comodidad,'}<br/>{lang === 'EN' ? 'our priority' : 'nuestra '} <span style={{ color:'var(--orange)' }}>{lang === 'EN' ? 'priority' : 'prioridad'}</span>
-            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', width: '100%', marginBottom: '2rem' }}>
+              <div className="rv"><Tag dark={true}>{t.aboutTitle}</Tag></div>
+              <h2 className="rv d1" style={{ fontSize:'clamp(1.8rem,3.5vw,2.6rem)', fontWeight:800, color:'var(--text)', letterSpacing:'-0.03em', lineHeight:1.1, marginTop:'0.6rem', textAlign: 'center', margin: 0 }}>
+                {lang === 'EN' ? 'Your comfort,' : 'Tu comodidad,'}<br/>{lang === 'EN' ? 'our priority' : 'nuestra '} <span style={{ color:'var(--orange)' }}>{lang === 'EN' ? 'priority' : 'prioridad'}</span>
+              </h2>
+            </div>
             {[
               { icon:'🛡️', bg:'rgba(15,76,129,0.09)', title: lang === 'EN' ? 'Verified on Airbnb ★5.0' : 'Verificados en Airbnb ★5.0', desc: lang === 'EN' ? 'All our accommodations are verified and meet the highest standards of cleaning and security for your absolute peace of mind.' : 'Todos nuestros alojamientos están verificados y cumplen los más altos estándares de limpieza y seguridad para tu total tranquilidad.' },
               { icon:'💬', bg:'rgba(245,124,0,0.09)', title: lang === 'EN' ? 'Personalized 24/7 Support' : 'Atención personalizada 24/7', desc: lang === 'EN' ? 'We are available on WhatsApp to answer any query before, during, and after your stay. Response in minutes.' : 'Estamos disponibles por WhatsApp para atender cualquier consulta antes, durante y después de tu estadía. Respuesta en minutos.' },
