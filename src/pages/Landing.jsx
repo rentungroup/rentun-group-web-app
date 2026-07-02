@@ -242,13 +242,24 @@ export default function Landing() {
   const [currency, setCurrency] = useState(localStorage.getItem('app_currency') || 'COP');
 
   useEffect(() => {
+    document.title = lang === 'EN' 
+      ? 'Rentun Group | Premium Vacation Rentals, Property Management & Investment' 
+      : 'Rentun Group | Rentas · Gestión · Inversión';
+
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', lang === 'EN'
+        ? 'Rentun Group — Premium short-stay apartments and national & international real estate advisory. Vacation rentals, investment, and property management.'
+        : 'Rentun Group — Apartamentos de corta estancia premium y servicios de asesoría inmobiliaria a nivel nacional e internacional. Gestión de rentas vacacionales, inversión y bienes raíces.');
+    }
+
     const handleConfigChange = () => {
       setLang(localStorage.getItem('app_lang') || 'ES');
       setCurrency(localStorage.getItem('app_currency') || 'COP');
     };
     window.addEventListener('config_changed', handleConfigChange);
     return () => window.removeEventListener('config_changed', handleConfigChange);
-  }, []);
+  }, [lang]);
 
   const { config: cfg } = useConfig();
   const properties = cfg.properties || [];
@@ -408,7 +419,10 @@ export default function Landing() {
               display: flex;
               flex-direction: column;
               gap: 0.8rem;
-              align-items: flex-start;
+              align-items: center !important;
+            }
+            .hero-grid h1 {
+              text-align: center !important;
             }
             .hero-btns {
               display: flex;
