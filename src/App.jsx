@@ -5,8 +5,6 @@ import GuestGuide from './pages/GuestGuide';
 import Admin      from './pages/Admin';
 import Legal      from './pages/Legal';
 import PrintView  from './pages/PrintView';
-import RealEstate from './pages/RealEstate';
-import RealEstateDetail from './pages/RealEstateDetail';
 import ChatWidget from './components/ChatWidget';
 import { AuthProvider } from './context/AuthContext';
 import { ConfigProvider, useConfig } from './context/ConfigContext';
@@ -49,8 +47,6 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/"              element={<Landing />} />
-            <Route path="/inmobiliaria"  element={<RealEstate />} />
-            <Route path="/inmobiliaria/:id" element={<RealEstateDetail />} />
             <Route path="/guia"          element={<GuestGuide />} />
             <Route path="/admin"         element={<Admin />} />
             <Route path="/legal"         element={<Legal />} />

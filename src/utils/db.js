@@ -27,26 +27,6 @@ export const DEFAULTS = {
   hostImage:    SITE.hostImage,
   rntNumber:    SITE.rntNumber,
 
-  // ── Página Inmobiliaria ──
-  rePageTitle: 'Servicios Inmobiliarios & Gestión',
-  rePageTitleEn: 'Real Estate Services & Management',
-  rePageSub: 'Asesoría profesional en compra, venta, rentas de corta/larga estancia y administración de propiedades en Bogotá.',
-  rePageSubEn: 'Professional advice on purchase, sale, short/long-term rentals, and property management in Bogota.',
-  rePageHeroVideo: '',
-  rePageWelcomeVideo: 'https://assets.mixkit.co/videos/preview/mixkit-real-estate-agent-showing-a-house-41583-large.mp4',
-  rePageDescription: 'En Rentun Group ofrecemos soluciones inmobiliarias integrales adaptadas a las necesidades actuales. Entendemos que el mercado es amplio y dinámico, por lo que brindamos orientación especializada para optimizar tu retorno de inversión (ROI), comprar el hogar de tus sueños o gestionar tus rentas de forma eficiente.',
-  rePageDescriptionEn: 'At Rentun Group we offer comprehensive real estate solutions adapted to today’s needs. We understand that the market is broad and dynamic, so we provide specialized guidance to optimize your return on investment (ROI), buy your dream home, or manage your rentals efficiently.',
-  rePageVideos: [
-    { title: 'Recorrido Virtual - Apartamento Chicó', titleEn: 'Virtual Tour - Chico Apartment', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' },
-    { title: 'Presentación Rentun Inmobiliaria', titleEn: 'Rentun Real Estate Presentation', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }
-  ],
-  rePageGallery: [
-    'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=600&q=80',
-    'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=600&q=80'
-  ],
-
   // ── Asistente IA ──
   chatAssistant: {
     name: 'Asistente Rentun Group',
@@ -103,37 +83,6 @@ export const DEFAULTS = {
       customWifiQR: '',
       customGuideQR: '',
       customWhatsappQR: ''
-    }
-  ],
-
-  // ── Servicios Inmobiliarios por Defecto ──
-  realEstateServices: [
-    {
-      id: 're-1',
-      title: 'Gestión de Rentas Cortas',
-      titleEn: 'Short-Term Rental Management',
-      description: 'Optimizamos tus anuncios en Airbnb y Booking, gestionamos reservas, limpieza y comunicación con huéspedes para maximizar tus ingresos sin que tengas que preocuparte por nada.',
-      descriptionEn: 'We optimize your listings on Airbnb and Booking, manage bookings, cleaning, and guest communication to maximize your revenue worry-free.',
-      icon: 'Key',
-      sortOrder: 1
-    },
-    {
-      id: 're-2',
-      title: 'Inversión y Compra',
-      titleEn: 'Investment & Buying',
-      description: 'Te asesoramos en la búsqueda y adquisición de propiedades con alto potencial de rentabilidad y valorización en las mejores zonas de Bogotá, diseñadas para rentas cortas.',
-      descriptionEn: 'We advise you on searching and acquiring properties with high profitability and appreciation potential in the best areas of Bogota, designed for short-term rentals.',
-      icon: 'TrendingUp',
-      sortOrder: 2
-    },
-    {
-      id: 're-3',
-      title: 'Consultoría Inmobiliaria',
-      titleEn: 'Real Estate Consulting',
-      description: 'Ofrecemos asesoría legal, comercial y de mercado personalizada para optimizar el rendimiento de tu portafolio de propiedades en Colombia y maximizar tu plusvalía.',
-      descriptionEn: 'We offer personalized legal, commercial, and market advice to optimize your property portfolio performance in Colombia and maximize your appreciation.',
-      icon: 'Briefcase',
-      sortOrder: 3
     }
   ],
 
@@ -276,27 +225,6 @@ export const fetchConfig = async () => {
       mappedProperties.push(DEFAULTS.properties[0]);
     }
 
-    let realEstateServices = [];
-    try {
-      const { data, error } = await supabase.from('real_estate_services').select('*').order('sort_order', { ascending: true });
-      if (!error && data && data.length > 0) {
-        realEstateServices = data.map(s => ({
-          id: s.id,
-          title: s.title,
-          titleEn: s.title_en,
-          description: s.description,
-          descriptionEn: s.description_en,
-          icon: s.icon,
-          sortOrder: s.sort_order
-        }));
-      } else {
-        realEstateServices = DEFAULTS.realEstateServices;
-      }
-    } catch (err) {
-      console.warn('Could not fetch real_estate_services (table might not exist yet):', err);
-      realEstateServices = DEFAULTS.realEstateServices;
-    }
-
     return {
       ...DEFAULTS,
       fontPair: settings.font_pair || DEFAULTS.fontPair,
@@ -312,18 +240,6 @@ export const fetchConfig = async () => {
       hostImage: settings.host_image || DEFAULTS.hostImage,
       rntNumber: settings.rnt_number || DEFAULTS.rntNumber,
       heroImages: settings.hero_images || DEFAULTS.heroImages,
-      
-      rePageTitle: settings.re_page_title || DEFAULTS.rePageTitle,
-      rePageTitleEn: settings.re_page_title_en || DEFAULTS.rePageTitleEn,
-      rePageSub: settings.re_page_sub || DEFAULTS.rePageSub,
-      rePageSubEn: settings.re_page_sub_en || DEFAULTS.rePageSubEn,
-      rePageHeroVideo: settings.re_page_hero_video || DEFAULTS.rePageHeroVideo,
-      rePageHeroImage: settings.re_page_hero_image || DEFAULTS.rePageHeroImage,
-      rePageWelcomeVideo: settings.re_page_welcome_video || DEFAULTS.rePageWelcomeVideo,
-      rePageDescription: settings.re_page_description || DEFAULTS.rePageDescription,
-      rePageDescriptionEn: settings.re_page_description_en || DEFAULTS.rePageDescriptionEn,
-      rePageVideos: (Array.isArray(settings.re_page_videos) && settings.re_page_videos.length > 0) ? settings.re_page_videos : DEFAULTS.rePageVideos,
-      rePageGallery: (Array.isArray(settings.re_page_gallery) && settings.re_page_gallery.length > 0) ? settings.re_page_gallery : DEFAULTS.rePageGallery,
       
       chatAssistant: {
         name: settings.chat_assistant_name || DEFAULTS.chatAssistant.name,
@@ -370,8 +286,7 @@ export const fetchConfig = async () => {
         id: p.id, title: p.title, icon: p.icon || '📄',
         content: p.content || '', is_active: p.is_active !== false,
         sort_order: p.sort_order || 0
-      })) : DEFAULTS.legalPages,
-      realEstateServices: realEstateServices
+      })) : DEFAULTS.legalPages
     };
   } catch (err) {
     console.error('Error fetching config from Supabase:', err);
@@ -403,18 +318,7 @@ export const saveConfig = async (newData) => {
       chat_assistant_welcome: newData.chatAssistant?.welcome || '',
       chat_assistant_avatar: newData.chatAssistant?.avatar || '',
       checkout_tasks: Array.isArray(newData.checkoutTasks) ? newData.checkoutTasks : [],
-      house_rules_text: newData.houseRulesText || '',
-      re_page_title: newData.rePageTitle || '',
-      re_page_title_en: newData.rePageTitleEn || '',
-      re_page_sub: newData.rePageSub || '',
-      re_page_sub_en: newData.rePageSubEn || '',
-      re_page_hero_video: newData.rePageHeroVideo || '',
-      re_page_hero_image: newData.rePageHeroImage || '',
-      re_page_welcome_video: newData.rePageWelcomeVideo || '',
-      re_page_description: newData.rePageDescription || '',
-      re_page_description_en: newData.rePageDescriptionEn || '',
-      re_page_videos: Array.isArray(newData.rePageVideos) ? newData.rePageVideos : [],
-      re_page_gallery: Array.isArray(newData.rePageGallery) ? newData.rePageGallery : []
+      house_rules_text: newData.houseRulesText || ''
     });
     if (settingsError) {
       console.error('SUPABASE ERROR IN SITE_SETTINGS:', settingsError);
@@ -517,26 +421,6 @@ export const saveConfig = async (newData) => {
       }
     }
 
-    // ── Real Estate Services (delete + re-insert) ──
-    if (newData.realEstateServices) {
-      try {
-        const { error: delRE } = await supabase.from('real_estate_services').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-        if (!delRE && newData.realEstateServices.length > 0) {
-          const { error: insRE } = await supabase.from('real_estate_services').insert(newData.realEstateServices.map((s, idx) => ({
-            title: s.title || '',
-            title_en: s.titleEn || '',
-            description: s.description || '',
-            description_en: s.descriptionEn || '',
-            icon: s.icon || 'Home',
-            sort_order: s.sortOrder ?? idx
-          })));
-          if (insRE) { console.error('INS real_estate_services:', insRE); throw insRE; }
-        }
-      } catch (err) {
-        console.warn('Could not save real_estate_services (table might not exist yet):', err);
-      }
-    }
-
     return true;
   } catch (err) {
     console.error('Error saving to Supabase:', err);
@@ -553,7 +437,7 @@ export const resetConfig = async () => {
 export const uploadImage = async (fileOrBase64, bucket = 'images') => {
   try {
     let fileBody;
-    if (typeof fileOrBase64 === 'string' && fileOrBase64.startsWith('data:')) {
+    if (typeof fileOrBase64 === 'string' && fileOrBase64.startsWith('data:image')) {
       const res = await fetch(fileOrBase64);
       fileBody = await res.blob();
     } else {
@@ -599,7 +483,6 @@ const TRANSLATIONS = {
     // Navbar
     navProps: 'Propiedades',
     navNosotros: 'Nosotros',
-    navInmobiliaria: 'Inmobiliaria',
     navGuia: 'Información de la Estadía',
     navReservar: 'Reservar ahora →',
 
@@ -633,13 +516,6 @@ const TRANSLATIONS = {
     aboutTitle: 'Por qué elegirnos',
     aboutSubtitle: 'Anfitriones premium en Bogotá',
     aboutDesc: 'Nos dedicamos a hacer tu estadía perfecta. Desde el check-in autónomo hasta recomendaciones locales personalizadas, nuestro objetivo es tu confort absoluto.',
-
-    // Real Estate section
-    reTitle: 'Servicios Inmobiliarios',
-    reAccent: 'y Gestión',
-    reSub: 'En Rentun Group no solo hospedamos, impulsamos tu patrimonio. Ofrecemos consultoría especializada, gestión integral de propiedades e inversión inmobiliaria estratégica en Bogotá.',
-    reBtnWA: '💬 Solicitar asesoría inmobiliaria',
-    reMsgWA: '¡Hola Rentun Group! Me interesa recibir asesoría sobre sus servicios de inmobiliaria y gestión de propiedades en Bogotá.',
     aboutFeature1Title: 'Soporte 24/7',
     aboutFeature1Desc: 'Siempre disponibles para ayudarte con cualquier duda o requerimiento durante tu estadía.',
     aboutFeature2Title: 'Ubicación ideal',
@@ -676,7 +552,6 @@ const TRANSLATIONS = {
     // Navbar
     navProps: 'Properties',
     navNosotros: 'About Us',
-    navInmobiliaria: 'Real Estate',
     navGuia: 'Stay Information',
     navReservar: 'Book Now →',
 
@@ -710,13 +585,6 @@ const TRANSLATIONS = {
     aboutTitle: 'Why choose us',
     aboutSubtitle: 'Premium hosts in Bogota',
     aboutDesc: 'We are dedicated to making your stay perfect. From self check-in to personalized local recommendations, our goal is your absolute comfort.',
-
-    // Real Estate section
-    reTitle: 'Real Estate Services',
-    reAccent: '& Management',
-    reSub: 'At Rentun Group, we don\'t just host, we grow your wealth. We offer specialized consulting, comprehensive property management, and strategic real estate investment in Bogota.',
-    reBtnWA: '💬 Request Real Estate Consulting',
-    reMsgWA: 'Hello Rentun Group! I am interested in receiving advice about your real estate and property management services in Bogota.',
     aboutFeature1Title: '24/7 Support',
     aboutFeature1Desc: 'Always available to help you with any questions or requirements during your stay.',
     aboutFeature2Title: 'Ideal location',

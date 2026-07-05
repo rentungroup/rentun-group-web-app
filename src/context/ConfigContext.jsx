@@ -46,10 +46,4 @@ export function ConfigProvider({ children }) {
   );
 }
 
-export const useConfig = () => {
-  const context = useContext(ConfigContext);
-  if (!context) {
-    return { config: {}, setConfig: () => {}, reloadConfig: () => {} };
-  }
-  return context;
-};
+export const useConfig = () => useContext(ConfigContext);

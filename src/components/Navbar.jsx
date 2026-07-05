@@ -93,10 +93,10 @@ export default function Navbar() {
         </div>
       </Link>
 
+      {/* Desktop links */}
       <ul className="nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: '2rem', listStyle: 'none', margin: 0, padding: 0 }}>
         <li><button onClick={() => scrollTo('propiedades')} style={navLink}>{t.navProps}</button></li>
         <li><button onClick={() => scrollTo('nosotros')} style={navLink}>{t.navNosotros}</button></li>
-        <li><Link to="/inmobiliaria" style={navLink}>{t.navInmobiliaria || 'Inmobiliaria'}</Link></li>
         {/* <li><Link to="/guia" style={navLink}>{t.navGuia}</Link></li> */}
         
         {/* Idioma Selector */}
@@ -145,7 +145,6 @@ export default function Navbar() {
         }}>
           <button onClick={() => scrollTo('propiedades')} style={mobileNavLink}>{t.navProps}</button>
           <button onClick={() => scrollTo('nosotros')} style={mobileNavLink}>{t.navNosotros}</button>
-          <Link to="/inmobiliaria" onClick={() => setMenuOpen(false)} style={mobileNavLink}>{t.navInmobiliaria || 'Inmobiliaria'}</Link>
           {/* <Link to="/guia" onClick={() => setMenuOpen(false)} style={mobileNavLink}>{t.navGuia}</Link> */}
 
           {/* Selectores Mobile */}
