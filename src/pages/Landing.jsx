@@ -4,6 +4,7 @@ import { useConfig } from '../context/ConfigContext';
 import { waLink, getTranslation, formatPrice } from '../utils/db';
 import { SITE } from '../config/site';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import { ArrowRight, Star, Home, Coffee, Info, Smartphone, ExternalLink, CalendarDays, Users, Clock, Zap, MapPin, Key, Wifi, PawPrint } from 'lucide-react';
 
 // ── Scroll Reveal Hook ──────────────────────────────────
@@ -503,6 +504,9 @@ export default function Landing() {
                 padding: 6rem 2rem 2rem !important;
               }
               .hero-grid > div:first-child { display: flex; flex-direction: column; align-items: center; }
+              .hero-grid h1 {
+                text-align: center !important;
+              }
               .hero-grid p {
                 margin: 0 auto 2.5rem !important;
                 text-align: center !important;
@@ -552,6 +556,9 @@ export default function Landing() {
                 align-items: center;
               }
               .prop-header-grid p {
+                text-align: center !important;
+              }
+              .prop-header-grid h2 {
                 text-align: center !important;
               }
             }
@@ -786,7 +793,7 @@ export default function Landing() {
       <section id="nosotros" className="section-pad" style={{ background:'white' }}>
         <div className="s-inner nosotros-grid" style={{ alignItems:'center' }}>
           {/* Visual */}
-          <div className="rv" style={{ position:'relative', paddingBottom:'2.5rem', paddingRight:'2.5rem' }}>
+          <div className="rv host-column">
             <div style={{ background:'linear-gradient(145deg,#0a3560,#0F4C81)', borderRadius:28, padding:'3.5rem 2.8rem 2.8rem', color:'white', position:'relative', overflow:'hidden', display:'flex', justifyContent:'center' }}>
               <div style={{ position:'absolute', top:-70, right:-70, width:220, height:220, borderRadius:'50%', background:'rgba(245,124,0,0.13)' }}/>
               
@@ -808,7 +815,8 @@ export default function Landing() {
             </div>
             
             {/* Title and text moved below blue box */}
-            <div style={{ marginTop: '1.8rem', paddingLeft: 0, paddingRight: 0, textAlign: 'center' }}>
+            {/* Title and text moved below blue box */}
+            <div className="host-text-container" style={{ textAlign: 'center', paddingLeft: 0, paddingRight: 0 }}>
               <h3 style={{ fontSize: '1.35rem', fontWeight: 800, color: 'var(--text)', marginBottom: '0.5rem', letterSpacing: '-0.02em', textAlign: 'center' }}>
                 {lang === 'EN' ? 'Experience that makes the difference' : 'Experiencia que marca la diferencia'}
               </h3>
@@ -818,7 +826,7 @@ export default function Landing() {
             </div>
 
             {/* Float badge */}
-            <div style={{ position:'relative', marginTop:'1.5rem', width:'fit-content', background:'white', borderRadius:20, padding:'1.2rem 1.6rem', boxShadow:'0 20px 55px rgba(15,76,129,0.2)', display:'flex', alignItems:'center', gap:'1rem', border:'1px solid #E6E7E8', zIndex: 2, margin: '1.5rem auto 0' }}>
+            <div className="host-badge-float" style={{ margin: '1.5rem auto 0' }}>
               <div style={{ width:48, height:48, background:'rgba(245,124,0,0.1)', borderRadius:14, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.5rem' }}>⭐</div>
               <div>
                 <strong style={{ display:'block', fontSize:'1.3rem', fontWeight:900, color:'var(--navy)', lineHeight:1 }}>5.0 / 5.0</strong>
@@ -828,10 +836,10 @@ export default function Landing() {
           </div>
 
           {/* Features */}
-          <div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', width: '100%', marginBottom: '2rem' }}>
+          <div className="features-column">
+            <div className="features-title-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', width: '100%' }}>
               <div className="rv"><Tag dark={true}>{t.aboutTitle}</Tag></div>
-              <h2 className="rv d1" style={{ fontSize:'clamp(1.8rem,3.5vw,2.6rem)', fontWeight:800, color:'var(--text)', letterSpacing:'-0.03em', lineHeight:1.1, marginTop:'0.6rem', textAlign: 'center', margin: 0 }}>
+              <h2 className="rv d1" style={{ fontSize:'clamp(1.8rem,3.5vw,2.6rem)', fontWeight:800, color:'var(--text)', letterSpacing:'-0.03em', lineHeight:1.1, marginBottom:'2rem', marginTop:'0.6rem', textAlign: 'center' }}>
                 {lang === 'EN' ? 'Your comfort,' : 'Tu comodidad,'}<br/>{lang === 'EN' ? 'our priority' : 'nuestra '} <span style={{ color:'var(--orange)' }}>{lang === 'EN' ? 'priority' : 'prioridad'}</span>
               </h2>
             </div>
@@ -841,7 +849,7 @@ export default function Landing() {
               { icon:'🔑', bg:'rgba(176,180,184,0.14)', title: lang === 'EN' ? 'Flexible & Hassle-Free Check-In' : 'Check-in flexible sin complicaciones', desc: lang === 'EN' ? 'We adapt to your arrival time. The entry process is simple and without waiting, so you feel right at home.' : 'Nos adaptamos a tu horario de llegada. El proceso de ingreso es simple y sin esperas, para que te sientas en casa.' },
               { icon:'📈', bg:'rgba(15,76,129,0.09)', title: lang === 'EN' ? 'Property Management & Investment' : 'Gestión e inversión inmobiliaria', desc: lang === 'EN' ? 'Do you own a property in Bogota? Join Rentun Group. We handle full management to maximize your ROI.' : '¿Tienes una propiedad en Bogotá? Únete a Rentun Group. Nos encargamos de la gestión completa para maximizar tu ROI.' },
             ].map((f, i) => (
-              <div key={i} className={`rv d${i + 1}`} style={{ display:'flex', alignItems:'flex-start', gap:'1.2rem', marginBottom:'1.8rem' }}>
+              <div key={i} className={`rv d${i + 1} feature-item`} style={{ display:'flex', alignItems:'flex-start', gap:'1.2rem', marginBottom:'1.8rem' }}>
                 <div style={{ width:54, height:54, flexShrink:0, borderRadius:16, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.5rem', background:f.bg }}>
                   {f.icon}
                 </div>
@@ -851,6 +859,97 @@ export default function Landing() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── SERVICIOS INMOBILIARIOS & GESTIÓN ────────────────── */}
+      <section id="inmobiliaria" className="section-pad" style={{ background:'var(--navy-dark)', color:'white', position:'relative', overflow:'hidden' }}>
+        {/* Decorative elements */}
+        <div style={{ position:'absolute', width:600, height:600, top:-100, left:-200, borderRadius:'50%', background:'radial-gradient(circle,rgba(196,154,60,0.06) 0%,transparent 65%)', pointerEvents:'none' }}/>
+        <div style={{ position:'absolute', width:500, height:500, bottom:-100, right:-100, borderRadius:'50%', background:'radial-gradient(circle,rgba(26,109,181,0.08) 0%,transparent 65%)', pointerEvents:'none' }}/>
+        <div style={{
+          position:'absolute', inset:0,
+          backgroundImage:'linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px)',
+          backgroundSize:'55px 55px',
+          opacity: 0.5,
+          pointerEvents: 'none'
+        }}/>
+
+        <div className="s-inner">
+          {/* Header */}
+          <div style={{ display:'flex', flexDirection:'column', alignItems:'center', textAlign:'center', maxWidth:680, margin:'0 auto 4rem' }}>
+            <div className="rv"><Tag>{lang === 'EN' ? '🏢 Real Estate & Advisory' : '🏢 Inmobiliaria & Asesoría'}</Tag></div>
+            <h2 className="rv d1" style={{ fontSize:'clamp(1.8rem,3.5vw,2.6rem)', fontWeight:800, color:'white', letterSpacing:'-0.03em', lineHeight:1.1, marginBottom:'1rem', marginTop:'0.6rem' }}>
+              {t.reTitle} <span style={{ color:'var(--orange)' }}>{t.reAccent}</span>
+            </h2>
+            <p className="rv d2" style={{ fontSize:'0.96rem', color:'rgba(255,255,255,0.7)', lineHeight:1.7 }}>
+              {t.reSub}
+            </p>
+          </div>
+
+          {/* Services Grid */}
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(280px, 1fr))', gap:'2rem', marginBottom:'3.5rem' }}>
+            {(cfg.realEstateServices || []).map((s, idx) => {
+              const iconMap = {
+                Key: '🔑',
+                TrendingUp: '📈',
+                Briefcase: '💼',
+                Home: '🏠',
+                Shield: '🛡️',
+                Users: '👥'
+              };
+              const displayIcon = iconMap[s.icon] || s.icon || '🏢';
+              
+              return (
+                <div key={s.id || idx} className={`rv d${idx + 1}`} style={{
+                  background:'rgba(255,255,255,0.03)',
+                  border:'1px solid rgba(255,255,255,0.08)',
+                  borderRadius:24,
+                  padding:'2.5rem 2rem',
+                  display:'flex',
+                  flexDirection:'column',
+                  gap:'1.2rem',
+                  backdropFilter:'blur(10px)',
+                  transition:'transform 0.3s, border-color 0.3s',
+                  boxShadow:'0 10px 30px rgba(0,0,0,0.1)'
+                }}>
+                  <div style={{ width:56, height:56, borderRadius:16, background:'rgba(196,154,60,0.12)', border:'1px solid rgba(196,154,60,0.25)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.8rem', color:'var(--orange)' }}>
+                    {displayIcon}
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize:'1.25rem', fontWeight:800, color:'white', marginBottom:'0.6rem', letterSpacing:'-0.01em' }}>
+                      {lang === 'EN' ? (s.titleEn || s.title) : s.title}
+                    </h3>
+                    <p style={{ fontSize:'0.86rem', color:'rgba(255,255,255,0.65)', lineHeight:1.62, margin:0 }}>
+                      {lang === 'EN' ? (s.descriptionEn || s.description) : s.description}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* CTA Button */}
+          <div className="rv d4" style={{ display:'flex', justifyContent:'center' }}>
+            <BtnWA msg={t.reMsgWA} style={{
+              background:'linear-gradient(135deg, var(--orange), #FF9A2F)',
+              color:'var(--navy-dark)',
+              fontWeight:850,
+              padding:'1.1rem 3rem',
+              borderRadius:50,
+              fontSize:'1.05rem',
+              boxShadow:'0 8px 30px rgba(196,154,60,0.3)',
+              border:'none',
+              cursor:'pointer',
+              display:'inline-flex',
+              alignItems:'center',
+              gap:'0.6rem',
+              textDecoration:'none',
+              transition:'transform 0.2s, box-shadow 0.2s'
+            }}>
+              {t.reBtnWA}
+            </BtnWA>
           </div>
         </div>
       </section>
@@ -886,126 +985,31 @@ export default function Landing() {
       </section>
 
       {/* ── UNIFIED CTA & FOOTER ────────────────────────── */}
-      <footer style={{ background:'#04111f', padding:'6rem 4rem 3rem', color:'rgba(255,255,255,0.5)', position:'relative', overflow:'hidden', borderTop:'4px solid var(--orange)' }}>
-        {/* ── 4-COLUMN FOOTER CONTENT ── */}
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(220px, 1fr))', gap:'3rem', textAlign:'left', marginBottom:'3rem', position:'relative', zIndex:2 }}>
-          
-          {/* Column 1: Brand & Slogan */}
-          <div>
-            <div style={{ display:'flex', alignItems:'center', gap:'0.7rem', marginBottom:'1.2rem' }}>
-              <img src="/logos/rentungroupwithe.webp" alt="Rentun Group Logo" style={{ width: 40, height: 40, objectFit: 'contain' }} />
-              <span style={{ fontSize:'1.15rem', fontWeight:850, color:'white', letterSpacing:'-0.02em' }}>Rentun Group</span>
-            </div>
-            <div style={{ fontSize:'0.72rem', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.15em', color:'var(--orange)', marginBottom:'1rem' }}>
-              Rentas · Gestión · Inversión
-            </div>
-            <p style={{ fontSize:'0.82rem', color:'rgba(255,255,255,0.48)', lineHeight:1.6, margin:0 }}>
-              {lang === 'EN' ? 'Short-stay apartments with premium service in Bogota. Vacation rentals, comprehensive management, and high-level real estate consulting.' : 'Apartamentos de corta estancia con servicio premium en Bogotá. Rentas vacacionales, administración integral y consultoría inmobiliaria de alto nivel.'}
-            </p>
-          </div>
-
-          {/* Column 2: Navigation */}
-          <div>
-            <h4 style={{ fontSize:'0.85rem', fontWeight:800, color:'white', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'1.4rem', margin:0 }}>
-              {lang === 'EN' ? 'Explore' : 'Explora'}
-            </h4>
-            <ul style={{ listStyle:'none', padding:0, margin:0, display:'flex', flexDirection:'column', gap:'0.75rem' }}>
-              <li>
-                <a href="#propiedades" style={{ color:'rgba(255,255,255,0.48)', textDecoration:'none', fontSize:'0.82rem', fontWeight:500, transition:'color 0.2s' }}
-                   onMouseOver={e => e.target.style.color = 'white'} onMouseOut={e => e.target.style.color = 'rgba(255,255,255,0.48)'}>
-                  {t.navProps}
-                </a>
-              </li>
-              <li>
-                <a href="#nosotros" style={{ color:'rgba(255,255,255,0.48)', textDecoration:'none', fontSize:'0.82rem', fontWeight:500, transition:'color 0.2s' }}
-                   onMouseOver={e => e.target.style.color = 'white'} onMouseOut={e => e.target.style.color = 'rgba(255,255,255,0.48)'}>
-                  {t.navNosotros}
-                </a>
-              </li>
-              {/*
-              <li>
-                <Link to="/guia" style={{ color:'rgba(255,255,255,0.48)', textDecoration:'none', fontSize:'0.82rem', fontWeight:500, transition:'color 0.2s' }}
-                      onMouseOver={e => e.target.style.color = 'white'} onMouseOut={e => e.target.style.color = 'rgba(255,255,255,0.48)'}>
-                  {t.navGuia}
-                </Link>
-              </li>
-              */}
-            </ul>
-          </div>
-
-          {/* Column 3: Contact & Links */}
-          <div>
-            <h4 style={{ fontSize:'0.85rem', fontWeight:800, color:'white', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'1.4rem', margin:0 }}>
-              {lang === 'EN' ? 'Contact' : 'Contacto'}
-            </h4>
-            <ul style={{ listStyle:'none', padding:0, margin:0, display:'flex', flexDirection:'column', gap:'0.75rem' }}>
-              <li>
-                <a href={waLink('Hola Rentun Group!')} target="_blank" rel="noopener noreferrer"
-                   style={{ color:'rgba(255,255,255,0.48)', textDecoration:'none', fontSize:'0.82rem', fontWeight:500, transition:'color 0.2s' }}
-                   onMouseOver={e => e.target.style.color = 'white'} onMouseOut={e => e.target.style.color = 'rgba(255,255,255,0.48)'}>
-                  💬 {lang === 'EN' ? 'Official WhatsApp' : 'WhatsApp Oficial'}
-                </a>
-              </li>
-              <li>
-                <a href={`mailto:${cfg.email || SITE.email}`}
-                   style={{ color:'rgba(255,255,255,0.48)', textDecoration:'none', fontSize:'0.82rem', fontWeight:500, transition:'color 0.2s' }}
-                   onMouseOver={e => e.target.style.color = 'white'} onMouseOut={e => e.target.style.color = 'rgba(255,255,255,0.48)'}>
-                  ✉️ {lang === 'EN' ? 'Official Email' : 'Correo Oficial'}
-                </a>
-              </li>
-              <li>
-                <a href={ab.listing} target="_blank" rel="noopener noreferrer"
-                   style={{ color:'rgba(255,255,255,0.48)', textDecoration:'none', fontSize:'0.82rem', fontWeight:500, transition:'color 0.2s' }}
-                   onMouseOver={e => e.target.style.color = 'white'} onMouseOut={e => e.target.style.color = 'rgba(255,255,255,0.48)'}>
-                  🏠 {lang === 'EN' ? 'Airbnb Profile' : 'Perfil de Airbnb'}
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 4: Legal & RNT */}
-          <div>
-            <h4 style={{ fontSize:'0.85rem', fontWeight:800, color:'white', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'1.4rem', margin:0 }}>
-              {lang === 'EN' ? 'Policies' : 'Normativas'}
-            </h4>
-            <ul style={{ listStyle:'none', padding:0, margin:0, display:'flex', flexDirection:'column', gap:'0.75rem' }}>
-              <li>
-                <Link to="/legal" style={{ color:'var(--orange)', textDecoration:'none', fontSize:'0.82rem', fontWeight:800, transition:'opacity 0.2s' }}
-                      onMouseOver={e => e.target.style.opacity = '0.8'} onMouseOut={e => e.target.style.opacity = '1'}>
-                  {lang === 'EN' ? '📄 Privacy Policy & Legal →' : '📄 Políticas de Privacidad y Legales →'}
-                </Link>
-              </li>
-              <li style={{ fontSize:'0.82rem', color:'rgba(255,255,255,0.7)', fontWeight:700 }}>
-                RNT: {cfg.rntNumber || (lang === 'EN' ? 'In progress' : 'En trámite')}
-              </li>
-            </ul>
-            <p style={{ fontSize:'0.65rem', color:'rgba(255,255,255,0.3)', lineHeight:1.5, marginTop:'1rem', margin:0 }}>
-              {lang === 'EN' ? 'Pursuant to Law 679 of 2001 (ESCNNA Prevention) and Law 1581 of 2012 (Habeas Data).' : 'Conforme a Ley 679 de 2001 (Prevención ESCNNA) y Ley 1581 de 2012 (Habeas Data).'}
-            </p>
-          </div>
-
-        </div>
-
-        <div style={{ height:1, background:'rgba(255,255,255,0.06)', margin:'2rem 0', position:'relative', zIndex:2 }}/>
-
-        {/* Copyright & Developer Credits */}
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:'1rem', fontSize:'0.75rem', color:'rgba(255,255,255,0.35)', position:'relative', zIndex:2 }}>
-          <p style={{ margin:0 }}>{lang === 'EN' ? '© 2026 Rentun Group. All rights reserved. · Bogota, Colombia' : '© 2026 Rentun Group. Todos los derechos reservados. · Bogotá, Colombia'}</p>
-          <p style={{ margin:0 }}>
-            {lang === 'EN' ? 'Developed by ' : 'Desarrollado por '}<a href="https://www.jymtechsolutions.online/es" target="_blank" rel="noopener noreferrer" style={{ color:'rgba(255,255,255,0.5)', textDecoration:'underline' }}>J&M Tech Solutions</a>
-          </p>
-        </div>
-      </footer>
+      <Footer />
 
       {/* Schema SEO */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Rentun Group",
-        "url": "https://rentungroup.com",
-        "description": "Rentas · Gestión · Inversión. Apartamentos de corta estancia con servicio premium en Bogotá.",
-        "creator": { "@type": "Organization", "name": "J&M Tech Solutions", "url": "https://www.jymtechsolutions.online/es" }
-      })}} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "Rentun Group",
+          "url": "https://rentungroup.com",
+          "description": "Rentas · Gestión · Inversión. Apartamentos de corta estancia con servicio premium y servicios inmobiliarios a nivel nacional e internacional.",
+          "creator": { 
+            "@type": "Organization", 
+            "name": "J&M Tech Solutions", 
+            "url": "https://www.jymtechsolutions.online/es",
+            "description": "Agencia de automatización con IA y desarrollo de software"
+          }
+        },
+        {
+          "@context": "https://schema.org",
+          "@type": "RealEstateAgent",
+          "name": "Rentun Group Inmobiliaria",
+          "url": "https://rentungroup.com",
+          "description": "Servicios de asesoría de inversión inmobiliaria y administración de propiedades vacacionales a nivel nacional e internacional."
+        }
+      ])}} />
     </>
   );
 }

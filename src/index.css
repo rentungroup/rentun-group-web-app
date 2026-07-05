@@ -48,7 +48,24 @@ p {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-header, 'Outfit', sans-serif);
-  text-align: left; /* Keep headings left-aligned so they don't stretch weirdly */
+  text-align: left; /* Keep headings left-aligned by default */
+}
+
+/* Helper rule: Center headings if their parent container is centered */
+[style*="text-align: center"] h1,
+[style*="text-align: center"] h2,
+[style*="text-align: center"] h3,
+[style*="text-align: center"] h4,
+[style*="text-align: center"] h5,
+[style*="text-align: center"] h6,
+.text-center h1, .text-center h2, .text-center h3 {
+  text-align: center !important;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 a { color: inherit; }
@@ -68,8 +85,12 @@ img { display: block; max-width: 100%; }
 .rv.d4 { transition-delay: 0.4s; }
 
 /* ── Section defaults ── */
-.section-pad { padding: 5.5rem 4rem; }
-.s-inner     { max-width: 1200px; margin: 0 auto; }
+.section-pad { 
+  padding: 5.5rem 4rem; 
+  max-width: 100%; 
+  overflow-x: hidden; 
+}
+.s-inner     { max-width: 1200px; margin: 0 auto; width: 100%; }
 
 @media (max-width: 700px) {
   .section-pad { padding: 3.5rem 1.5rem; }
@@ -155,6 +176,40 @@ img { display: block; max-width: 100%; }
   gap: 1.5rem;
 }
 
+/* ── Host & Features Columns Responsive Layouts ── */
+.host-column {
+  position: relative;
+  padding-bottom: 2.5rem;
+  padding-right: 2.5rem;
+  width: 100%;
+}
+.host-text-container {
+  margin-top: 1.8rem;
+  padding-left: 0.5rem;
+  padding-right: 2rem;
+}
+.host-badge-float {
+  position: relative;
+  margin-top: 1.5rem;
+  width: fit-content;
+  background: white;
+  border-radius: 20px;
+  padding: 1.2rem 1.6rem;
+  box-shadow: 0 20px 55px rgba(15,76,129,0.2);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid #E6E7E8;
+  z-index: 2;
+}
+
+.features-column {
+  width: 100%;
+}
+.features-title-container {
+  margin-bottom: 2rem;
+}
+
 @media (max-width: 900px) {
   .hero-grid {
     grid-template-columns: 1fr !important;
@@ -163,13 +218,61 @@ img { display: block; max-width: 100%; }
   }
   .nosotros-grid {
     grid-template-columns: 1fr !important;
-    gap: 3rem !important;
+    gap: 3.5rem !important;
   }
   .steps-grid {
     grid-template-columns: repeat(2, 1fr) !important;
   }
   .scroll-cue {
     display: none !important;
+  }
+  
+  /* Centrar la columna del anfitrión en móviles */
+  .host-column {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    padding-bottom: 1.5rem !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .host-text-container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    text-align: center;
+  }
+  .host-text-container h3 {
+    text-align: center !important;
+  }
+  .host-text-container p {
+    text-align: center !important;
+  }
+  .host-badge-float {
+    margin: 1.5rem auto 0 !important; /* Centrado */
+  }
+
+  /* Centrar títulos de características en móviles */
+  .features-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .features-title-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+  .features-column h2 {
+    text-align: center !important;
+  }
+  .features-column .rv {
+    display: flex;
+    justify-content: center;
+    width: 100%;
   }
 }
 

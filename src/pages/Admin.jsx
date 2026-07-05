@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Edit2, Trash2, Save, RotateCcw, AlertTriangle, Eye, ArrowUp, ArrowDown } from 'lucide-react';
+import { Plus, Edit2, Trash2, Save, RotateCcw, AlertTriangle, Eye, ArrowUp, ArrowDown, UploadCloud } from 'lucide-react';
 import { saveConfig, resetConfig, DEFAULTS, uploadImage } from '../utils/db';
 import { useConfig } from '../context/ConfigContext';
 import { useAuth } from '../context/AuthContext';
@@ -154,6 +154,20 @@ export default function Admin() {
   // Estados para CRUD de emergencias dinámicas
   const [emergencyForm, setEmergencyForm] = useState({ id: '', title: '', value: '' });
   const [isEditingEmergency, setIsEditingEmergency] = useState(false);
+
+  // Estados para CRUD de servicios inmobiliarios
+  const [realEstateForm, setRealEstateForm] = useState({ id: '', title: '', titleEn: '', description: '', descriptionEn: '', icon: 'Home', sortOrder: 0 });
+  const [isEditingRealEstate, setIsEditingRealEstate] = useState(false);
+
+  // Estados para página inmobiliaria ampliada
+  const [reSubTab, setReSubTab] = useState('general');
+  const [projectVideoForm, setProjectVideoForm] = useState({ title: '', titleEn: '', url: '', description: '', descriptionEn: '' });
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [uploadingHeroImage, setUploadingHeroImage] = useState(false);
+  const [uploadingWelcomeVideo, setUploadingWelcomeVideo] = useState(false);
+  const [portfolioForm, setPortfolioForm] = useState({ id: '', title: '', titleEn: '', description: '', descriptionEn: '', price: '', location: '', locationEn: '', specs: '', specsEn: '', images: [] });
+  const [isEditingPortfolio, setIsEditingPortfolio] = useState(false);
+  const [uploadingPortfolioPhoto, setUploadingPortfolioPhoto] = useState(false);
 
   // Estados para acordeones de formularios de apartamentos
   const [openAirbnb, setOpenAirbnb] = useState(false);
@@ -519,6 +533,222 @@ export default function Admin() {
     setIsEditingLegalPage(false);
   };
 
+  // ── Real Estate CRUD ──
+  const saveRealEstate = (e) => {
+    if (e) e.preventDefault();
+    if (!realEstateForm.title || !realEstateForm.description) {
+      alert('El título y la descripción son obligatorios.');
+      return;
+    }
+    let updatedServices;
+    const currentServices = cfg.realEstateServices || [];
+    if (isEditingRealEstate) {
+      updatedServices = currentServices.map(s => s.id === realEstateForm.id ? { ...realEstateForm } : s);
+    } else {
+      updatedServices = [...currentServices, { ...realEstateForm, id: 're-' + Date.now(), sortOrder: currentServices.length + 1 }];
+    }
+    const newCfg = { ...cfg, realEstateServices: updatedServices };
+    handleSave(newCfg);
+    clearRealEstateForm();
+  };
+
+  const startEditRealEstate = (s) => {
+    setRealEstateForm(s);
+    setIsEditingRealEstate(true);
+  };
+
+  const deleteRealEstate = (id) => {
+    if (!window.confirm('¿Eliminar este servicio inmobiliario?')) return;
+    const updated = (cfg.realEstateServices || []).filter(s => s.id !== id);
+    const reordered = updated.map((s, idx) => ({ ...s, sortOrder: idx + 1 }));
+    const newCfg = { ...cfg, realEstateServices: reordered };
+    handleSave(newCfg);
+  };
+
+  const clearRealEstateForm = () => {
+    setRealEstateForm({ id: '', title: '', titleEn: '', description: '', descriptionEn: '', icon: 'Home', sortOrder: 0 });
+    setIsEditingRealEstate(false);
+  };
+
+  const moveRealEstate = (index, direction) => {
+    const services = [...(cfg.realEstateServices || [])];
+    if (direction === 'up' && index > 0) {
+      [services[index], services[index - 1]] = [services[index - 1], services[index]];
+    } else if (direction === 'down' && index < services.length - 1) {
+      [services[index], services[index + 1]] = [services[index + 1], services[index]];
+    }
+    const updated = services.map((s, idx) => ({ ...s, sortOrder: idx + 1 }));
+    const newCfg = { ...cfg, realEstateServices: updated };
+    handleSave(newCfg);
+  };
+
+  // ── Página Inmobiliaria Ampliada ──
+  const uploadHeroImageFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingHeroImage(true);
+    try {
+      const url = await uploadImage(file, 'images');
+      setCfg(prev => ({ ...prev, rePageHeroImage: url }));
+      alert("Imagen de fondo del banner subida con éxito.");
+    } catch (err) {
+      alert("Error al subir imagen: " + err.message);
+    } finally {
+      setUploadingHeroImage(false);
+    }
+  };
+
+  const uploadProjectVideoFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingVideo(true);
+    try {
+      const url = await uploadImage(file, 'images');
+      setProjectVideoForm(prev => ({ ...prev, url }));
+      alert("Archivo de video subido. Puedes añadir el video ahora.");
+    } catch (err) {
+      alert("Error al subir video: " + err.message);
+    } finally {
+      setUploadingVideo(false);
+    }
+  };
+
+  const addProjectVideo = (e) => {
+    if (e) e.preventDefault();
+    if (!projectVideoForm.title || !projectVideoForm.url) {
+      alert("El título y la URL del video son obligatorios.");
+      return;
+    }
+    const currentVideos = cfg.rePageVideos || [];
+    const updated = [...currentVideos, { ...projectVideoForm }];
+    setCfg(prev => ({ ...prev, rePageVideos: updated }));
+    setProjectVideoForm({ title: '', titleEn: '', url: '', description: '', descriptionEn: '' });
+  };
+
+  const deleteProjectVideo = (index) => {
+    const current = cfg.rePageVideos || [];
+    const updated = current.filter((_, idx) => idx !== index);
+    setCfg(prev => ({ ...prev, rePageVideos: updated }));
+  };
+
+  const uploadPortfolioPhoto = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if ((portfolioForm.images || []).length >= 4) {
+      alert("Puedes subir un máximo de 4 fotos por propiedad.");
+      return;
+    }
+    setUploadingPortfolioPhoto(true);
+    try {
+      const url = await uploadImage(file, 'images');
+      setPortfolioForm(prev => ({
+        ...prev,
+        images: [...(prev.images || []), url]
+      }));
+    } catch (err) {
+      alert("Error al subir foto: " + err.message);
+    } finally {
+      setUploadingPortfolioPhoto(false);
+    }
+  };
+
+  const removePortfolioFormPhoto = (idxToRemove) => {
+    setPortfolioForm(prev => ({
+      ...prev,
+      images: (prev.images || []).filter((_, idx) => idx !== idxToRemove)
+    }));
+  };
+
+  const savePortfolioItem = (e) => {
+    if (e) e.preventDefault();
+    if (!portfolioForm.title || (portfolioForm.images || []).length === 0) {
+      alert("El título y al menos una foto son obligatorios.");
+      return;
+    }
+
+    const currentItems = (cfg.rePageGallery || []).map((item, idx) => {
+      if (typeof item === 'string') {
+        return {
+          id: `legacy-${idx}`,
+          title: `Espacio ${idx + 1}`,
+          titleEn: `Space ${idx + 1}`,
+          description: '',
+          descriptionEn: '',
+          price: '',
+          location: '',
+          locationEn: '',
+          specs: '',
+          specsEn: '',
+          images: [item]
+        };
+      }
+      return item;
+    });
+
+    let updated;
+    if (isEditingPortfolio) {
+      updated = currentItems.map(item => item.id === portfolioForm.id ? { ...portfolioForm } : item);
+    } else {
+      const newItem = { 
+        ...portfolioForm, 
+        id: crypto.randomUUID() 
+      };
+      updated = [...currentItems, newItem];
+    }
+
+    setCfg(prev => ({ ...prev, rePageGallery: updated }));
+    clearPortfolioForm();
+  };
+
+  const deletePortfolioItem = (id) => {
+    if (!window.confirm('¿Eliminar esta propiedad del portafolio?')) return;
+    const currentItems = (cfg.rePageGallery || []).map((item, idx) => {
+      if (typeof item === 'string') {
+        return {
+          id: `legacy-${idx}`,
+          title: `Espacio ${idx + 1}`,
+          titleEn: `Space ${idx + 1}`,
+          description: '',
+          descriptionEn: '',
+          price: '',
+          location: '',
+          locationEn: '',
+          specs: '',
+          specsEn: '',
+          images: [item]
+        };
+      }
+      return item;
+    });
+    const updated = currentItems.filter(item => item.id !== id);
+    setCfg(prev => ({ ...prev, rePageGallery: updated }));
+  };
+
+  const startEditPortfolioItem = (item) => {
+    setPortfolioForm(item);
+    setIsEditingPortfolio(true);
+  };
+
+  const clearPortfolioForm = () => {
+    setPortfolioForm({ id: '', title: '', titleEn: '', description: '', descriptionEn: '', price: '', location: '', locationEn: '', specs: '', specsEn: '', images: [] });
+    setIsEditingPortfolio(false);
+  };
+
+  const uploadWelcomeVideoFile = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingWelcomeVideo(true);
+    try {
+      const url = await uploadImage(file, 'images');
+      setCfg(prev => ({ ...prev, rePageWelcomeVideo: url }));
+      alert("Video de bienvenida subido con éxito.");
+    } catch (err) {
+      alert("Error al subir video: " + err.message);
+    } finally {
+      setUploadingWelcomeVideo(false);
+    }
+  };
+
   return (
     <div style={{ minHeight:'100vh', background:'#F3F5F8', fontFamily:'Outfit,sans-serif' }}>
 
@@ -595,6 +825,7 @@ export default function Admin() {
         {[
           { id: 'landing', label: '🏠 Inicio' },
           { id: 'properties', label: '🏨 Apartamentos' },
+          { id: 'inmobiliaria', label: '🏢 Inmobiliaria' },
           { id: 'guide-info', label: '📋 Info & Reglas' },
           { id: 'guide-places', label: '📍 Lugares Cercanos' },
           { id: 'guide-manuals', label: '📖 Manuales de la Casa' },
@@ -1512,6 +1743,455 @@ export default function Admin() {
                 </AdminSection>
               </div>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'inmobiliaria' && (
+          <div>
+            {/* Sub-tab navigation */}
+            <div style={{ display:'flex', gap:'0.8rem', marginBottom:'2rem', borderBottom:'1px solid #E6E7E8', paddingBottom:'0.8rem', flexWrap:'wrap' }}>
+              {[
+                { id: 'general', label: '⚙️ General & Hero' },
+                { id: 'services', label: '🛠️ Servicios Pilares' },
+                { id: 'videos', label: '🎬 Videos de Proyectos' },
+                { id: 'gallery', label: '🏢 Portafolio de Propiedades' }
+              ].map(sub => (
+                <button
+                  key={sub.id}
+                  type="button"
+                  onClick={() => setReSubTab(sub.id)}
+                  style={{
+                    border: 'none',
+                    background: reSubTab === sub.id ? 'rgba(15,76,129,0.1)' : 'transparent',
+                    color: reSubTab === sub.id ? '#0F4C81' : '#5c6d80',
+                    padding: '0.5rem 1.2rem',
+                    borderRadius: 8,
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {sub.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Sub-tab: General */}
+            {reSubTab === 'general' && (
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(480px, 1fr))', gap:'2rem' }}>
+                <div>
+                  <AdminSection title="Hero Inmobiliario — Textos" icon="✍️">
+                    <Field label="Título del Banner (Español) *" value={cfg.rePageTitle || ''} onChange={e => setCfg({ ...cfg, rePageTitle: e.target.value })} />
+                    <Field label="Título del Banner (Inglés)" value={cfg.rePageTitleEn || ''} onChange={e => setCfg({ ...cfg, rePageTitleEn: e.target.value })} />
+                    <Field label="Subtítulo del Banner (Español) *" value={cfg.rePageSub || ''} onChange={e => setCfg({ ...cfg, rePageSub: e.target.value })} multiline />
+                    <Field label="Subtítulo del Banner (Inglés)" value={cfg.rePageSubEn || ''} onChange={e => setCfg({ ...cfg, rePageSubEn: e.target.value })} multiline />
+                  </AdminSection>
+
+                  <div style={{ marginTop:'1.5rem' }}>
+                    <AdminSection title="Introducción / Enfoque" icon="📖">
+                      <Field label="Descripción de la Página (Español) *" value={cfg.rePageDescription || ''} onChange={e => setCfg({ ...cfg, rePageDescription: e.target.value })} multiline />
+                      <Field label="Descripción de la Página (Inglés)" value={cfg.rePageDescriptionEn || ''} onChange={e => setCfg({ ...cfg, rePageDescriptionEn: e.target.value })} multiline />
+                    </AdminSection>
+                  </div>
+                </div>
+
+                <div>
+                  <AdminSection title="Fondo de Banner (Imagen de Fondo)" icon="🖼️">
+                    <div style={{ display:'flex', flexDirection:'column', gap:'1.2rem' }}>
+                      <Field 
+                        label="URL de la Imagen de Fondo" 
+                        value={cfg.rePageHeroImage || ''} 
+                        onChange={e => setCfg({ ...cfg, rePageHeroImage: e.target.value })} 
+                        placeholder="Ej: https://.../imagen.webp"
+                        hint="Esta imagen se mostrará como fondo oscuro y elegante detrás del video de presentación en la cabecera."
+                      />
+                      
+                      <div>
+                        <label style={{ display:'block', fontSize:'0.72rem', fontWeight:700, color:'#5c6d80', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'0.4rem' }}>
+                          Subir Imagen de Fondo desde PC (Recomendado: Máx. 3MB, formato .webp o .jpg)
+                        </label>
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          onChange={uploadHeroImageFile} 
+                          style={{ fontSize:'0.82rem', color:'#5c6d80' }} 
+                        />
+                        {uploadingHeroImage && <p style={{ fontSize:'0.75rem', color:'#0F4C81', fontWeight:600, margin:'0.4rem 0 0' }}>⏳ Subiendo imagen de fondo...</p>}
+                      </div>
+                    </div>
+                  </AdminSection>
+
+                  <div style={{ marginTop:'1.5rem' }}>
+                    <AdminSection title="Video de Bienvenida / Presentación" icon="👋">
+                      <div style={{ display:'flex', flexDirection:'column', gap:'1.2rem' }}>
+                        <Field 
+                          label="URL del Video de Bienvenida (MP4 o YouTube)" 
+                          value={cfg.rePageWelcomeVideo || ''} 
+                          onChange={e => setCfg({ ...cfg, rePageWelcomeVideo: e.target.value })} 
+                          placeholder="Ej: https://.../welcome.mp4" 
+                          hint="Puedes pegar un enlace de YouTube o una URL directa MP4. Se mostrará en la sección de enfoque en la cabecera de la página."
+                        />
+                        
+                        <div>
+                          <label style={{ display:'block', fontSize:'0.72rem', fontWeight:700, color:'#5c6d80', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'0.4rem' }}>
+                            Subir Video de Presentación desde PC (Recomendado: Máx. 30MB, formato .mp4)
+                          </label>
+                          <input 
+                            type="file" 
+                            accept="video/mp4,video/*" 
+                            onChange={uploadWelcomeVideoFile} 
+                            style={{ fontSize:'0.82rem', color:'#5c6d80' }} 
+                          />
+                          {uploadingWelcomeVideo && <p style={{ fontSize:'0.75rem', color:'#0F4C81', fontWeight:600, margin:'0.4rem 0 0' }}>⏳ Subiendo video de bienvenida...</p>}
+                        </div>
+
+                        {cfg.rePageWelcomeVideo && (
+                          <div style={{ marginTop:'1rem' }}>
+                            <span style={{ display:'block', fontSize:'0.72rem', fontWeight:700, color:'#5c6d80', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'0.4rem' }}>Vista previa del Video de Bienvenida:</span>
+                            {cfg.rePageWelcomeVideo.includes('youtube.com') || cfg.rePageWelcomeVideo.includes('youtu.be') ? (
+                              <p style={{ fontSize:'0.85rem', color:'#5c6d80', fontStyle:'italic' }}>Enlace de YouTube detectado (Vista previa de video disponible en la página pública).</p>
+                            ) : (
+                              <video 
+                                src={cfg.rePageWelcomeVideo} 
+                                controls 
+                                muted 
+                                style={{ width:'100%', height:180, borderRadius:12, objectFit:'cover', background:'#000' }} 
+                              />
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </AdminSection>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Sub-tab: Services */}
+            {reSubTab === 'services' && (
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(480px, 1fr))', gap:'2rem' }}>
+                {/* Formulario para agregar/editar servicio */}
+                <div>
+                  <AdminSection title={isEditingRealEstate ? 'Editar Servicio Inmobiliario' : 'Añadir Servicio Inmobiliario'} icon="🏢">
+                    <form onSubmit={saveRealEstate} style={{ display:'flex', flexDirection:'column', gap:'1.2rem' }}>
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1rem' }}>
+                        <Field label="Título (Español) *" value={realEstateForm.title} onChange={e => setRealEstateForm(s => ({ ...s, title: e.target.value }))} placeholder="Ej: Gestión de Rentas Cortas" />
+                        <Field label="Título (Inglés)" value={realEstateForm.titleEn} onChange={e => setRealEstateForm(s => ({ ...s, titleEn: e.target.value }))} placeholder="Ej: Short-Term Rental Management" />
+                      </div>
+
+                      <Field label="Descripción (Español) *" value={realEstateForm.description} onChange={e => setRealEstateForm(s => ({ ...s, description: e.target.value }))} multiline placeholder="Escribe aquí los detalles del servicio en español..." />
+                      <Field label="Descripción (Inglés)" value={realEstateForm.descriptionEn} onChange={e => setRealEstateForm(s => ({ ...s, descriptionEn: e.target.value }))} multiline placeholder="Escribe aquí los detalles del servicio en inglés..." />
+
+                      <SelectField
+                        label="Icono Visual"
+                        value={realEstateForm.icon}
+                        onChange={e => setRealEstateForm(s => ({ ...s, icon: e.target.value }))}
+                        options={[
+                          { label: '🔑 Llave (Key / Gestión)', value: 'Key' },
+                          { label: '📈 Gráfico de Crecimiento (TrendingUp / Inversión)', value: 'TrendingUp' },
+                          { label: '💼 Portafolio / Maletín (Briefcase / Consultoría)', value: 'Briefcase' },
+                          { label: '🏠 Casa (Home / Inmobiliaria)', value: 'Home' },
+                          { label: '🛡️ Escudo de Seguridad (Shield / Confianza)', value: 'Shield' },
+                          { label: '👥 Personas / Clientes (Users / Asesoría)', value: 'Users' }
+                        ]}
+                      />
+
+                      <div style={{ display:'flex', gap:'0.8rem', justifyContent:'flex-end' }}>
+                        {(isEditingRealEstate || realEstateForm.title) && (
+                          <button type="button" onClick={clearRealEstateForm} style={{ padding:'0.6rem 1.2rem', borderRadius:50, border:'1.5px solid #E6E7E8', background:'white', color:'#5c6d80', fontWeight:600, cursor:'pointer' }}>
+                            Cancelar
+                          </button>
+                        )}
+                        <button type="submit" style={{ padding:'0.6rem 1.5rem', borderRadius:50, border:'none', background:'linear-gradient(135deg,#0a3560,#0F4C81)', color:'white', fontWeight:700, cursor:'pointer' }}>
+                          {isEditingRealEstate ? 'Guardar Cambios' : 'Añadir Servicio'}
+                        </button>
+                      </div>
+                    </form>
+                  </AdminSection>
+                </div>
+
+                {/* Lista de servicios */}
+                <div>
+                  <AdminSection title="Servicios Inmobiliarios Registrados" icon="📋">
+                    <p style={{ fontSize:'0.78rem', color:'#5c6d80', margin:'0 0 1.2rem', lineHeight:1.5 }}>
+                      Estos servicios aparecen en la sección de <strong>Inmobiliaria</strong> en la página principal. Puedes reordenarlos usando las flechas de posición.
+                    </p>
+                    <div style={{ display:'flex', flexDirection:'column', gap:'0.8rem' }}>
+                      {(cfg.realEstateServices || []).length === 0 ? (
+                        <p style={{ fontSize:'0.85rem', color:'#5c6d80', fontStyle:'italic' }}>No hay servicios inmobiliarios registrados.</p>
+                      ) : (
+                        (cfg.realEstateServices || []).map((s, idx) => (
+                          <div key={s.id || idx} style={{ display:'flex', alignItems:'center', gap:'1rem', background:'#f8fafc', padding:'1rem', borderRadius:16, border:'1px solid #E6E7E8' }}>
+                            <div style={{ width:44, height:44, borderRadius:10, background:'rgba(196,154,60,0.1)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.4rem' }}>
+                              {s.icon === 'Key' ? '🔑' : s.icon === 'TrendingUp' ? '📈' : s.icon === 'Briefcase' ? '💼' : s.icon === 'Home' ? '🏠' : s.icon === 'Shield' ? '🛡️' : s.icon === 'Users' ? '👥' : '🏢'}
+                            </div>
+                            <div style={{ flex:1, minWidth:0 }}>
+                              <h4 style={{ fontSize:'0.88rem', fontWeight:700, color:'#0d1724', margin:0 }}>{s.title}</h4>
+                              <span style={{ fontSize:'0.7rem', color:'#B0B4B8', display:'block', textTransform:'uppercase', fontWeight:800 }}>{s.titleEn || '(Sin título EN)'}</span>
+                              <p style={{ fontSize:'0.75rem', color:'#5c6d80', margin:'0.2rem 0 0', overflow:'hidden', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical' }}>
+                                {s.description}
+                              </p>
+                            </div>
+                            <div style={{ display:'flex', alignItems:'center', gap:'0.4rem' }}>
+                              <div style={{ display:'flex', flexDirection:'column', gap:'2px' }}>
+                                <button disabled={idx === 0} onClick={() => moveRealEstate(idx, 'up')} style={{ border:'none', background:'none', color: idx === 0 ? '#cbd5e1' : '#0F4C81', padding:2, cursor: idx === 0 ? 'default' : 'pointer' }} title="Subir">
+                                  <ArrowUp size={16} />
+                                </button>
+                                <button disabled={idx === (cfg.realEstateServices || []).length - 1} onClick={() => moveRealEstate(idx, 'down')} style={{ border:'none', background:'none', color: idx === (cfg.realEstateServices || []).length - 1 ? '#cbd5e1' : '#0F4C81', padding:2, cursor: idx === (cfg.realEstateServices || []).length - 1 ? 'default' : 'pointer' }} title="Bajar">
+                                  <ArrowDown size={16} />
+                                </button>
+                              </div>
+                              <div style={{ display:'flex', flexDirection:'column', gap:'0.3rem' }}>
+                                <button onClick={() => startEditRealEstate(s)} style={{ border:'none', background:'rgba(15,76,129,0.1)', color:'#0F4C81', padding:'0.3rem 0.6rem', borderRadius:6, fontSize:'0.7rem', fontWeight:600, cursor:'pointer' }}>
+                                  Editar
+                                </button>
+                                <button onClick={() => deleteRealEstate(s.id)} style={{ border:'none', background:'rgba(255,56,92,0.1)', color:'#FF385C', padding:'0.3rem 0.6rem', borderRadius:6, fontSize:'0.7rem', fontWeight:600, cursor:'pointer' }}>
+                                  Borrar
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </AdminSection>
+                </div>
+              </div>
+            )}
+
+            {/* Sub-tab: Videos */}
+            {reSubTab === 'videos' && (
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(480px, 1fr))', gap:'2rem' }}>
+                <div>
+                  <AdminSection title="Añadir Video de Proyecto" icon="🎬">
+                    <form onSubmit={addProjectVideo} style={{ display:'flex', flexDirection:'column', gap:'1.2rem' }}>
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1rem' }}>
+                        <Field label="Título del Video (Español) *" value={projectVideoForm.title} onChange={e => setProjectVideoForm({ ...projectVideoForm, title: e.target.value })} placeholder="Ej: Recorrido del Proyecto" />
+                        <Field label="Título del Video (Inglés)" value={projectVideoForm.titleEn} onChange={e => setProjectVideoForm({ ...projectVideoForm, titleEn: e.target.value })} placeholder="Ej: Project Tour" />
+                      </div>
+                      
+                      <Field 
+                        label="URL del Video (MP4 o enlace de YouTube)" 
+                        value={projectVideoForm.url} 
+                        onChange={e => setProjectVideoForm({ ...projectVideoForm, url: e.target.value })} 
+                        placeholder="Ej: https://.../video.mp4" 
+                      />
+
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1rem' }}>
+                        <Field 
+                          label="Descripción del Video (Español)" 
+                          value={projectVideoForm.description || ''} 
+                          onChange={e => setProjectVideoForm({ ...projectVideoForm, description: e.target.value })} 
+                          multiline 
+                          placeholder="Ej: Recorrido completo del apartamento..." 
+                        />
+                        <Field 
+                          label="Descripción del Video (Inglés)" 
+                          value={projectVideoForm.descriptionEn || ''} 
+                          onChange={e => setProjectVideoForm({ ...projectVideoForm, descriptionEn: e.target.value })} 
+                          multiline 
+                          placeholder="Ej: Full apartment tour..." 
+                        />
+                      </div>
+
+                      <div>
+                        <label style={{ display:'block', fontSize:'0.72rem', fontWeight:700, color:'#5c6d80', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'0.4rem' }}>
+                          O subir video desde PC (Recomendado: Aspecto 16:9, resolución 1080p o 720p, peso máximo 20MB, formato .mp4)
+                        </label>
+                        <input 
+                          type="file" 
+                          accept="video/mp4,video/*" 
+                          onChange={uploadProjectVideoFile} 
+                          style={{ fontSize:'0.82rem', color:'#5c6d80' }} 
+                        />
+                        {uploadingVideo && <p style={{ fontSize:'0.75rem', color:'#0F4C81', fontWeight:600, margin:'0.4rem 0 0' }}>⏳ Subiendo video a Supabase...</p>}
+                      </div>
+
+                      <div style={{ display:'flex', justifyContent:'flex-end' }}>
+                        <button type="submit" style={{ padding:'0.6rem 1.5rem', borderRadius:50, border:'none', background:'linear-gradient(135deg,#0a3560,#0F4C81)', color:'white', fontWeight:700, cursor:'pointer' }}>
+                          Añadir Video
+                        </button>
+                      </div>
+                    </form>
+                  </AdminSection>
+                </div>
+
+                <div>
+                  <AdminSection title="Videos Guardados" icon="📋">
+                    <div style={{ display:'flex', flexDirection:'column', gap:'0.8rem' }}>
+                      {(cfg.rePageVideos || []).length === 0 ? (
+                        <p style={{ fontSize:'0.85rem', color:'#5c6d80', fontStyle:'italic' }}>No hay videos guardados para la inmobiliaria.</p>
+                      ) : (
+                        (cfg.rePageVideos || []).map((vid, idx) => (
+                          <div key={idx} style={{ display:'flex', alignItems:'center', gap:'1rem', background:'#f8fafc', padding:'1rem', borderRadius:16, border:'1px solid #E6E7E8' }}>
+                            <div style={{ flex:1, minWidth:0 }}>
+                              <h4 style={{ fontSize:'0.88rem', fontWeight:700, color:'#0d1724', margin:0 }}>{vid.title}</h4>
+                              {vid.description && (
+                                <p style={{ fontSize:'0.75rem', color:'#5c6d80', margin:'0.2rem 0 0.1rem', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{vid.description}</p>
+                              )}
+                              <span style={{ fontSize:'0.7rem', color:'#cbd5e1', display:'block' }}>{vid.url}</span>
+                            </div>
+                            <button 
+                              type="button"
+                              onClick={() => deleteProjectVideo(idx)} 
+                              style={{ border:'none', background:'rgba(255,56,92,0.1)', color:'#FF385C', padding:'0.4rem 0.8rem', borderRadius:8, fontSize:'0.75rem', fontWeight:600, cursor:'pointer' }}
+                            >
+                              Eliminar
+                            </button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </AdminSection>
+                </div>
+              </div>
+            )}
+
+            {/* Sub-tab: Portfolio (Legacy key 'gallery') */}
+            {reSubTab === 'gallery' && (
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(480px, 1fr))', gap:'2rem' }}>
+                <div>
+                  <AdminSection title={isEditingPortfolio ? 'Editar Propiedad del Portafolio' : 'Añadir Propiedad al Portafolio'} icon="🏢">
+                    <form onSubmit={savePortfolioItem} style={{ display:'flex', flexDirection:'column', gap:'1.2rem' }}>
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1rem' }}>
+                        <Field label="Título / Nombre (Español) *" value={portfolioForm.title} onChange={e => setPortfolioForm({ ...portfolioForm, title: e.target.value })} placeholder="Ej: Penthouse Chicó Reservado" />
+                        <Field label="Título / Nombre (Inglés)" value={portfolioForm.titleEn} onChange={e => setPortfolioForm({ ...portfolioForm, titleEn: e.target.value })} placeholder="Ej: Chico Reservado Penthouse" />
+                      </div>
+
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1rem' }}>
+                        <Field label="Ubicación (Español)" value={portfolioForm.location} onChange={e => setPortfolioForm({ ...portfolioForm, location: e.target.value })} placeholder="Ej: Chicó, Bogotá" />
+                        <Field label="Ubicación (Inglés)" value={portfolioForm.locationEn} onChange={e => setPortfolioForm({ ...portfolioForm, locationEn: e.target.value })} placeholder="Ej: Chico, Bogota" />
+                      </div>
+
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1rem' }}>
+                        <Field label="Especificaciones (Español)" value={portfolioForm.specs} onChange={e => setPortfolioForm({ ...portfolioForm, specs: e.target.value })} placeholder="Ej: 3 Hab • 4 Baños • 150m²" />
+                        <Field label="Especificaciones (Inglés)" value={portfolioForm.specsEn} onChange={e => setPortfolioForm({ ...portfolioForm, specsEn: e.target.value })} placeholder="Ej: 3 Beds • 4 Baths • 1,610 sqft" />
+                      </div>
+
+                      <Field label="Precio (Ej: $950.000.000 COP o Consultar)" value={portfolioForm.price} onChange={e => setPortfolioForm({ ...portfolioForm, price: e.target.value })} placeholder="Ej: $950.000.000 COP" />
+
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1rem' }}>
+                        <Field label="Descripción Detallada (Español)" value={portfolioForm.description || ''} onChange={e => setPortfolioForm({ ...portfolioForm, description: e.target.value })} multiline placeholder="Describe detalladamente la vivienda..." />
+                        <Field label="Descripción Detallada (Inglés)" value={portfolioForm.descriptionEn || ''} onChange={e => setPortfolioForm({ ...portfolioForm, descriptionEn: e.target.value })} multiline placeholder="Detailed description of the property..." />
+                      </div>
+
+                      <div>
+                        <label style={{ display:'block', fontSize:'0.72rem', fontWeight:700, color:'#5c6d80', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'0.4rem' }}>
+                          Fotos de la Propiedad (Sube hasta 4 fotos. La primera será la foto de portada)
+                        </label>
+                        <div style={{ display:'flex', gap:'1rem', flexWrap:'wrap', marginBottom:'0.8rem' }}>
+                          {(portfolioForm.images || []).map((imgUrl, idx) => (
+                            <div key={idx} style={{ position:'relative', width:80, height:80, borderRadius:12, overflow:'hidden', border:'1px solid #E6E7E8' }}>
+                              <img src={imgUrl} alt={`prop-img-${idx}`} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                              <button 
+                                type="button" 
+                                onClick={() => removePortfolioFormPhoto(idx)} 
+                                style={{ position:'absolute', top:2, right:2, width:18, height:18, borderRadius:'50%', border:'none', background:'#FF385C', color:'white', fontSize:'0.6rem', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', zIndex:5 }}
+                              >
+                                ✕
+                              </button>
+                              {idx === 0 && (
+                                <span style={{ position:'absolute', bottom:0, left:0, right:0, background:'rgba(10,53,96,0.85)', color:'white', fontSize:'0.55rem', textAlign:'center', display:'block', padding:'2px 0', fontWeight:600 }}>Portada</span>
+                              )}
+                            </div>
+                          ))}
+                          
+                          {(portfolioForm.images || []).length < 4 && (
+                            <div style={{ position:'relative', width:80, height:80, borderRadius:12, border:'2px dashed #B0B4B8', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', background:'#f8fafc', cursor:'pointer' }}>
+                              <input 
+                                type="file" 
+                                accept="image/*" 
+                                onChange={uploadPortfolioPhoto} 
+                                style={{ position:'absolute', inset:0, opacity:0, cursor:'pointer' }} 
+                              />
+                              <span style={{ fontSize:'1.2rem', color:'#5c6d80' }}>+</span>
+                              <span style={{ fontSize:'0.55rem', color:'#5c6d80', fontWeight:600 }}>Subir</span>
+                            </div>
+                          )}
+                        </div>
+                        {uploadingPortfolioPhoto && <p style={{ fontSize:'0.75rem', color:'#0F4C81', fontWeight:600, margin:'0.4rem 0 0' }}>⏳ Subiendo foto...</p>}
+                      </div>
+
+                      <div style={{ display:'flex', gap:'0.8rem', justifyContent:'flex-end' }}>
+                        {(isEditingPortfolio || portfolioForm.title || (portfolioForm.images || []).length > 0) && (
+                          <button type="button" onClick={clearPortfolioForm} style={{ padding:'0.6rem 1.2rem', borderRadius:50, border:'1.5px solid #E6E7E8', background:'white', color:'#5c6d80', fontWeight:600, cursor:'pointer' }}>
+                            Cancelar
+                          </button>
+                        )}
+                        <button type="submit" style={{ padding:'0.6rem 1.5rem', borderRadius:50, border:'none', background:'linear-gradient(135deg,#0a3560,#0F4C81)', color:'white', fontWeight:700, cursor:'pointer' }}>
+                          {isEditingPortfolio ? 'Guardar Cambios' : 'Añadir Propiedad'}
+                        </button>
+                      </div>
+                    </form>
+                  </AdminSection>
+                </div>
+
+                <div>
+                  <AdminSection title="Propiedades en el Portafolio" icon="📋">
+                    <p style={{ fontSize:'0.78rem', color:'#5c6d80', margin:'0 0 1.2rem', lineHeight:1.5 }}>
+                      Estas propiedades aparecen en la sección "Portafolio de Espacios & Propiedades" de la página de Inmobiliaria. Haz clic en una para editar sus detalles.
+                    </p>
+                    <div style={{ display:'flex', flexDirection:'column', gap:'0.8rem' }}>
+                      {((cfg.rePageGallery || []).map((item, idx) => {
+                        if (typeof item === 'string') {
+                          return {
+                            id: `legacy-${idx}`,
+                            title: `Espacio ${idx + 1}`,
+                            titleEn: `Space ${idx + 1}`,
+                            description: '',
+                            descriptionEn: '',
+                            price: '',
+                            location: '',
+                            locationEn: '',
+                            specs: '',
+                            specsEn: '',
+                            images: [item]
+                          };
+                        }
+                        return item;
+                      })).length === 0 ? (
+                        <p style={{ fontSize:'0.85rem', color:'#5c6d80', fontStyle:'italic' }}>No hay propiedades registradas en el portafolio.</p>
+                      ) : (
+                        ((cfg.rePageGallery || []).map((item, idx) => {
+                          const p = typeof item === 'string' ? {
+                            id: `legacy-${idx}`,
+                            title: `Espacio ${idx + 1}`,
+                            titleEn: `Space ${idx + 1}`,
+                            description: '',
+                            descriptionEn: '',
+                            price: '',
+                            location: '',
+                            locationEn: '',
+                            specs: '',
+                            specsEn: '',
+                            images: [item]
+                          } : item;
+
+                          return (
+                            <div key={p.id || idx} style={{ display:'flex', alignItems:'center', gap:'1rem', background:'#f8fafc', padding:'0.8rem', borderRadius:16, border:'1px solid #E6E7E8' }}>
+                              <img src={p.images?.[0]} alt={p.title} style={{ width:54, height:54, borderRadius:10, objectFit:'cover' }} />
+                              <div style={{ flex:1, minWidth:0 }}>
+                                <h4 style={{ fontSize:'0.88rem', fontWeight:700, color:'#0d1724', margin:0 }}>{p.title}</h4>
+                                {p.price && <span style={{ fontSize:'0.75rem', color:'var(--orange)', fontWeight:800, display:'block' }}>{p.price}</span>}
+                                {p.specs && <span style={{ fontSize:'0.7rem', color:'#5c6d80', display:'block' }}>{p.specs}</span>}
+                              </div>
+                              <div style={{ display:'flex', gap:'0.3rem' }}>
+                                <button onClick={() => startEditPortfolioItem(p)} style={{ border:'none', background:'rgba(15,76,129,0.1)', color:'#0F4C81', padding:'0.3rem 0.6rem', borderRadius:6, fontSize:'0.7rem', fontWeight:600, cursor:'pointer' }}>
+                                  Editar
+                                </button>
+                                <button onClick={() => deletePortfolioItem(p.id)} style={{ border:'none', background:'rgba(255,56,92,0.1)', color:'#FF385C', padding:'0.3rem 0.6rem', borderRadius:6, fontSize:'0.7rem', fontWeight:600, cursor:'pointer' }}>
+                                  Borrar
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        }))
+                      )}
+                    </div>
+                  </AdminSection>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
