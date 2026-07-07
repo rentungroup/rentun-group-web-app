@@ -234,10 +234,14 @@ Fuente: **Outfit** (Google Fonts) — pesos 300 → 900
 - ✅ `vercel.json` configurado para SPA routing
 - ✅ `.env.example` con template de variables de entorno
 
+### v3.0.0 — Jul 2026
+- ✅ Integración completa de Booking.com en base de datos (Supabase) y frontend.
+- ✅ Captura de Leads e Huéspedes con consentimiento de Habeas Data con persistencia en `localStorage` (15+ días/largo plazo).
+- ✅ Intercepción de clicks de redirección externa en botones de la web y links dinámicos generados por la IA en el Chatbot.
+- ✅ Pestaña administrativa de "Leads de la IA" en `/admin` con visualización en tiempo real y enlace de contacto directo vía WhatsApp.
+
 ### Pendiente
-- ⏳ Ejecutar `setup.bat` para copiar favicons y hacer `npm install`
 - ⏳ Actualizar número de WhatsApp real (cuando llegue de Airbnb)
-- ⏳ Conectar Supabase (cuando lleguen las credenciales del proyecto)
 - ⏳ Subir a GitHub y conectar a Vercel para deploy
 - ⏳ Auth de admin panel (con Supabase Auth)
 
