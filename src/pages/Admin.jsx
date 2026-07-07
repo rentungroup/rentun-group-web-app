@@ -157,6 +157,7 @@ export default function Admin() {
 
   // Estados para acordeones de formularios de apartamentos
   const [openAirbnb, setOpenAirbnb] = useState(false);
+  const [openBooking, setOpenBooking] = useState(false);
   const [openQRs, setOpenQRs] = useState(false);
 
   // Estados para CRUD de propiedades (apartamentos)
@@ -164,16 +165,40 @@ export default function Admin() {
     id: '', name: '', description: '', location: '', address: '', wifiSSID: '', wifiPassword: '', price: '',
     bedrooms: 1, beds: 1, baths: 1, guests: 2, isAirbnb: true,
     airbnbListing: '', airbnbBooking: '', airbnbReviews: '', airbnbContact: '', airbnbCalendar: '', airbnbRules: '', airbnbSafety: '', airbnbEmbedId: '',
+    bookingLink: '',
     images: [], customWifiQR: '', customGuideQR: '', customWhatsappQR: ''
   });
   const [isEditingProp, setIsEditingProp] = useState(false);
   const [newImgUrl, setNewImgUrl] = useState('');
+  const [leads, setLeads] = useState([]);
+  const [loadingLeads, setLoadingLeads] = useState(false);
 
   const properties = cfg.properties || [];
 
   useEffect(() => { 
     if (dbConfig) setCfg(dbConfig);
   }, [dbConfig]);
+
+  useEffect(() => {
+    if (activeTab === 'leads') {
+      const fetchLeads = async () => {
+        setLoadingLeads(true);
+        try {
+          const { data, error } = await supabase
+            .from('leads')
+            .select('*')
+            .order('created_at', { ascending: false });
+          if (error) throw error;
+          setLeads(data || []);
+        } catch (err) {
+          console.error('Error fetching leads:', err);
+        } finally {
+          setLoadingLeads(false);
+        }
+      };
+      fetchLeads();
+    }
+  }, [activeTab]);
 
   const handle = (e) => {
     const { name, value } = e.target;
@@ -227,6 +252,7 @@ export default function Admin() {
   const startEditProp = (p) => {
     setPropForm({
       ...p,
+      bookingLink: p.bookingLink || '',
       images: p.images || [],
       customWifiQR: p.customWifiQR || '',
       customGuideQR: p.customGuideQR || '',
@@ -251,6 +277,7 @@ export default function Admin() {
       id: '', name: '', description: '', location: '', address: '', wifiSSID: '', wifiPassword: '', price: '',
       bedrooms: 1, beds: 1, baths: 1, guests: 2, isAirbnb: true,
       airbnbListing: '', airbnbBooking: '', airbnbReviews: '', airbnbContact: '', airbnbCalendar: '', airbnbRules: '', airbnbSafety: '', airbnbEmbedId: '',
+      bookingLink: '',
       images: [], customWifiQR: '', customGuideQR: '', customWhatsappQR: ''
     });
     setIsEditingProp(false);
@@ -599,7 +626,8 @@ export default function Admin() {
           { id: 'guide-places', label: '📍 Lugares Cercanos' },
           { id: 'guide-manuals', label: '📖 Manuales de la Casa' },
           { id: 'guide-faqs', label: '❓ FAQs & Tareas' },
-          { id: 'legal', label: '⚖️ Pág. Legal' }
+          { id: 'legal', label: '⚖️ Pág. Legal' },
+          { id: 'leads', label: '👥 Leads de la IA' }
         ].map(t => (
           <button key={t.id} onClick={() => setActiveTab(t.id)}
             style={{
@@ -981,6 +1009,20 @@ export default function Admin() {
                         )}
                       </div>
                     )}
+
+                    {/* Acordeón Enlace de Booking.com */}
+                    <div style={{ border:'1px solid #E6E7E8', borderRadius:16, overflow:'hidden', marginTop:'0.8rem' }}>
+                      <button type="button" onClick={() => setOpenBooking(!openBooking)}
+                              style={{ width:'100%', padding:'0.8rem 1.2rem', background:'#f8fafc', border:'none', display:'flex', justifyContent:'space-between', alignItems:'center', cursor:'pointer', fontWeight:700, color:'#003580', fontSize:'0.82rem', fontFamily:'inherit' }}>
+                        <span>🔗 Enlace de Booking.com ({openBooking ? 'Ocultar' : 'Mostrar'})</span>
+                        <span style={{ fontSize:'0.7rem' }}>{openBooking ? '▲' : '▼'}</span>
+                      </button>
+                      {openBooking && (
+                        <div style={{ padding:'1.2rem', background:'white', borderTop:'1px solid #E6E7E8' }}>
+                          <Field label="Link del Listing en Booking.com" value={propForm.bookingLink} onChange={e => setPropForm(p => ({ ...p, bookingLink: e.target.value }))} placeholder="Ej: https://www.booking.com/Share-..." />
+                        </div>
+                      )}
+                    </div>
 
                     {/* Image Manager */}
                     <AdminSection title="Fotos del Apartamento" icon="🖼️">
@@ -1631,6 +1673,89 @@ export default function Admin() {
                 </div>
               </AdminSection>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'leads' && (
+          <div style={{ background:'white', borderRadius:24, border:'1px solid #E6E7E8', padding:'2.2rem', boxShadow:'0 4px 20px rgba(0,0,0,0.02)' }}>
+            <h3 style={{ fontSize:'1.4rem', fontWeight:800, color:'#0F4C81', fontFamily:'var(--font-header, sans-serif)', marginBottom:'0.5rem', display:'flex', alignItems:'center', gap:'0.6rem' }}>
+              👥 Leads Capturados por la IA
+            </h3>
+            <p style={{ fontSize:'0.88rem', color:'#5c6d80', marginBottom:'2rem', lineHeight:1.5 }}>
+              Esta tabla muestra a los huéspedes interesados que han completado el formulario de contacto (Habeas Data) antes de dirigirse a WhatsApp, Airbnb o Booking.com.
+            </p>
+
+            {loadingLeads ? (
+              <div style={{ display:'flex', justifyContent:'center', padding:'3rem', color:'#5c6d80', fontWeight:600 }}>
+                ⏳ Cargando leads de la base de datos...
+              </div>
+            ) : leads.length === 0 ? (
+              <div style={{ padding:'3rem 1.5rem', textAlign:'center', background:'#f8fafc', borderRadius:16, border:'1.5px dashed #E6E7E8' }}>
+                <p style={{ fontSize:'0.95rem', color:'#5c6d80', fontWeight:600, margin:0 }}>No se han capturado leads todavía.</p>
+                <p style={{ fontSize:'0.82rem', color:'#8c9ba5', margin:'0.4rem 0 0' }}>Los prospectos aparecerán aquí cuando hagan clic en los botones de reserva e ingresen sus datos.</p>
+              </div>
+            ) : (
+              <div style={{ overflowX:'auto' }}>
+                <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.88rem', minWidth:'650px' }}>
+                  <thead>
+                    <tr style={{ borderBottom:'2px solid #E6E7E8', color:'#0F4C81', textAlign:'left', fontWeight:700 }}>
+                      <th style={{ padding:'1rem 0.8rem' }}>Fecha</th>
+                      <th style={{ padding:'1rem 0.8rem' }}>Nombre</th>
+                      <th style={{ padding:'1rem 0.8rem' }}>Teléfono / WhatsApp</th>
+                      <th style={{ padding:'1rem 0.8rem' }}>Correo Electrónico</th>
+                      <th style={{ padding:'1rem 0.8rem' }}>Plataforma</th>
+                      <th style={{ padding:'1rem 0.8rem', textAlign:'center' }}>Habeas Data</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {leads.map((l) => (
+                      <tr key={l.id} style={{ borderBottom:'1px solid #E6E7E8', transition:'background 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e)=>e.currentTarget.style.background='none'}>
+                        <td style={{ padding:'1rem 0.8rem', whiteSpace:'nowrap', color:'#5c6d80' }}>
+                          {new Date(l.created_at).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' })}
+                        </td>
+                        <td style={{ padding:'1rem 0.8rem', fontWeight:700, color:'#0d1724' }}>{l.name}</td>
+                        <td style={{ padding:'1rem 0.8rem' }}>
+                          <a 
+                            href={`https://wa.me/${l.phone.replace(/[^0-9]/g, '')}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            style={{ 
+                              color:'#059669', 
+                              textDecoration:'none', 
+                              fontWeight:700, 
+                              display:'inline-flex', 
+                              alignItems:'center', 
+                              gap:'0.3rem' 
+                            }}
+                          >
+                            🟢 {l.phone}
+                          </a>
+                        </td>
+                        <td style={{ padding:'1rem 0.8rem', color: l.email ? '#0d1724' : '#8c9ba5', fontStyle: l.email ? 'normal' : 'italic' }}>
+                          {l.email || 'No proporcionado'}
+                        </td>
+                        <td style={{ padding:'1rem 0.8rem' }}>
+                          <span style={{ 
+                            fontSize:'0.72rem', 
+                            fontWeight:700, 
+                            textTransform:'uppercase', 
+                            padding:'0.25rem 0.6rem', 
+                            borderRadius:50,
+                            background: l.destination === 'airbnb' ? 'rgba(255,56,92,0.1)' : (l.destination === 'booking' ? 'rgba(0,53,128,0.1)' : 'rgba(37,211,102,0.1)'),
+                            color: l.destination === 'airbnb' ? '#FF385C' : (l.destination === 'booking' ? '#003580' : '#059669')
+                          }}>
+                            {l.destination || 'whatsapp'}
+                          </span>
+                        </td>
+                        <td style={{ padding:'1rem 0.8rem', textAlign:'center', color:'#059669', fontWeight:800 }}>
+                          {l.consent ? '✅ Autorizado' : '❌ No'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         )}
 

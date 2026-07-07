@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Bot, Loader2, Minus } from 'lucide-react';
 import { useConfig } from '../context/ConfigContext';
+import { handleRedirectWithLead } from './LeadModal';
 
 export default function ChatWidget() {
   const { config } = useConfig();
@@ -96,14 +97,30 @@ export default function ChatWidget() {
       const linkText = match[1];
       const linkUrl = match[2];
       
+      // Determinar dinámicamente el tipo de destino y colores correspondientes
+      let dest = 'whatsapp';
+      if (linkUrl.includes('airbnb.')) dest = 'airbnb';
+      else if (linkUrl.includes('booking.')) dest = 'booking';
+      
+      const isAirbnb = dest === 'airbnb';
+      const isBooking = dest === 'booking';
+      const btnBg = isAirbnb ? '#FF385C' : (isBooking ? '#003580' : '#25D366');
+      const btnShadow = isAirbnb ? 'rgba(255,56,92,0.25)' : (isBooking ? 'rgba(0,53,128,0.25)' : 'rgba(37,211,102,0.25)');
+      
       parts.push(
         <a 
           key={match.index} 
           href={linkUrl} 
           target="_blank" 
           rel="noopener noreferrer" 
+          onClick={(e) => {
+            if (!localStorage.getItem('lead_registered')) {
+              e.preventDefault();
+              handleRedirectWithLead(linkUrl, dest);
+            }
+          }}
           style={{ 
-            background: '#FF385C', 
+            background: btnBg, 
             color: 'white', 
             textDecoration: 'none',
             padding: '0.3rem 0.7rem',
@@ -114,7 +131,7 @@ export default function ChatWidget() {
             alignItems: 'center',
             gap: '0.3rem',
             margin: '0.2rem 0.4rem',
-            boxShadow: '0 2px 8px rgba(255,56,92,0.25)',
+            boxShadow: `0 2px 8px ${btnShadow}`,
             transition: 'all 0.2s'
           }}
         >

@@ -5,6 +5,7 @@ import { waLink, getTranslation, formatPrice } from '../utils/db';
 import { SITE } from '../config/site';
 import Navbar from '../components/Navbar';
 import { ArrowRight, Star, Home, Coffee, Info, Smartphone, ExternalLink, CalendarDays, Users, Clock, Zap, MapPin, Key, Wifi, PawPrint } from 'lucide-react';
+import { handleRedirectWithLead } from '../components/LeadModal';
 
 // ── Scroll Reveal Hook ──────────────────────────────────
 function useReveal() {
@@ -84,11 +85,38 @@ const BtnNavy = ({ href, children, id }) => (
   </a>
 );
 
-const BtnWA = ({ msg, children, id, style }) => (
-  <a href={waLink(msg)} id={id} target="_blank" rel="noopener noreferrer"
+const BtnWA = ({ msg, children, id, style }) => {
+  const url = waLink(msg);
+  return (
+    <a href={url} id={id} target="_blank" rel="noopener noreferrer"
+       onClick={(e) => {
+         if (!localStorage.getItem('lead_registered')) {
+           e.preventDefault();
+           handleRedirectWithLead(url, 'whatsapp');
+         }
+       }}
+       style={{
+         display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'0.6rem',
+         background:'#25D366', color:'white', textDecoration:'none',
+         padding:'1rem 2.2rem', borderRadius:8, fontWeight:700, fontSize:'1rem',
+         boxShadow:'var(--shadow-md)', transition:'all 0.2s', ...style,
+       }}>
+      {children}
+    </a>
+  );
+};
+
+const BtnAirbnb = ({ href, children, id, style }) => (
+  <a href={href} id={id} target="_blank" rel="noopener noreferrer"
+     onClick={(e) => {
+       if (!localStorage.getItem('lead_registered')) {
+         e.preventDefault();
+         handleRedirectWithLead(href, 'airbnb');
+       }
+     }}
      style={{
        display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'0.6rem',
-       background:'#25D366', color:'white', textDecoration:'none',
+       background:'#FF385C', color:'white', textDecoration:'none',
        padding:'1rem 2.2rem', borderRadius:8, fontWeight:700, fontSize:'1rem',
        boxShadow:'var(--shadow-md)', transition:'all 0.2s', ...style,
      }}>
@@ -96,11 +124,17 @@ const BtnWA = ({ msg, children, id, style }) => (
   </a>
 );
 
-const BtnAirbnb = ({ href, children, id, style }) => (
+const BtnBooking = ({ href, children, id, style }) => (
   <a href={href} id={id} target="_blank" rel="noopener noreferrer"
+     onClick={(e) => {
+       if (!localStorage.getItem('lead_registered')) {
+         e.preventDefault();
+         handleRedirectWithLead(href, 'booking');
+       }
+     }}
      style={{
        display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'0.6rem',
-       background:'#FF385C', color:'white', textDecoration:'none',
+       background:'#003580', color:'white', textDecoration:'none',
        padding:'1rem 2.2rem', borderRadius:8, fontWeight:700, fontSize:'1rem',
        boxShadow:'var(--shadow-md)', transition:'all 0.2s', ...style,
      }}>
@@ -264,6 +298,7 @@ export default function Landing() {
   const { config: cfg } = useConfig();
   const properties = cfg.properties || [];
   const mainProp = properties[0] || {};
+  const bookingLink = mainProp.bookingLink || SITE.bookingLink;
   const t = getTranslation(lang);
   const waBtnLink = waLink(cfg.whatsapp, '¡Hola! Quiero información para reservar mi estadía en Rentun Group.');
   
@@ -585,13 +620,24 @@ export default function Landing() {
             </p>
             
             <div className="hero-btns" style={{ display:'flex', gap:'1rem', flexWrap:'wrap' }}>
-              {mainProp.isAirbnb ? (
+              {mainProp.isAirbnb && (
                 <BtnAirbnb href={ab.booking} id="hero-reserve-airbnb">{t.btnAirbnb}</BtnAirbnb>
-              ) : (
+              )}
+              {bookingLink && (
+                <BtnBooking href={bookingLink} id="hero-reserve-booking">{t.btnBooking}</BtnBooking>
+              )}
+              {!mainProp.isAirbnb && !bookingLink && (
                 <BtnWA msg={lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name}` : `Hola! Me interesa reservar el apartamento ${mainProp.name}`} id="hero-reserve-wa">{t.btnWhatsapp}</BtnWA>
               )}
               <a href={waLink(lang === 'EN' ? 'Hello! I would like more information about Rentun Group apartments.' : 'Hola! Quisiera más información sobre los apartamentos de Rentun Group.')}
                  target="_blank" rel="noopener noreferrer" id="hero-whatsapp-btn"
+                 onClick={(e) => {
+                   const url = waLink(lang === 'EN' ? 'Hello! I would like more information about Rentun Group apartments.' : 'Hola! Quisiera más información sobre los apartamentos de Rentun Group.');
+                   if (!localStorage.getItem('lead_registered')) {
+                     e.preventDefault();
+                     handleRedirectWithLead(url, 'whatsapp');
+                   }
+                 }}
                  style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:'0.55rem', background:'rgba(255,255,255,0.08)', color:'white', textDecoration:'none', padding:'0.9rem 1.8rem', borderRadius:50, fontWeight:700, fontSize:'0.88rem', border:'1px solid rgba(255,255,255,0.18)', transition:'all 0.2s' }}>
                 {t.btnAvailability}
               </a>
@@ -670,6 +716,13 @@ export default function Landing() {
             </div>
             <a href={waLink(lang === 'EN' ? 'Hello! I would like to check availability for Rentun Group apartments' : 'Hola! Me gustaría conocer disponibilidad de los apartamentos Rentun Group')}
                target="_blank" rel="noopener noreferrer" id="props-wa-btn" className="rv d3"
+               onClick={(e) => {
+                 const url = waLink(lang === 'EN' ? 'Hello! I would like to check availability for Rentun Group apartments' : 'Hola! Me gustaría conocer disponibilidad de los apartamentos Rentun Group');
+                 if (!localStorage.getItem('lead_registered')) {
+                   e.preventDefault();
+                   handleRedirectWithLead(url, 'whatsapp');
+                 }
+               }}
                style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'var(--orange)', color:'var(--text)', textDecoration:'none', padding:'0.8rem 1.8rem', borderRadius:8, fontWeight:800, fontSize:'0.88rem', boxShadow:'var(--shadow-md)', flexShrink:0, transition:'all 0.2s' }}>
               {t.btnAvailability}
             </a>
@@ -719,23 +772,42 @@ export default function Landing() {
                   </div>
 
                   <div style={{ display:'flex', gap:'0.8rem', flexWrap:'wrap' }}>
-                    {mainProp.isAirbnb ? (
-                      <>
-                        <a href={mainProp.airbnbBooking || SITE.airbnb.booking} target="_blank" rel="noopener noreferrer" id="props-reserve-btn"
-                           style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'#FF385C', color:'white', textDecoration:'none', padding:'0.75rem 1.6rem', borderRadius:8, fontWeight:700, fontSize:'0.85rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
-                          {t.btnAirbnb}
-                        </a>
-                        <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name}` : `Hola! Me interesa reservar el apartamento ${mainProp.name}`)} target="_blank" rel="noopener noreferrer" id="props-whatsapp-btn"
-                           style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.75rem 1.6rem', borderRadius:8, fontWeight:700, fontSize:'0.85rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
-                          {lang === 'EN' ? '💬 Inquire direct' : '💬 Consultar directo'}
-                        </a>
-                      </>
-                    ) : (
-                      <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name}` : `Hola! Me interesa reservar el apartamento ${mainProp.name}`)} target="_blank" rel="noopener noreferrer" id="props-whatsapp-btn"
-                         style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.75rem 1.8rem', borderRadius:8, fontWeight:700, fontSize:'0.88rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
-                        {t.btnWhatsapp}
+                    {mainProp.isAirbnb && (
+                      <a href={mainProp.airbnbBooking || SITE.airbnb.booking} target="_blank" rel="noopener noreferrer" id="props-reserve-btn"
+                         onClick={(e) => {
+                           const url = mainProp.airbnbBooking || SITE.airbnb.booking;
+                           if (!localStorage.getItem('lead_registered')) {
+                             e.preventDefault();
+                             handleRedirectWithLead(url, 'airbnb');
+                           }
+                         }}
+                         style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'#FF385C', color:'white', textDecoration:'none', padding:'0.75rem 1.6rem', borderRadius:8, fontWeight:700, fontSize:'0.85rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
+                        {t.btnAirbnb}
                       </a>
                     )}
+                    {bookingLink && (
+                      <a href={bookingLink} target="_blank" rel="noopener noreferrer" id="props-booking-btn"
+                         onClick={(e) => {
+                           if (!localStorage.getItem('lead_registered')) {
+                             e.preventDefault();
+                             handleRedirectWithLead(bookingLink, 'booking');
+                           }
+                         }}
+                         style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'#003580', color:'white', textDecoration:'none', padding:'0.75rem 1.6rem', borderRadius:8, fontWeight:700, fontSize:'0.85rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
+                        {t.btnBooking}
+                      </a>
+                    )}
+                    <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name}` : `Hola! Me interesa reservar el apartamento ${mainProp.name}`)} target="_blank" rel="noopener noreferrer" id="props-whatsapp-btn"
+                       onClick={(e) => {
+                         const url = waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name}` : `Hola! Me interesa reservar el apartamento ${mainProp.name}`);
+                         if (!localStorage.getItem('lead_registered')) {
+                           e.preventDefault();
+                           handleRedirectWithLead(url, 'whatsapp');
+                         }
+                       }}
+                       style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.75rem 1.6rem', borderRadius:8, fontWeight:700, fontSize:'0.85rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
+                      {lang === 'EN' ? '💬 Inquire direct' : '💬 Consultar directo'}
+                    </a>
                   </div>
 
                   {/* Quick Airbnb links */}

@@ -21,15 +21,18 @@ export const SITE = {
 
   // ── Links Airbnb (Propiedad Bogotá) ────────────────
   airbnb: {
-    listing:   'https://es-l.airbnb.com/rooms/1637747920094051201?unique_share_id=7363f5cf-eace-4af5-b476-c8d522716b62&viralityEntryPoint=1&s=76',
-    booking:   'https://www.airbnb.com.co/book/stays/1637747920094051201?checkin=2026-07-05&numberOfAdults=1&checkout=2026-07-15&guestCurrency=COP&productId=1637747920094051201&isWorkTrip=false&numberOfChildren=0&numberOfInfants=0&numberOfPets=0&code=HMMKPNM3HC&orderId=1717084509004352174',
-    reviews:   'https://www.airbnb.com.co/rooms/1637747920094051201/reviews?unique_share_id=7363f5cf-eace-4af5-b476-c8d522716b62&viralityEntryPoint=1&s=76',
+    listing:   'https://es-l.airbnb.com/rooms/1637747920094051201?unique_share_id=d0631700-1174-45d2-91c9-0cf08fa95e96&viralityEntryPoint=1&s=76',
+    booking:   'https://es-l.airbnb.com/rooms/1637747920094051201?unique_share_id=d0631700-1174-45d2-91c9-0cf08fa95e96&viralityEntryPoint=1&s=76',
+    reviews:   'https://www.airbnb.com.co/rooms/1637747920094051201/reviews?unique_share_id=d0631700-1174-45d2-91c9-0cf08fa95e96&viralityEntryPoint=1&s=76',
     contact:   'https://www.airbnb.com.co/contact_host/1637747920094051201/send_message',
     calendar:  'https://www.airbnb.com.co/contact_host/1637747920094051201/send_message#availability-calendar',
-    houseRules:'https://www.airbnb.com.co/rooms/1637747920094051201/house-rules?unique_share_id=7363f5cf-eace-4af5-b476-c8d522716b62&viralityEntryPoint=1&s=76',
-    safety:    'https://www.airbnb.com.co/rooms/1637747920094051201/safety?unique_share_id=7363f5cf-eace-4af5-b476-c8d522716b62&viralityEntryPoint=1&s=76',
+    houseRules:'https://www.airbnb.com.co/rooms/1637747920094051201/house-rules?unique_share_id=d0631700-1174-45d2-91c9-0cf08fa95e96&viralityEntryPoint=1&s=76',
+    safety:    'https://www.airbnb.com.co/rooms/1637747920094051201/safety?unique_share_id=d0631700-1174-45d2-91c9-0cf08fa95e96&viralityEntryPoint=1&s=76',
     embedId:   '1637747920094051201',
   },
+
+  // ── Links Booking.com ──────────────────────────────
+  bookingLink: 'https://www.booking.com/Share-twQDfc',
 
   // ── Propiedad principal ────────────────────────────
   property: {

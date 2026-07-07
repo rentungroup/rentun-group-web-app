@@ -6,6 +6,7 @@ import Admin      from './pages/Admin';
 import Legal      from './pages/Legal';
 import PrintView  from './pages/PrintView';
 import ChatWidget from './components/ChatWidget';
+import LeadModal  from './components/LeadModal';
 import { AuthProvider } from './context/AuthContext';
 import { ConfigProvider, useConfig } from './context/ConfigContext';
 import { Analytics } from '@vercel/analytics/react';
@@ -53,6 +54,7 @@ export default function App() {
             <Route path="/imprimir/:id"  element={<PrintView />} />
           </Routes>
           <ChatWidget />
+          <LeadModal />
         </BrowserRouter>
         <Analytics />
       </ConfigProvider>

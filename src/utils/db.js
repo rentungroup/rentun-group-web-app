@@ -74,6 +74,7 @@ export const DEFAULTS = {
       airbnbRules: SITE.airbnb.houseRules,
       airbnbSafety: SITE.airbnb.safety,
       airbnbEmbedId: SITE.airbnb.embedId,
+      bookingLink: SITE.bookingLink,
       images: [
         'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=60&w=800',
         'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=60&w=800',
@@ -215,7 +216,8 @@ export const fetchConfig = async () => {
       airbnbBooking: p.airbnb_booking, airbnbReviews: p.airbnb_reviews,
       airbnbContact: p.airbnb_contact, airbnbCalendar: p.airbnb_calendar,
       airbnbRules: p.airbnb_rules, airbnbSafety: p.airbnb_safety,
-      airbnbEmbedId: p.airbnb_embed_id, images: p.images || [],
+      airbnbEmbedId: p.airbnb_embed_id, bookingLink: p.booking_link || '',
+      images: p.images || [],
       customWifiQR: p.custom_wifi_qr, customGuideQR: p.custom_guide_qr,
       customWhatsappQR: p.custom_whatsapp_qr
     })) || [];
@@ -339,6 +341,7 @@ export const saveConfig = async (newData) => {
         airbnb_reviews: p.airbnbReviews || '', airbnb_contact: p.airbnbContact || '',
         airbnb_calendar: p.airbnbCalendar || '', airbnb_rules: p.airbnbRules || '',
         airbnb_safety: p.airbnbSafety || '', airbnb_embed_id: p.airbnbEmbedId || '',
+        booking_link: p.bookingLink || '',
         images: Array.isArray(p.images) ? p.images : [],
         custom_wifi_qr: p.customWifiQR || '', custom_guide_qr: p.customGuideQR || '',
         custom_whatsapp_qr: p.customWhatsappQR || ''
@@ -492,6 +495,7 @@ const TRANSLATIONS = {
     heroDefaultAccent: 'con estilo y confort',
     heroDefaultSub: 'Apartamentos de corta estancia cuidadosamente equipados en Bogotá. Atención personalizada, check-in flexible y la tranquilidad de un anfitrión ★5.0 en Airbnb.',
     btnAirbnb: '🗓️ Reservar en Airbnb',
+    btnBooking: '🏨 Reservar en Booking',
     btnWhatsapp: '🗓️ Reservar por WhatsApp',
     btnAvailability: '💬 Consultar disponibilidad',
 
@@ -561,6 +565,7 @@ const TRANSLATIONS = {
     heroDefaultAccent: 'with style and comfort',
     heroDefaultSub: 'Carefully equipped short-stay apartments in Bogota. Personalized attention, flexible check-in, and the peace of mind of a ★5.0 host on Airbnb.',
     btnAirbnb: '🗓️ Book on Airbnb',
+    btnBooking: '🏨 Book on Booking',
     btnWhatsapp: '🗓️ Book on WhatsApp',
     btnAvailability: '💬 Check availability',
 
