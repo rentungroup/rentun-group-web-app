@@ -5,6 +5,7 @@ import GuestGuide from './pages/GuestGuide';
 import Admin      from './pages/Admin';
 import Legal      from './pages/Legal';
 import PrintView  from './pages/PrintView';
+import PrintContract from './pages/PrintContract';
 import ChatWidget from './components/ChatWidget';
 import LeadModal  from './components/LeadModal';
 import { AuthProvider } from './context/AuthContext';
@@ -52,6 +53,7 @@ export default function App() {
             <Route path="/admin"         element={<Admin />} />
             <Route path="/legal"         element={<Legal />} />
             <Route path="/imprimir/:id"  element={<PrintView />} />
+            <Route path="/imprimir-contrato/:id" element={<PrintContract />} />
           </Routes>
           <ChatWidget />
           <LeadModal />

@@ -4,6 +4,11 @@ import { useConfig } from '../context/ConfigContext';
 import { handleRedirectWithLead } from './LeadModal';
 
 export default function ChatWidget() {
+  // Hide on admin and print paths
+  if (window.location.pathname.startsWith('/admin') || window.location.pathname.startsWith('/imprimir-contrato')) {
+    return null;
+  }
+
   const { config } = useConfig();
   const [isOpen, setIsOpen] = useState(false);
   
