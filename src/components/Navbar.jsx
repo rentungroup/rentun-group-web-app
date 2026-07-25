@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useConfig } from '../context/ConfigContext';
 import { waLink, getTranslation } from '../utils/db';
@@ -13,6 +13,7 @@ export default function Navbar() {
   
   const { config: cfg } = useConfig();
   const loc = useLocation();
+  const navigate = useNavigate();
   const isLanding = loc.pathname === '/';
   const t = getTranslation(lang);
 
@@ -36,6 +37,10 @@ export default function Navbar() {
 
   const scrollTo = (id) => {
     setMenuOpen(false);
+    if (id === 'propiedades') {
+      navigate('/propiedades');
+      return;
+    }
     if (!isLanding) {
       window.location.href = `/#${id}`;
       return;

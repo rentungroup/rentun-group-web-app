@@ -75,6 +75,7 @@ export const DEFAULTS = {
       airbnbSafety: SITE.airbnb.safety,
       airbnbEmbedId: SITE.airbnb.embedId,
       bookingLink: SITE.bookingLink,
+      whatsappNumber: SITE.whatsapp,
       images: [
         'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=60&w=800',
         'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=60&w=800',
@@ -218,6 +219,7 @@ export const fetchConfig = async () => {
       airbnbContact: p.airbnb_contact, airbnbCalendar: p.airbnb_calendar,
       airbnbRules: p.airbnb_rules, airbnbSafety: p.airbnb_safety,
       airbnbEmbedId: p.airbnb_embed_id, bookingLink: p.booking_link || '',
+      whatsappNumber: p.whatsapp_number || '',
       images: p.images || [],
       customWifiQR: p.custom_wifi_qr, customGuideQR: p.custom_guide_qr,
       customWhatsappQR: p.custom_whatsapp_qr
@@ -344,6 +346,7 @@ export const saveConfig = async (newData) => {
         airbnb_calendar: p.airbnbCalendar || '', airbnb_rules: p.airbnbRules || '',
         airbnb_safety: p.airbnbSafety || '', airbnb_embed_id: p.airbnbEmbedId || '',
         booking_link: p.bookingLink || '',
+        whatsapp_number: p.whatsappNumber || '',
         images: Array.isArray(p.images) ? p.images : [],
         custom_wifi_qr: p.customWifiQR || '', custom_guide_qr: p.customGuideQR || '',
         custom_whatsapp_qr: p.customWhatsappQR || ''

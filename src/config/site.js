@@ -16,7 +16,7 @@ export const SITE = {
   hostImage: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=165&h=165&fit=crop&q=80',
 
   // ── Contacto ───────────────────────────────────────
-  whatsapp: '573219511173',           // Número temporal — actualizar cuando llegue el real
+  whatsapp: '573134900223',           // Número oficial de la empresa (chatbot / general)
   email: 'admin@rentungroup.com',    // TODO: conectar a Supabase para edición dinámica
 
   // ── Links Airbnb (Propiedad Bogotá) ────────────────

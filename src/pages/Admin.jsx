@@ -178,7 +178,7 @@ export default function Admin() {
     id: '', name: '', description: '', location: '', address: '', wifiSSID: '', wifiPassword: '', price: '',
     bedrooms: 1, beds: 1, baths: 1, guests: 2, isAirbnb: true,
     airbnbListing: '', airbnbBooking: '', airbnbReviews: '', airbnbContact: '', airbnbCalendar: '', airbnbRules: '', airbnbSafety: '', airbnbEmbedId: '',
-    bookingLink: '',
+    bookingLink: '', whatsappNumber: '',
     images: [], customWifiQR: '', customGuideQR: '', customWhatsappQR: ''
   });
   const [isEditingProp, setIsEditingProp] = useState(false);
@@ -537,6 +537,7 @@ export default function Admin() {
     setPropForm({
       ...p,
       bookingLink: p.bookingLink || '',
+      whatsappNumber: p.whatsappNumber || '',
       images: p.images || [],
       customWifiQR: p.customWifiQR || '',
       customGuideQR: p.customGuideQR || '',
@@ -561,7 +562,7 @@ export default function Admin() {
       id: '', name: '', description: '', location: '', address: '', wifiSSID: '', wifiPassword: '', price: '',
       bedrooms: 1, beds: 1, baths: 1, guests: 2, isAirbnb: true,
       airbnbListing: '', airbnbBooking: '', airbnbReviews: '', airbnbContact: '', airbnbCalendar: '', airbnbRules: '', airbnbSafety: '', airbnbEmbedId: '',
-      bookingLink: '',
+      bookingLink: '', whatsappNumber: '',
       images: [], customWifiQR: '', customGuideQR: '', customWhatsappQR: ''
     });
     setIsEditingProp(false);
@@ -1589,6 +1590,9 @@ export default function Admin() {
                       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'0.8rem' }}>
                         <Field label="Nombre Red WiFi" value={propForm.wifiSSID} onChange={e => setPropForm(p => ({ ...p, wifiSSID: e.target.value }))} />
                         <Field label="Contraseña WiFi" value={propForm.wifiPassword} onChange={e => setPropForm(p => ({ ...p, wifiPassword: e.target.value }))} />
+                      </div>
+                      <div style={{ marginTop:'0.8rem' }}>
+                        <Field label="Número de WhatsApp para Reservas de este apartamento (con código de país, sin +)" value={propForm.whatsappNumber || ''} onChange={e => setPropForm(p => ({ ...p, whatsappNumber: e.target.value }))} placeholder="Ej: 573219511173" hint="Si se deja vacío, usará el número de WhatsApp de la empresa configurado arriba." />
                       </div>
                     </AdminSection>
 

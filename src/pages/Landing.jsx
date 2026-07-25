@@ -205,9 +205,11 @@ function PropImageCycle({ images }) {
   );
 }
 
-// ── PropCard: reusable card for 2-3 grid and 4+ slider ─────────────────────
-function PropCard({ p, idx, lang, t, waLink }) {
+// ── PropCard: reusable card for properties grid and slider ─────────────────────
+export function PropCard({ p, idx, lang, t, waLink }) {
   const [imgIdx, setImgIdx] = useState(0);
+  const { config: cfg } = useConfig();
+  
   useEffect(() => {
     if (!p.images || p.images.length <= 1) return;
     const timer = setInterval(() => setImgIdx(i => (i + 1) % p.images.length), 3500);
@@ -236,9 +238,15 @@ function PropCard({ p, idx, lang, t, waLink }) {
       {/* Card Content */}
       <div style={{ padding:'1.8rem', flex:1, display:'flex', flexDirection:'column', justifyContent:'space-between', gap:'1.2rem' }}>
         <div>
-          <h3 style={{ fontSize:'1.2rem', fontWeight:800, color:'var(--text)', margin:'0 0 0.4rem', letterSpacing:'-0.01em' }}>{p.name}</h3>
-          <p style={{ fontSize:'0.75rem', color:'var(--orange)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.05em', margin:'0 0 0.8rem' }}>{p.location}</p>
-          <p style={{ fontSize:'0.85rem', color:'var(--text-muted)', lineHeight:1.6, margin:0, display:'-webkit-box', WebkitLineClamp:3, WebkitBoxOrient:'vertical', overflow:'hidden' }}>{p.description}</p>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text)', margin: '0 0 0.4rem', letterSpacing: '-0.01em', lineHeight: 1.25 }}>
+            {lang === 'EN' ? (p.nameEn || p.name) : p.name
+          }</h3>
+          <p style={{ fontSize:'0.75rem', color:'var(--orange)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.05em', margin:'0 0 0.8rem' }}>
+            📍 {lang === 'EN' ? (p.locationEn || p.location) : p.location}
+          </p>
+          <p style={{ fontSize:'0.85rem', color:'var(--text-muted)', lineHeight:1.6, margin:0, display:'-webkit-box', WebkitLineClamp:3, WebkitBoxOrient:'vertical', overflow:'hidden' }}>
+            {lang === 'EN' ? (p.descriptionEn || p.description) : p.description}
+          </p>
           <div style={{ display:'flex', gap:'0.8rem', marginTop:'1.2rem', fontSize:'0.78rem', color:'var(--text-muted)', fontWeight:500 }}>
             <span>🛏️ {p.bedrooms} {t.propBedrooms}</span>
             <span>•</span>
@@ -248,19 +256,52 @@ function PropCard({ p, idx, lang, t, waLink }) {
           </div>
         </div>
         <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid #f1f2f4', paddingTop:'1rem' }}>
-          <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:'0.6rem' }}>
-            {p.isAirbnb ? (
+          <div style={{ display:'grid', gridTemplateColumns:(p.isAirbnb && p.bookingLink) ? '1fr 1fr' : '1fr', gap:'0.6rem' }}>
+            {p.isAirbnb && (
               <a href={p.airbnbListing} target="_blank" rel="noopener noreferrer"
-                 style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#FF385C', color:'white', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700 }}>
+                 onClick={(e) => {
+                   if (!localStorage.getItem('lead_registered')) {
+                     e.preventDefault();
+                     handleRedirectWithLead(p.airbnbListing, 'airbnb');
+                   }
+                 }}
+                 style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#FF385C', color:'white', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700, transition:'all 0.2s' }}
+                 onMouseEnter={(e)=>e.currentTarget.style.filter='brightness(0.9)'}
+                 onMouseLeave={(e)=>e.currentTarget.style.filter='none'}
+              >
                 🗓️ Airbnb
               </a>
-            ) : (
-              <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${p.name}` : `Hola! Me interesa reservar el apartamento ${p.name}`)} target="_blank" rel="noopener noreferrer"
-                 style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700 }}>
-                💬 WhatsApp
+            )}
+            {p.bookingLink && (
+              <a href={p.bookingLink} target="_blank" rel="noopener noreferrer"
+                 onClick={(e) => {
+                   if (!localStorage.getItem('lead_registered')) {
+                     e.preventDefault();
+                     handleRedirectWithLead(p.bookingLink, 'booking');
+                   }
+                 }}
+                 style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#003580', color:'white', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700, transition:'all 0.2s' }}
+                 onMouseEnter={(e)=>e.currentTarget.style.filter='brightness(0.95)'}
+                 onMouseLeave={(e)=>e.currentTarget.style.filter='none'}
+              >
+                🏨 Booking
               </a>
             )}
           </div>
+          <a href={waLink(p.whatsappNumber || cfg?.whatsapp || SITE.whatsapp, lang === 'EN' ? `Hello! I'm interested in booking the apartment ${p.name}` : `Hola! Me interesa reservar el apartamento ${p.name}`)} target="_blank" rel="noopener noreferrer"
+             onClick={(e) => {
+               const url = waLink(p.whatsappNumber || cfg?.whatsapp || SITE.whatsapp, lang === 'EN' ? `Hello! I'm interested in booking the apartment ${p.name}` : `Hola! Me interesa reservar el apartamento ${p.name}`);
+               if (!localStorage.getItem('lead_registered')) {
+                 e.preventDefault();
+                 handleRedirectWithLead(url, 'whatsapp');
+               }
+             }}
+             style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700, transition:'all 0.2s' }}
+             onMouseEnter={(e)=>e.currentTarget.style.filter='brightness(0.9)'}
+             onMouseLeave={(e)=>e.currentTarget.style.filter='none'}
+          >
+            💬 {lang === 'EN' ? 'Inquire Direct' : 'Consultar Directo'}
+          </a>
         </div>
       </div>
     </div>
@@ -830,25 +871,46 @@ export default function Landing() {
               </div>
             </div>
 
-          ) : properties.length <= 3 ? (
-            /* ── 2-3 properties: responsive grid ── */
-            <div style={{ display:'grid', gridTemplateColumns: properties.length === 2 ? 'repeat(2,1fr)' : 'repeat(3,1fr)', gap:'2rem', marginTop:'3rem' }}>
-              {properties.map((p, idx) => (
-                <PropCard key={p.id} p={p} idx={idx} lang={lang} t={t} waLink={waLink} />
-              ))}
-            </div>
-
           ) : (
-            /* ── 4+ properties: horizontal scrolling slider ── */
-            <div style={{ position:'relative', marginTop:'3rem' }}>
-              <div style={{ display:'flex', gap:'1.5rem', overflowX:'auto', paddingBottom:'1rem', scrollSnapType:'x mandatory', WebkitOverflowScrolling:'touch', scrollbarWidth:'none' }}>
-                {properties.map((p, idx) => (
-                  <div key={p.id} style={{ minWidth:'300px', maxWidth:'320px', flexShrink:0, scrollSnapAlign:'start' }}>
-                    <PropCard p={p} idx={idx} lang={lang} t={t} waLink={waLink} />
-                  </div>
+            /* ── 2+ properties: responsive grid of featured properties ── */
+            <div>
+              <div style={{ 
+                display:'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+                gap:'2rem', 
+                marginTop:'3rem' 
+              }}>
+                {properties.slice(0, 2).map((p, idx) => (
+                  <PropCard key={p.id} p={p} idx={idx} lang={lang} t={t} waLink={waLink} />
                 ))}
               </div>
-              <p style={{ textAlign:'center', fontSize:'0.75rem', color:'var(--text-muted)', marginTop:'0.5rem' }}>← Desliza para ver más →</p>
+              
+              {properties.length > 2 && (
+                <div style={{ display:'flex', justifyContent:'center', marginTop:'3rem' }}>
+                  <Link to="/propiedades"
+                     style={{ 
+                       display:'inline-flex', 
+                       alignItems:'center', 
+                       gap:'0.5rem', 
+                       background:'linear-gradient(135deg,#0F4C81,#1a5c96)', 
+                       color:'white', 
+                       padding:'0.9rem 2.2rem', 
+                       borderRadius:50, 
+                       fontSize:'0.9rem', 
+                       fontWeight:700, 
+                       textDecoration:'none', 
+                       transition:'all 0.3s ease',
+                       boxShadow:'0 6px 20px rgba(15,76,129,0.3)',
+                       border:'none',
+                       cursor:'pointer'
+                     }}
+                     onMouseEnter={(e)=>{e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 8px 24px rgba(15,76,129,0.42)'}}
+                     onMouseLeave={(e)=>{e.currentTarget.style.transform='none'; e.currentTarget.style.boxShadow='0 6px 20px rgba(15,76,129,0.3)'}}
+                  >
+                    {lang === 'EN' ? '🏨 View all available properties →' : '🏨 Ver todas las propiedades disponibles →'}
+                  </Link>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Landing    from './pages/Landing';
+import Properties from './pages/Properties';
 import GuestGuide from './pages/GuestGuide';
 import Admin      from './pages/Admin';
 import Legal      from './pages/Legal';
@@ -49,6 +50,7 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/"              element={<Landing />} />
+            <Route path="/propiedades"   element={<Properties />} />
             <Route path="/guia"          element={<GuestGuide />} />
             <Route path="/admin"         element={<Admin />} />
             <Route path="/legal"         element={<Legal />} />
