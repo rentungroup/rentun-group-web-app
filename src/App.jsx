@@ -9,6 +9,7 @@ import PrintView  from './pages/PrintView';
 import PrintContract from './pages/PrintContract';
 import ChatWidget from './components/ChatWidget';
 import LeadModal  from './components/LeadModal';
+import ScrollToTop from './components/ScrollToTop';
 import { AuthProvider } from './context/AuthContext';
 import { ConfigProvider, useConfig } from './context/ConfigContext';
 import { Analytics } from '@vercel/analytics/react';
@@ -48,6 +49,7 @@ export default function App() {
       <ConfigProvider>
         <FontLoader />
         <BrowserRouter>
+          <ScrollToTop />
           <Routes>
             <Route path="/"              element={<Landing />} />
             <Route path="/propiedades"   element={<Properties />} />

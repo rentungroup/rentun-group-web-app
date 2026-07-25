@@ -26,6 +26,28 @@ export default function Properties() {
     return () => window.removeEventListener('config_changed', handleConfigChange);
   }, []);
 
+  // Animación Scroll Reveal al cambiar los elementos mostrados
+  useEffect(() => {
+    const els = document.querySelectorAll('.rv');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    const timer = setTimeout(() => {
+      els.forEach(el => io.observe(el));
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      io.disconnect();
+    };
+  }, [filteredProperties]);
+
   // Extraer las zonas únicas de los apartamentos para el filtro
   const locations = Array.from(
     new Set(
