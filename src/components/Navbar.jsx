@@ -100,6 +100,7 @@ export default function Navbar() {
 
       {/* Desktop links */}
       <ul className="nav-desktop" style={{ display: 'flex', alignItems: 'center', gap: '2rem', listStyle: 'none', margin: 0, padding: 0 }}>
+        {!isLanding && <li><Link to="/" style={{ ...navLink, display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>🏠 {lang === 'EN' ? 'Home' : 'Inicio'}</Link></li>}
         <li><button onClick={() => scrollTo('propiedades')} style={navLink}>{t.navProps}</button></li>
         <li><button onClick={() => scrollTo('nosotros')} style={navLink}>{t.navNosotros}</button></li>
         {/* <li><Link to="/guia" style={navLink}>{t.navGuia}</Link></li> */}
@@ -148,6 +149,7 @@ export default function Navbar() {
           boxShadow: '0 12px 36px rgba(0,0,0,0.35)',
           zIndex: 99
         }}>
+          {!isLanding && <Link to="/" onClick={() => setMenuOpen(false)} style={{ ...mobileNavLink, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>🏠 {lang === 'EN' ? 'Home' : 'Inicio'}</Link>}
           <button onClick={() => scrollTo('propiedades')} style={mobileNavLink}>{t.navProps}</button>
           <button onClick={() => scrollTo('nosotros')} style={mobileNavLink}>{t.navNosotros}</button>
           {/* <Link to="/guia" onClick={() => setMenuOpen(false)} style={mobileNavLink}>{t.navGuia}</Link> */}

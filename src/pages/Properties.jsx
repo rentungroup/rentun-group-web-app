@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useConfig } from '../context/ConfigContext';
 import { waLink, getTranslation } from '../utils/db';
 import { SITE } from '../config/site';
@@ -64,9 +65,32 @@ export default function Properties() {
         padding: '9rem 4rem 5rem', 
         color: 'white', 
         textAlign: 'center',
-        borderBottom: '4px solid var(--orange)'
+        borderBottom: '4px solid var(--orange)',
+        position: 'relative'
       }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', position: 'relative' }}>
+          <Link to="/" style={{
+            position: 'absolute',
+            top: '-2.5rem',
+            left: '1rem',
+            color: 'rgba(255,255,255,0.75)',
+            textDecoration: 'none',
+            fontSize: '0.85rem',
+            fontWeight: 700,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.3rem',
+            transition: 'color 0.2s',
+            background: 'rgba(255,255,255,0.08)',
+            padding: '0.4rem 1rem',
+            borderRadius: 50,
+            border: '1px solid rgba(255,255,255,0.15)'
+          }}
+          onMouseEnter={(e)=>{e.currentTarget.style.color='white'; e.currentTarget.style.background='rgba(255,255,255,0.15)'}}
+          onMouseLeave={(e)=>{e.currentTarget.style.color='rgba(255,255,255,0.75)'; e.currentTarget.style.background='rgba(255,255,255,0.08)'}}
+          >
+            ← {lang === 'EN' ? 'Back to home' : 'Volver al inicio'}
+          </Link>
           <span style={{ 
             fontSize: '0.75rem', 
             fontWeight: 800, 
@@ -74,7 +98,8 @@ export default function Properties() {
             letterSpacing: '0.15em', 
             color: 'var(--orange)', 
             display: 'block', 
-            marginBottom: '0.8rem' 
+            marginBottom: '0.8rem',
+            marginTop: '0.5rem'
           }}>
             {lang === 'EN' ? '🏨 Premium Catalog' : '🏨 Catálogo Premium'}
           </span>
