@@ -337,11 +337,11 @@ export default function Landing() {
   }, [lang]);
 
   const { config: cfg } = useConfig();
-  const properties = cfg.properties || [];
+  const properties = cfg?.properties || [];
   const mainProp = properties[0] || {};
   const bookingLink = mainProp.bookingLink || SITE.bookingLink;
   const t = getTranslation(lang);
-  const waBtnLink = waLink(cfg.whatsapp, '¡Hola! Quiero información para reservar mi estadía en Rentun Group.');
+  const waBtnLink = cfg ? waLink(cfg.whatsapp, '¡Hola! Quiero información para reservar mi estadía en Rentun Group.') : '';
   
   // Cargamos el SDK de Airbnb para mostrar el widget en la sección de propiedades
   useEffect(() => {
@@ -383,6 +383,8 @@ export default function Landing() {
     }, 500);
     return () => clearInterval(interval);
   }, [mainProp.isAirbnb]);
+
+  if (!cfg) return null;
 
   // Enlaces de Airbnb para el primer apartamento (Hero)
   const ab = {

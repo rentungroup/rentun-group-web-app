@@ -9,8 +9,6 @@ import { PropCard } from './Landing';
 export default function Properties() {
   const { config: cfg } = useConfig();
   const [lang, setLang] = useState(localStorage.getItem('app_lang') || 'ES');
-  const properties = cfg.properties || [];
-  const t = getTranslation(lang);
 
   // Estados de Filtros
   const [search, setSearch] = useState('');
@@ -26,27 +24,8 @@ export default function Properties() {
     return () => window.removeEventListener('config_changed', handleConfigChange);
   }, []);
 
-  // Animación Scroll Reveal al cambiar los elementos mostrados
-  useEffect(() => {
-    const els = document.querySelectorAll('.rv');
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('in');
-          io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.1 });
-    
-    const timer = setTimeout(() => {
-      els.forEach(el => io.observe(el));
-    }, 100);
-
-    return () => {
-      clearTimeout(timer);
-      io.disconnect();
-    };
-  }, [filteredProperties]);
+  // Extraer propiedades
+  const properties = cfg?.properties || [];
 
   // Extraer las zonas únicas de los apartamentos para el filtro
   const locations = Array.from(
@@ -76,6 +55,38 @@ export default function Properties() {
 
     return matchesSearch && matchesLocation && matchesGuests;
   });
+
+  // Animación Scroll Reveal al cambiar los elementos mostrados
+  useEffect(() => {
+    const els = document.querySelectorAll('.rv');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    const timer = setTimeout(() => {
+      els.forEach(el => io.observe(el));
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      io.disconnect();
+    };
+  }, [filteredProperties]);
+
+  if (!cfg) {
+    return (
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#0B2035', color: 'white' }}>
+        <p>Cargando catálogo...</p>
+      </div>
+    );
+  }
+
+  const t = getTranslation(lang);
 
   return (
     <div style={{ background: '#f8fafc', minHeight: '100vh', display: 'flex', flexDirection: 'column', fontFamily: 'var(--font-body, sans-serif)' }}>

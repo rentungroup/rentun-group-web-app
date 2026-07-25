@@ -11,6 +11,14 @@ export default function Legal() {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
+  if (!cfg) {
+    return (
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#0B2035', color: 'white' }}>
+        <p>Cargando políticas...</p>
+      </div>
+    );
+  }
+
   const legalPages = (cfg.legalPages || []).filter(p => p.is_active !== false);
 
   return (

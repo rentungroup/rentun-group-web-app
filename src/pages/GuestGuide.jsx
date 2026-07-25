@@ -29,6 +29,14 @@ export default function GuestGuide() {
     return () => window.removeEventListener('config_changed', handleConfigChange);
   }, []);
 
+  if (!cfg) {
+    return (
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#0B2035', color: 'white' }}>
+        <p>Cargando guía...</p>
+      </div>
+    );
+  }
+
   const t = getTranslation(lang);
 
   const TABS = [

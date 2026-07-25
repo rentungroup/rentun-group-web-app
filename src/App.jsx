@@ -16,7 +16,8 @@ import { Analytics } from '@vercel/analytics/react';
 
 function FontLoader() {
   const { config } = useConfig();
-  const fontPair = config?.fontPair || 'outfit_inter';
+  if (!config) return null;
+  const fontPair = config.fontPair || 'outfit_inter';
 
   useEffect(() => {
 
