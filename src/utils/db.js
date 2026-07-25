@@ -196,7 +196,7 @@ export const fetchConfig = async () => {
       manualsRes, rulesRes, emergenciesRes, faqsRes, legalPagesRes
     ] = await Promise.all([
       supabase.from('site_settings').select('*').eq('id', 1).single(),
-      supabase.from('properties').select('*'),
+      supabase.from('properties').select('*').order('created_at', { ascending: true }),
       supabase.from('places').select('*'),
       supabase.from('manuals').select('*'),
       supabase.from('house_rules').select('*'),
