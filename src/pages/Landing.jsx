@@ -1141,7 +1141,7 @@ export default function Landing() {
         "url": "https://rentungroup.com",
         "description": "Rentas · Gestión · Inversión. Apartamentos de corta estancia con servicio premium en Bogotá.",
         "creator": { "@type": "Organization", "name": "J&M Tech Solutions", "url": "https://www.jymtechsolutions.online/es" }
-      })}} />
+      }).replace(/\u0026/g, '&')}} />
     </>
   );
 }

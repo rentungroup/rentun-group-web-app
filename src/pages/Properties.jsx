@@ -101,29 +101,30 @@ export default function Properties() {
         borderBottom: '4px solid var(--orange)',
         position: 'relative'
       }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto', position: 'relative' }}>
-          <Link to="/" style={{
-            position: 'absolute',
-            top: '-2.5rem',
-            left: '1rem',
-            color: 'rgba(255,255,255,0.75)',
-            textDecoration: 'none',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.3rem',
-            transition: 'color 0.2s',
-            background: 'rgba(255,255,255,0.08)',
-            padding: '0.4rem 1rem',
-            borderRadius: 50,
-            border: '1px solid rgba(255,255,255,0.15)'
-          }}
-          onMouseEnter={(e)=>{e.currentTarget.style.color='white'; e.currentTarget.style.background='rgba(255,255,255,0.15)'}}
-          onMouseLeave={(e)=>{e.currentTarget.style.color='rgba(255,255,255,0.75)'; e.currentTarget.style.background='rgba(255,255,255,0.08)'}}
-          >
-            ← {lang === 'EN' ? 'Back to home' : 'Volver al inicio'}
-          </Link>
+        {/* Botón volver — fuera del contenedor centrado para no desplazar el h1 */}
+        <Link to="/" style={{
+          position: 'absolute',
+          top: '5.5rem',
+          left: '2rem',
+          color: 'rgba(255,255,255,0.75)',
+          textDecoration: 'none',
+          fontSize: '0.85rem',
+          fontWeight: 700,
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '0.3rem',
+          transition: 'color 0.2s',
+          background: 'rgba(255,255,255,0.08)',
+          padding: '0.4rem 1rem',
+          borderRadius: 50,
+          border: '1px solid rgba(255,255,255,0.15)'
+        }}
+        onMouseEnter={(e)=>{e.currentTarget.style.color='white'; e.currentTarget.style.background='rgba(255,255,255,0.15)'}}
+        onMouseLeave={(e)=>{e.currentTarget.style.color='rgba(255,255,255,0.75)'; e.currentTarget.style.background='rgba(255,255,255,0.08)'}}
+        >
+          ← {lang === 'EN' ? 'Back to home' : 'Volver al inicio'}
+        </Link>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
           <span style={{ 
             fontSize: '0.75rem', 
             fontWeight: 800, 
