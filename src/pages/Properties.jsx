@@ -124,7 +124,7 @@ export default function Properties() {
         >
           ← {lang === 'EN' ? 'Back to home' : 'Volver al inicio'}
         </Link>
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
           <span style={{ 
             fontSize: '0.75rem', 
             fontWeight: 800, 
@@ -133,7 +133,8 @@ export default function Properties() {
             color: 'var(--orange)', 
             display: 'block', 
             marginBottom: '0.8rem',
-            marginTop: '0.5rem'
+            marginTop: '0.5rem',
+            textAlign: 'center'
           }}>
             {lang === 'EN' ? '🏨 Premium Catalog' : '🏨 Catálogo Premium'}
           </span>
@@ -141,7 +142,8 @@ export default function Properties() {
             fontSize: 'clamp(2rem, 4vw, 3rem)', 
             fontWeight: 900, 
             letterSpacing: '-0.03em', 
-            margin: 0,
+            margin: '0 auto',
+            textAlign: 'center',
             fontFamily: 'var(--font-header, serif)'
           }}>
             {lang === 'EN' ? 'Available Apartments' : 'Apartamentos Disponibles'}

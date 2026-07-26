@@ -1132,16 +1132,6 @@ export default function Landing() {
           </p>
         </div>
       </footer>
-
-      {/* Schema SEO */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Rentun Group",
-        "url": "https://rentungroup.com",
-        "description": "Rentas · Gestión · Inversión. Apartamentos de corta estancia con servicio premium en Bogotá.",
-        "creator": { "@type": "Organization", "name": "J&M Tech Solutions", "url": "https://www.jymtechsolutions.online/es" }
-      }).replace(/\u0026/g, '&')}} />
     </>
   );
 }
