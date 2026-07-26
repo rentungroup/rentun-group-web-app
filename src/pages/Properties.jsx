@@ -152,7 +152,8 @@ export default function Properties() {
             marginTop: '1rem', 
             lineHeight: 1.6,
             maxWidth: '600px',
-            margin: '1rem auto 0'
+            margin: '1rem auto 0',
+            textAlign: 'center'
           }}>
             {lang === 'EN' 
               ? 'Find the perfect place for your stay in Bogota. Fully equipped apartments in the most exclusive areas.' 
