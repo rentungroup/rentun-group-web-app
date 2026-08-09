@@ -97,10 +97,13 @@ export default function Admin() {
   
   const [contractSettings, setContractSettings] = useState(null);
   const [loadingContractSettings, setLoadingContractSettings] = useState(false);
-  const [contractSettingsForm, setContractSettingsForm] = useState({ logo_url: '', contract_text: '', last_code_number: 0, client_email_webhook: '' });
+  const [contractSettingsForm, setContractSettingsForm] = useState({ logo_url: '', contract_text: '', contract_text_2: '', last_code_number: 0, client_email_webhook: '' });
+  const [activeSettingTemplateTab, setActiveSettingTemplateTab] = useState('template_1');
+  const [showTemplateViewerModal, setShowTemplateViewerModal] = useState(false);
+  const [selectedViewerTemplate, setSelectedViewerTemplate] = useState('template_1');
 
   const DEFAULT_CONTRACT_FORM = {
-    id: '', agent_id: '', client_name: '', property_address: '', code: '',
+    id: '', agent_id: '', client_name: '', property_address: '', code: '', template_type: 'template_1',
     mandante1: { razonSocial: '', nombre: '', documento: '', tipoDoc: 'CC', expedido: '', fechaNacimiento: '', telefono: '', celular: '', direccion: '', casaApto: '', torre: '', barrio: '', conjunto: '', ciudad: '', email: '', direccionOficina: '', barrioOficina: '', ciudadOficina: '', regimen: 'No responsable de IVA', agenteRetenedor: 'No', pep: 'No', pepTipo: '' },
     mandante2: { razonSocial: '', nombre: '', documento: '', tipoDoc: 'CC', expedido: '', fechaNacimiento: '', telefono: '', celular: '', direccion: '', casaApto: '', torre: '', barrio: '', conjunto: '', ciudad: '', email: '', direccionOficina: '', barrioOficina: '', ciudadOficina: '', regimen: 'No responsable de IVA', agenteRetenedor: 'No', pep: 'No', pepTipo: '' },
     pagoRenta: { formaPago: 'Transferencia Bancaria', cuentaNumero: '', banco: '', tipoCuenta: 'Ahorros', ciudadApertura: '', titularCuenta: '', titularDocumento: '', titularDocTipo: 'CC' },
@@ -265,6 +268,7 @@ export default function Admin() {
         setContractSettingsForm({
           logo_url: data.logo_url || '',
           contract_text: data.contract_text || '',
+          contract_text_2: data.contract_text_2 || '',
           last_code_number: data.last_code_number || 0,
           client_email_webhook: data.client_email_webhook || ''
         });
@@ -868,6 +872,7 @@ export default function Admin() {
           id: 1,
           logo_url: contractSettingsForm.logo_url,
           contract_text: contractSettingsForm.contract_text,
+          contract_text_2: contractSettingsForm.contract_text_2,
           last_code_number: Number(contractSettingsForm.last_code_number || 0),
           client_email_webhook: contractSettingsForm.client_email_webhook
         });
@@ -2467,17 +2472,22 @@ export default function Admin() {
                 </h3>
                 <p style={{ fontSize:'0.82rem', color:'#5c6d80', margin:'0.3rem 0 0 0' }}>Crea, edita y genera vistas de impresión de contratos para asesores externos.</p>
               </div>
-              <button onClick={() => {
-                setContractForm({
-                  ...DEFAULT_CONTRACT_FORM,
-                  agent_id: userRole === 'agent' && currentAgent ? currentAgent.id : ''
-                });
-                setIsEditingContract(false);
-                setContractFormStep(1);
-                setShowContractModal(true);
-              }} style={{ padding:'0.75rem 1.8rem', background:'linear-gradient(135deg,#0a3560,#0F4C81)', color:'white', border:'none', borderRadius:50, fontWeight:750, fontSize:'0.85rem', cursor:'pointer', boxShadow:'0 6px 16px rgba(15,76,129,0.25)', display:'flex', alignItems:'center', gap:'0.4rem' }}>
-                <Plus size={16} /> Crear Nuevo Contrato
-              </button>
+              <div style={{ display:'flex', gap:'0.8rem', flexWrap:'wrap' }}>
+                <button onClick={() => setShowTemplateViewerModal(true)} style={{ padding:'0.75rem 1.4rem', background:'white', border:'1.5px solid #0F4C81', color:'#0F4C81', borderRadius:50, fontWeight:750, fontSize:'0.82rem', cursor:'pointer', display:'flex', alignItems:'center', gap:'0.4rem', boxShadow:'0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <FileText size={16} /> 📜 Consultar / Comparar Plantillas
+                </button>
+                <button onClick={() => {
+                  setContractForm({
+                    ...DEFAULT_CONTRACT_FORM,
+                    agent_id: userRole === 'agent' && currentAgent ? currentAgent.id : ''
+                  });
+                  setIsEditingContract(false);
+                  setContractFormStep(1);
+                  setShowContractModal(true);
+                }} style={{ padding:'0.75rem 1.8rem', background:'linear-gradient(135deg,#0a3560,#0F4C81)', color:'white', border:'none', borderRadius:50, fontWeight:750, fontSize:'0.85rem', cursor:'pointer', boxShadow:'0 6px 16px rgba(15,76,129,0.25)', display:'flex', alignItems:'center', gap:'0.4rem' }}>
+                  <Plus size={16} /> Crear Nuevo Contrato
+                </button>
+              </div>
             </div>
 
             {/* Buscador */}
@@ -2496,6 +2506,7 @@ export default function Admin() {
                   <thead>
                     <tr style={{ borderBottom:'2px solid #E6E7E8', color:'#0F4C81', textAlign:'left', fontWeight:700 }}>
                       <th style={{ padding:'1rem 0.8rem' }}>Código</th>
+                      <th style={{ padding:'1rem 0.8rem' }}>Plantilla</th>
                       <th style={{ padding:'1rem 0.8rem' }}>Cliente (Mandante)</th>
                       <th style={{ padding:'1rem 0.8rem' }}>Inmueble / Dirección</th>
                       <th style={{ padding:'1rem 0.8rem' }}>Asesor Externo</th>
@@ -2513,9 +2524,22 @@ export default function Admin() {
                       })
                       .map(c => {
                         const agentObj = agents.find(a => a.id === c.agent_id);
+                        const isT2 = c.contract_data?.template_type === 'template_2';
                         return (
                           <tr key={c.id} style={{ borderBottom:'1px solid #E6E7E8', transition:'background 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e)=>e.currentTarget.style.background='none'}>
                             <td style={{ padding:'1.1rem 0.8rem', fontWeight:850, color:'#F57C00' }}>{c.code}</td>
+                            <td style={{ padding:'1.1rem 0.8rem' }}>
+                              <span style={{ 
+                                fontSize:'0.68rem', 
+                                fontWeight:800, 
+                                padding:'0.2rem 0.6rem', 
+                                borderRadius:50, 
+                                background: isT2 ? 'rgba(245,124,0,0.1)' : 'rgba(15,76,129,0.1)', 
+                                color: isT2 ? '#D97706' : '#0F4C81' 
+                              }}>
+                                {isT2 ? '🏢 Adm. Integral (Renta Corta)' : '🏠 Arrendamiento Tradicional'}
+                              </span>
+                            </td>
                             <td style={{ padding:'1.1rem 0.8rem', fontWeight:700, color:'#0d1724' }}>{c.client_name}</td>
                             <td style={{ padding:'1.1rem 0.8rem', color:'#5c6d80' }}>{c.property_address || 'No especificada'}</td>
                             <td style={{ padding:'1.1rem 0.8rem', fontWeight:600 }}>{agentObj ? agentObj.name : 'Interno / Oficina'}</td>
@@ -2549,7 +2573,7 @@ export default function Admin() {
             <h3 style={{ fontSize:'1.4rem', fontWeight:800, color:'#0F4C81', fontFamily:'var(--font-header, sans-serif)', marginBottom:'0.5rem' }}>
               ⚙️ Configuración General de Contratos
             </h3>
-            <p style={{ fontSize:'0.82rem', color:'#5c6d80', marginBottom:'2rem' }}>Define la plantilla de logo, el texto base de las cláusulas legales y controla la numeración de los contratos.</p>
+            <p style={{ fontSize:'0.82rem', color:'#5c6d80', marginBottom:'2rem' }}>Define la plantilla de logo, los textos oficiales de las cláusulas legales y controla la numeración de los contratos.</p>
             
             <form onSubmit={saveContractSettings} style={{ display:'flex', flexDirection:'column', gap:'1.5rem' }}>
               <div style={{ border:'1px solid #cbd5e1', borderRadius:16, padding:'1.5rem', background:'#f8fafc' }}>
@@ -2591,13 +2615,42 @@ export default function Admin() {
                 </div>
                 <div>
                   <AdminSection title="Cláusulas Legales Base" icon="📜">
-                    <textarea 
-                      value={contractSettingsForm.contract_text} 
-                      onChange={e => setContractSettingsForm(prev => ({ ...prev, contract_text: e.target.value }))} 
-                      rows={14} 
-                      style={{ width:'100%', padding:'1rem', border:'1.5px solid #E6E7E8', borderRadius:12, fontSize:'0.82rem', fontFamily:'monospace', outline:'none', lineHeight:1.6, resize:'vertical' }} 
-                      placeholder="Escribe el texto oficial del contrato aquí..."
-                    />
+                    <div style={{ display:'flex', gap:'0.5rem', marginBottom:'1rem' }}>
+                      <button type="button" onClick={() => setActiveSettingTemplateTab('template_1')} style={{ padding:'0.5rem 1rem', borderRadius:50, border: activeSettingTemplateTab === 'template_1' ? 'none' : '1px solid #cbd5e1', background: activeSettingTemplateTab === 'template_1' ? '#0F4C81' : 'white', color: activeSettingTemplateTab === 'template_1' ? 'white' : '#5c6d80', fontWeight:700, fontSize:'0.78rem', cursor:'pointer' }}>
+                        🏠 Plantilla 1: Arrendamiento Tradicional
+                      </button>
+                      <button type="button" onClick={() => setActiveSettingTemplateTab('template_2')} style={{ padding:'0.5rem 1rem', borderRadius:50, border: activeSettingTemplateTab === 'template_2' ? 'none' : '1px solid #cbd5e1', background: activeSettingTemplateTab === 'template_2' ? '#F57C00' : 'white', color: activeSettingTemplateTab === 'template_2' ? 'white' : '#5c6d80', fontWeight:700, fontSize:'0.78rem', cursor:'pointer' }}>
+                        🏢 Plantilla 2: Administración Integral (Renta Corta)
+                      </button>
+                    </div>
+
+                    {activeSettingTemplateTab === 'template_1' ? (
+                      <div>
+                        <label style={{ display:'block', fontSize:'0.72rem', fontWeight:700, color:'#0F4C81', textTransform:'uppercase', marginBottom:'0.4rem' }}>
+                          Texto Base - Plantilla 1 (Arrendamiento Tradicional)
+                        </label>
+                        <textarea 
+                          value={contractSettingsForm.contract_text} 
+                          onChange={e => setContractSettingsForm(prev => ({ ...prev, contract_text: e.target.value }))} 
+                          rows={14} 
+                          style={{ width:'100%', padding:'1rem', border:'1.5px solid #E6E7E8', borderRadius:12, fontSize:'0.82rem', fontFamily:'monospace', outline:'none', lineHeight:1.6, resize:'vertical' }} 
+                          placeholder="Escribe el texto oficial de la Plantilla 1 aquí..."
+                        />
+                      </div>
+                    ) : (
+                      <div>
+                        <label style={{ display:'block', fontSize:'0.72rem', fontWeight:700, color:'#F57C00', textTransform:'uppercase', marginBottom:'0.4rem' }}>
+                          Texto Base - Plantilla 2 (Administración Integral y Comercialización)
+                        </label>
+                        <textarea 
+                          value={contractSettingsForm.contract_text_2} 
+                          onChange={e => setContractSettingsForm(prev => ({ ...prev, contract_text_2: e.target.value }))} 
+                          rows={14} 
+                          style={{ width:'100%', padding:'1rem', border:'1.5px solid #E6E7E8', borderRadius:12, fontSize:'0.82rem', fontFamily:'monospace', outline:'none', lineHeight:1.6, resize:'vertical' }} 
+                          placeholder="Escribe el texto oficial de la Plantilla 2 aquí..."
+                        />
+                      </div>
+                    )}
                   </AdminSection>
                 </div>
               </div>
@@ -2655,6 +2708,19 @@ export default function Admin() {
                 {/* STEP 1: Mandantes y Renta */}
                 {contractFormStep === 1 && (
                   <>
+                    <div style={{ background:'linear-gradient(135deg, rgba(15,76,129,0.05), rgba(245,124,0,0.05))', border:'1.5px solid #0F4C81', padding:'1.2rem', borderRadius:16, marginBottom:'0.5rem' }}>
+                      <SelectField 
+                        label="Plantilla de Contrato a Aplicar *" 
+                        value={contractForm.template_type || 'template_1'} 
+                        onChange={e => setContractForm(prev => ({ ...prev, template_type: e.target.value }))} 
+                        options={[
+                          { value: 'template_1', label: 'Plantilla 1: Arrendamiento Tradicional (Canon Garantizado / Fianza)' },
+                          { value: 'template_2', label: 'Plantilla 2: Administración Integral y Comercialización (Renta Corta / Plataformas / Precios Dinámicos)' }
+                        ]} 
+                        hint="Selecciona la modalidad de contrato legal. Determinará las cláusulas y el título del documento impreso." 
+                      />
+                    </div>
+
                     <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'1.2rem' }}>
                       <SelectField label="Asesor Externo Captador" value={contractForm.agent_id} onChange={e => setContractForm(prev => ({ ...prev, agent_id: e.target.value }))} options={[
                         { value: '', label: 'Interno / Oficina (Oficina principal)' },
@@ -3174,6 +3240,103 @@ export default function Admin() {
                     </button>
                   )}
                 </div>
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* --- MODAL VISOR Y COMPARADOR DE PLANTILLAS --- */}
+        {showTemplateViewerModal && (
+          <div style={{ position:'fixed', inset:0, zIndex:1100, background:'rgba(15,23,42,0.6)', backdropFilter:'blur(4px)', display:'flex', justifyContent:'center', alignItems:'center', padding:'2rem', fontFamily:'inherit' }}>
+            <div style={{ background:'white', borderRadius:24, width:'100%', maxWidth:900, maxHeight:'90vh', display:'flex', flexDirection:'column', border:'1px solid #E6E7E8', boxShadow:'0 20px 40px rgba(0,0,0,0.15)', overflow:'hidden' }}>
+              
+              {/* Header */}
+              <div style={{ background:'linear-gradient(135deg,#071e36,#0F4C81)', padding:'1.5rem 2rem', display:'flex', justifyContent:'space-between', alignItems:'center', color:'white' }}>
+                <div>
+                  <h3 style={{ margin:0, fontSize:'1.2rem', fontWeight:850 }}>
+                    📜 Visor y Comparador de Plantillas Oficiales
+                  </h3>
+                  <span style={{ fontSize:'0.75rem', color:'rgba(255,255,255,0.7)', marginTop:'0.2rem', display:'block' }}>
+                    Consulta y compara los textos legales oficiales predeterminados para la captación de inmuebles.
+                  </span>
+                </div>
+                <button onClick={() => setShowTemplateViewerModal(false)} style={{ border:'none', background:'none', color:'white', cursor:'pointer', fontSize:'1.8rem', fontWeight:700, lineHeight:1 }}>×</button>
+              </div>
+
+              {/* Selector Tabs */}
+              <div style={{ display:'flex', background:'#f8fafc', borderBottom:'1px solid #E6E7E8', padding:'1rem 2rem', gap:'1rem' }}>
+                <button 
+                  onClick={() => setSelectedViewerTemplate('template_1')}
+                  style={{
+                    padding:'0.6rem 1.4rem',
+                    borderRadius:50,
+                    border: selectedViewerTemplate === 'template_1' ? 'none' : '1px solid #cbd5e1',
+                    background: selectedViewerTemplate === 'template_1' ? '#0F4C81' : 'white',
+                    color: selectedViewerTemplate === 'template_1' ? 'white' : '#5c6d80',
+                    fontWeight: 750,
+                    fontSize: '0.82rem',
+                    cursor: 'pointer'
+                  }}>
+                  🏠 Plantilla 1: Arrendamiento Tradicional
+                </button>
+                <button 
+                  onClick={() => setSelectedViewerTemplate('template_2')}
+                  style={{
+                    padding:'0.6rem 1.4rem',
+                    borderRadius:50,
+                    border: selectedViewerTemplate === 'template_2' ? 'none' : '1px solid #cbd5e1',
+                    background: selectedViewerTemplate === 'template_2' ? '#F57C00' : 'white',
+                    color: selectedViewerTemplate === 'template_2' ? 'white' : '#5c6d80',
+                    fontWeight: 750,
+                    fontSize: '0.82rem',
+                    cursor: 'pointer'
+                  }}>
+                  🏢 Plantilla 2: Adm. Integral y Renta Corta
+                </button>
+              </div>
+
+              {/* Info banner */}
+              <div style={{ padding:'1.2rem 2rem 0.5rem 2rem' }}>
+                {selectedViewerTemplate === 'template_1' ? (
+                  <div style={{ background:'rgba(15,76,129,0.05)', border:'1px solid rgba(15,76,129,0.2)', padding:'0.9rem 1.2rem', borderRadius:12, fontSize:'0.8rem', color:'#0F4C81' }}>
+                    <strong>🏠 Plantilla 1 (Tradicional):</strong> Diseñada para contratos de arrendamiento de vivienda o comercio a plazo fijo (mínimo 1 año), con cánones fijados, fianza o seguro de arrendamiento y administración por cuenta del mandante.
+                  </div>
+                ) : (
+                  <div style={{ background:'rgba(245,124,0,0.05)', border:'1px solid rgba(245,124,0,0.2)', padding:'0.9rem 1.2rem', borderRadius:12, fontSize:'0.8rem', color:'#D97706' }}>
+                    <strong>🏢 Plantilla 2 (Administración Integral / Renta Corta):</strong> Diseñada para la operación y comercialización de inmuebles en plataformas digitales (Airbnb, Booking), con precios dinámicos, coordinación de aseo/check-in, autorizaciones de reparaciones hasta $300.000 COP y opción de compra (comisión 3% + IVA).
+                  </div>
+                )}
+              </div>
+
+              {/* Text viewer */}
+              <div style={{ padding:'1rem 2rem 2rem 2rem', overflowY:'auto', flex:1 }}>
+                <pre style={{ 
+                  whiteSpace: 'pre-wrap', 
+                  fontFamily: 'Consolas, monospace', 
+                  fontSize: '0.8rem', 
+                  lineHeight: 1.6, 
+                  color: '#334155',
+                  background: '#f8fafc',
+                  padding: '1.2rem',
+                  borderRadius: 16,
+                  border: '1px solid #e2e8f0',
+                  margin: 0
+                }}>
+                  {selectedViewerTemplate === 'template_1' 
+                    ? (contractSettingsForm.contract_text || 'Cargando texto de la plantilla 1...') 
+                    : (contractSettingsForm.contract_text_2 || 'Cargando texto de la plantilla 2...')}
+                </pre>
+              </div>
+
+              {/* Footer */}
+              <div style={{ background:'#f8fafc', padding:'1rem 2rem', borderTop:'1px solid #E6E7E8', display:'flex', justifyContent:'flex-end' }}>
+                <button 
+                  type="button" 
+                  onClick={() => setShowTemplateViewerModal(false)}
+                  style={{ padding:'0.6rem 1.8rem', border:'none', background:'linear-gradient(135deg,#0a3560,#0F4C81)', color:'white', borderRadius:50, fontWeight:700, fontSize:'0.85rem', cursor:'pointer' }}>
+                  Cerrar Visor
+                </button>
               </div>
 
             </div>

@@ -127,7 +127,14 @@ export default function PrintContract() {
 
   const data = contract.contract_data || {};
   const logo = settings?.logo_url || '/logos/rentungroupblue.webp';
-  const clauses = settings?.contract_text || '';
+  const selectedTemplate = data.template_type || 'template_1';
+  const isTemplate2 = selectedTemplate === 'template_2';
+  const contractTitle = isTemplate2
+    ? 'CONTRATO DE ADMINISTRACIÓN INTEGRAL Y COMERCIALIZACIÓN DE INMUEBLES'
+    : 'CONTRATO DE ADMINISTRACIÓN DE INMUEBLES EN ARRENDAMIENTO';
+  const clauses = isTemplate2
+    ? (settings?.contract_text_2 || '')
+    : (settings?.contract_text || '');
 
   // Auxiliares para formatear checkboxes o vacíos
   const renderCheck = (val) => (val ? '✔️ Sí' : '❌ No');
@@ -238,8 +245,12 @@ export default function PrintContract() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <img src={logo} alt="Logo" style={{ height: 48, objectFit: 'contain' }} />
               <div>
-                <h1 style={{ fontSize: '0.95rem', fontWeight: 900, color: '#0f2942', margin: 0, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>CONTRATO DE ADMINISTRACIÓN DE</h1>
-                <h2 style={{ fontSize: '1.05rem', fontWeight: 900, color: '#0F4C81', margin: 0, textTransform: 'uppercase' }}>INMUEBLES EN ARRENDAMIENTO</h2>
+                <h1 style={{ fontSize: '0.82rem', fontWeight: 900, color: '#0f2942', margin: 0, letterSpacing: '-0.02em', textTransform: 'uppercase' }}>
+                  {isTemplate2 ? 'CONTRATO DE ADMINISTRACIÓN INTEGRAL Y' : 'CONTRATO DE ADMINISTRACIÓN DE'}
+                </h1>
+                <h2 style={{ fontSize: '0.92rem', fontWeight: 900, color: '#0F4C81', margin: 0, textTransform: 'uppercase' }}>
+                  {isTemplate2 ? 'COMERCIALIZACIÓN DE INMUEBLES' : 'INMUEBLES EN ARRENDAMIENTO'}
+                </h2>
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -383,7 +394,7 @@ export default function PrintContract() {
         <div>
           {/* Brand header small */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #0F4C81', paddingBottom: '0.4rem', marginBottom: '0.8rem' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0F4C81' }}>CONTRATO DE ADMINISTRACIÓN DE INMUEBLES EN ARRENDAMIENTO</span>
+            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0F4C81' }}>{contractTitle}</span>
             <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#F57C00' }}>CÓDIGO: {contract.code}</span>
           </div>
 
@@ -497,7 +508,7 @@ export default function PrintContract() {
         <div>
           {/* Brand header small */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #0F4C81', paddingBottom: '0.4rem', marginBottom: '0.8rem' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0F4C81' }}>CONTRATO DE ADMINISTRACIÓN DE INMUEBLES EN ARRENDAMIENTO</span>
+            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0F4C81' }}>{contractTitle}</span>
             <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#F57C00' }}>CÓDIGO: {contract.code}</span>
           </div>
 
@@ -700,7 +711,7 @@ export default function PrintContract() {
         <div>
           {/* Brand header small */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #0F4C81', paddingBottom: '0.4rem', marginBottom: '0.8rem' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0F4C81' }}>CONTRATO DE ADMINISTRACIÓN DE INMUEBLES EN ARRENDAMIENTO</span>
+            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0F4C81' }}>{contractTitle}</span>
             <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#F57C00' }}>CÓDIGO: {contract.code}</span>
           </div>
 
@@ -821,7 +832,7 @@ export default function PrintContract() {
           <div>
             {/* Brand header small */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #0F4C81', paddingBottom: '0.4rem', marginBottom: '0.8rem' }}>
-              <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0F4C81' }}>CONTRATO DE ADMINISTRACIÓN DE INMUEBLES EN ARRENDAMIENTO</span>
+              <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0F4C81' }}>{contractTitle}</span>
               <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#F57C00' }}>CÓDIGO: {contract.code}</span>
             </div>
 
@@ -888,7 +899,7 @@ export default function PrintContract() {
         <div>
           {/* Brand header small */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #0F4C81', paddingBottom: '0.4rem', marginBottom: '1.2rem' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0F4C81' }}>CONTRATO DE ADMINISTRACIÓN DE INMUEBLES EN ARRENDAMIENTO</span>
+            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0F4C81' }}>{contractTitle}</span>
             <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#F57C00' }}>CÓDIGO: {contract.code}</span>
           </div>
 
@@ -922,7 +933,7 @@ export default function PrintContract() {
         <div>
           {/* Brand header small */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #0F4C81', paddingBottom: '0.4rem', marginBottom: '2rem' }}>
-            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0F4C81' }}>CONTRATO DE ADMINISTRACIÓN DE INMUEBLES EN ARRENDAMIENTO</span>
+            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#0F4C81' }}>{contractTitle}</span>
             <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#F57C00' }}>CÓDIGO: {contract.code}</span>
           </div>
 
