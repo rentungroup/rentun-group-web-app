@@ -211,35 +211,26 @@ PROPIEDADES DISPONIBLES:\n`;
 
     try {
       const systemPrompt = buildSystemPrompt();
-      
-      const apiKey = import.meta.env.VITE_GROQ_API_KEY;
 
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      // Llamada segura a través de nuestra API backend protegida (sin exponer API Keys en el cliente)
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            ...messages.slice(-6).map(m => ({ role: m.role, content: m.content })),
-            { role: 'user', content: userMsg }
-          ],
-          temperature: 0.3,
-          max_tokens: 500,
+          systemPrompt,
+          messages: messages.slice(-6).map(m => ({ role: m.role, content: m.content })),
+          userMessage: userMsg
         })
       });
 
       if (!response.ok) {
-        const errData = await response.json();
-        console.error('Groq API Error Detail:', errData);
         throw new Error('Error al conectar con la IA');
       }
 
       const data = await response.json();
-      const aiResponse = data.choices[0].message.content;
+      const aiResponse = data.content || 'Disculpa, no pude procesar tu mensaje en este momento.';
 
       setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
     } catch (error) {
