@@ -1,4 +1,30 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://rentungroup.com/sitemap.xml
+# Motores de Búsqueda de IA y LLMs (Generative Engine Optimization - GEO)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+# Sitemap oficial unificado (con www según canónica de GSC)
+Sitemap: https://www.rentungroup.com/sitemap.xml

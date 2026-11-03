@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Edit2, Trash2, Save, RotateCcw, AlertTriangle, Eye, ArrowUp, ArrowDown, Search, FileText, Upload, X, Check, EyeOff } from 'lucide-react';
+import { Plus, Edit2, Trash2, Save, RotateCcw, AlertTriangle, Eye, ArrowUp, ArrowDown, Search, FileText, Upload, X, Check, EyeOff, Share2, BarChart3, TrendingUp, Globe, Smartphone, Monitor, ExternalLink } from 'lucide-react';
 import { saveConfig, resetConfig, DEFAULTS, uploadImage } from '../utils/db';
 import { useConfig } from '../context/ConfigContext';
 import { useAuth } from '../context/AuthContext';
@@ -8,6 +8,7 @@ import { supabase } from '../supabase';
 import { SITE } from '../config/site';
 import ImageUploader from '../components/ImageUploader';
 import { addWatermarkToImage } from '../utils/watermark';
+import { fetchAnalyticsData } from '../utils/analytics';
 
 // ── Section wrapper ─────────────────────────────────────
 function AdminSection({ title, icon, children }) {
@@ -84,6 +85,17 @@ export default function Admin() {
   const [saved, setSaved]   = useState(false);
   const [reset, setReset]   = useState(false);
   const [activeTab, setActiveTab] = useState('landing');
+
+  // --- Analytics & Tracking de Compartidos ---
+  const [analyticsData, setAnalyticsData] = useState(null);
+  const [loadingAnalytics, setLoadingAnalytics] = useState(false);
+
+  const loadAnalytics = async () => {
+    setLoadingAnalytics(true);
+    const data = await fetchAnalyticsData();
+    setAnalyticsData(data);
+    setLoadingAnalytics(false);
+  };
 
   // --- Portal de Asesores y Contratos ---
   const [agents, setAgents] = useState([]);
@@ -331,6 +343,8 @@ export default function Admin() {
       fetchAgents();
     } else if (activeTab === 'contract-settings') {
       fetchContractSettings();
+    } else if (activeTab === 'analytics') {
+      loadAnalytics();
     }
   }, [activeTab, userRole, currentAgent, session]);
 
@@ -573,20 +587,139 @@ export default function Admin() {
     setNewImgUrl('');
   };
 
-  const addImgUrl = () => {
-    if (!newImgUrl.trim()) return;
-    setPropForm(prev => ({
-      ...prev,
-      images: [...(prev.images || []), newImgUrl.trim()]
-    }));
-    setNewImgUrl('');
+  // ── Helper para obtener y sincronizar Categorías de Fotos (Estilo Portal Dorado) ──
+  const [catNewPhotoTitle, setCatNewPhotoTitle] = useState({});
+  const [catNewPhotoUrl, setCatNewPhotoUrl] = useState({});
+
+  const getPropPhotoCategories = () => {
+    if (propForm.photoCategories && propForm.photoCategories.length > 0) {
+      return propForm.photoCategories;
+    }
+    const imgs = propForm.images || [];
+    if (imgs.length === 0) {
+      return [
+        {
+          id: 'cat-1',
+          title: '🏡 Fachada & Acceso Principal',
+          description: 'Vistas exteriores, jardines y acceso seguro a la propiedad',
+          photos: []
+        }
+      ];
+    }
+    const defaultZones = [
+      { title: '🏡 Fachada & Acceso Principal', desc: 'Vistas exteriores, jardines y panorámicas', titles: ['Fachada Principal y Acceso', 'Entorno y Zonas Verdes'] },
+      { title: '🛋️ Sala & Espacios Sociales', desc: 'Ambientes confortables con iluminación natural', titles: ['Sala de Estar y Mobiliario', 'Comedor y Área Social'] },
+      { title: '🛏️ Habitaciones & Confort', desc: 'Camas confortables y descanso garantizado', titles: ['Habitación Principal', 'Detalle de Lencería'] },
+      { title: '🍳 Cocina & Comedor', desc: 'Completamente equipada con electrodomésticos', titles: ['Cocina Integral Equipada'] },
+      { title: '🚿 Baños & Amenidades', desc: 'Agua caliente continua y toallas', titles: ['Baño Completo con Ducha'] }
+    ];
+    const cats = [];
+    imgs.forEach((url, i) => {
+      const zIdx = i % defaultZones.length;
+      const zone = defaultZones[zIdx];
+      let cat = cats.find(c => c.title === zone.title);
+      if (!cat) {
+        cat = { id: `cat-${zIdx + 1}`, title: zone.title, description: zone.desc, photos: [] };
+        cats.push(cat);
+      }
+      cat.photos.push({ id: `p-${i + 1}`, title: zone.titles[cat.photos.length] || `Foto ${cat.photos.length + 1}`, url });
+    });
+    return cats;
   };
 
-  const removeImg = (index) => {
+  const updatePropPhotoCategories = (newCats) => {
+    const allUrls = newCats.flatMap(c => (c.photos || []).map(p => p.url)).filter(Boolean);
     setPropForm(prev => ({
       ...prev,
-      images: (prev.images || []).filter((_, idx) => idx !== index)
+      photoCategories: newCats,
+      images: allUrls
     }));
+  };
+
+  const addPhotoCategory = () => {
+    const title = prompt('Nombre / Título de la nueva zona o categoría (ej: 🏡 Fachada, 🏊 Piscina & Hamacas, 🍗 Zona BBQ):');
+    if (!title || !title.trim()) return;
+    const desc = prompt('Descripción corta de esta zona (ej: Vistas exteriores, jardines y panorámicas):') || '';
+    const currentCats = getPropPhotoCategories();
+    const newCat = {
+      id: 'cat-' + Date.now(),
+      title: title.trim(),
+      description: desc.trim(),
+      photos: []
+    };
+    updatePropPhotoCategories([...currentCats, newCat]);
+  };
+
+  const editPhotoCategory = (catId) => {
+    const currentCats = getPropPhotoCategories();
+    const cat = currentCats.find(c => c.id === catId);
+    if (!cat) return;
+    const newTitle = prompt('Editar título de la categoría:', cat.title);
+    if (!newTitle || !newTitle.trim()) return;
+    const newDesc = prompt('Editar descripción de la categoría:', cat.description || '') || '';
+    const updated = currentCats.map(c => c.id === catId ? { ...c, title: newTitle.trim(), description: newDesc.trim() } : c);
+    updatePropPhotoCategories(updated);
+  };
+
+  const deletePhotoCategory = (catId) => {
+    const currentCats = getPropPhotoCategories();
+    if (currentCats.length <= 1) {
+      alert('Debes mantener al menos una categoría de fotos.');
+      return;
+    }
+    if (!window.confirm('¿Eliminar esta categoría y todas sus fotos?')) return;
+    const updated = currentCats.filter(c => c.id !== catId);
+    updatePropPhotoCategories(updated);
+  };
+
+  const addPhotoToCat = (catId, photoTitle, photoUrl) => {
+    if (!photoUrl || !photoUrl.trim()) return;
+    const currentCats = getPropPhotoCategories();
+    const updated = currentCats.map(c => {
+      if (c.id === catId) {
+        return {
+          ...c,
+          photos: [
+            ...(c.photos || []),
+            {
+              id: 'p-' + Date.now() + Math.random().toString(36).substr(2, 4),
+              title: photoTitle.trim() || 'Foto de la propiedad',
+              url: photoUrl.trim()
+            }
+          ]
+        };
+      }
+      return c;
+    });
+    updatePropPhotoCategories(updated);
+  };
+
+  const updatePhotoTitleInCat = (catId, photoId, newTitle) => {
+    const currentCats = getPropPhotoCategories();
+    const updated = currentCats.map(c => {
+      if (c.id === catId) {
+        return {
+          ...c,
+          photos: (c.photos || []).map(p => p.id === photoId ? { ...p, title: newTitle } : p)
+        };
+      }
+      return c;
+    });
+    updatePropPhotoCategories(updated);
+  };
+
+  const deletePhotoFromCat = (catId, photoId) => {
+    const currentCats = getPropPhotoCategories();
+    const updated = currentCats.map(c => {
+      if (c.id === catId) {
+        return {
+          ...c,
+          photos: (c.photos || []).map(p => p.id === photoId ? null : p).filter(Boolean)
+        };
+      }
+      return c;
+    });
+    updatePropPhotoCategories(updated);
   };
 
   // ── Places CRUD ──
@@ -1228,6 +1361,7 @@ export default function Admin() {
         {[
           { id: 'landing', label: '🏠 Inicio', role: 'admin' },
           { id: 'properties', label: '🏨 Apartamentos', role: 'admin' },
+          { id: 'analytics', label: '📊 Métricas & Compartidos', role: 'admin' },
           { id: 'guide-info', label: '📋 Info & Reglas', role: 'admin' },
           { id: 'guide-places', label: '📍 Lugares Cercanos', role: 'admin' },
           { id: 'guide-manuals', label: '📖 Manuales de la Casa', role: 'admin' },
@@ -1638,42 +1772,139 @@ export default function Admin() {
                       )}
                     </div>
 
-                    {/* Image Manager */}
-                    <AdminSection title="Fotos del Apartamento" icon="🖼️">
-                      <div style={{ display:'flex', gap:'0.5rem' }}>
-                        <div style={{ flex:1 }}><input type="text" placeholder="Pegar URL de foto..." value={newImgUrl} onChange={e => setNewImgUrl(e.target.value)} style={{ width:'100%', padding:'0.7rem 1rem', border:'1.5px solid #E6E7E8', borderRadius:12, fontSize:'0.88rem' }} /></div>
-                        <button type="button" onClick={addImgUrl} style={{ background:'#0F4C81', color:'white', border:'none', padding:'0 1.2rem', borderRadius:12, fontSize:'0.78rem', fontWeight:700, cursor:'pointer' }}>Añadir URL</button>
+                    {/* ── GESTOR DE FOTOS POR CATEGORÍAS / ZONAS (ESTILO PORTAL DORADO) ── */}
+                    <AdminSection title={`Galería de Fotos por Zonas / Espacios (${getPropPhotoCategories().reduce((a,c) => a + (c.photos?.length || 0), 0)} fotos)`} icon="🖼️">
+                      
+                      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:'0.8rem', background:'#f8fafc', padding:'0.9rem 1.2rem', borderRadius:16, border:'1px solid #E2E8F0' }}>
+                        <div>
+                          <strong style={{ fontSize:'0.88rem', color:'#0d1724', display:'block' }}>Zonas Clasificadas del Apartamento</strong>
+                          <span style={{ fontSize:'0.75rem', color:'#64748b' }}>Organiza las fotos por espacios (Fachada, Sala, Habitaciones, Cocina, etc.) con sus títulos individuales.</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={addPhotoCategory}
+                          style={{ display:'inline-flex', alignItems:'center', gap:'0.4rem', background:'#059669', color:'white', border:'none', padding:'0.5rem 1.1rem', borderRadius:50, fontSize:'0.78rem', fontWeight:800, cursor:'pointer', boxShadow:'0 2px 8px rgba(5,150,105,0.2)' }}>
+                          ➕ Nueva Zona / Categoría
+                        </button>
                       </div>
 
-                      <ImageUploader
-                        id="propUploader"
-                        label="O subir foto (Recomendado: 1200x800px)"
-                        currentImage=""
-                        onImageSelected={async (base64) => {
-                          try {
-                            const url = await uploadImage(base64, 'images');
-                            setPropForm(prev => ({
-                              ...prev,
-                              images: [...(prev.images || []), url]
-                            }));
-                          } catch(e) {
-                            alert("Error subiendo imagen");
-                          }
-                        }}
-                      />
+                      {/* Lista de Categorías */}
+                      <div style={{ display:'flex', flexDirection:'column', gap:'1.8rem', marginTop:'1rem' }}>
+                        {getPropPhotoCategories().map((cat, catIdx) => (
+                          <div key={cat.id || catIdx} style={{ background:'white', border:'1.5px solid #E2E8F0', borderRadius:18, padding:'1.3rem', boxShadow:'0 2px 10px rgba(0,0,0,0.02)' }}>
+                            
+                            {/* Cabecera de la Categoría */}
+                            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:'0.8rem', background:'#f8fafc', padding:'0.8rem 1rem', borderRadius:12, border:'1px solid #E2E8F0', marginBottom:'1.2rem' }}>
+                              <div>
+                                <span style={{ fontSize:'0.65rem', fontWeight:800, textTransform:'uppercase', color:'#059669', letterSpacing:'0.1em' }}>Categoría #{catIdx + 1}</span>
+                                <h4 style={{ fontSize:'1.05rem', fontWeight:800, color:'#0d1724', margin:'0.1rem 0' }}>{cat.title}</h4>
+                                {cat.description && <p style={{ fontSize:'0.75rem', color:'#64748b', margin:0 }}>{cat.description}</p>}
+                              </div>
+                              <div style={{ display:'flex', gap:'0.4rem' }}>
+                                <button
+                                  type="button"
+                                  onClick={() => editPhotoCategory(cat.id)}
+                                  style={{ background:'rgba(15,76,129,0.1)', color:'#0F4C81', border:'none', padding:'0.35rem 0.75rem', borderRadius:8, fontSize:'0.72rem', fontWeight:700, cursor:'pointer' }}>
+                                  ✏️ Editar
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => deletePhotoCategory(cat.id)}
+                                  style={{ background:'rgba(255,56,92,0.1)', color:'#FF385C', border:'none', padding:'0.35rem 0.75rem', borderRadius:8, fontSize:'0.72rem', fontWeight:700, cursor:'pointer' }}>
+                                  🗑️ Eliminar Zona
+                                </button>
+                              </div>
+                            </div>
 
-                      {/* Thumbnail Grid */}
-                      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(80px, 1fr))', gap:'0.8rem', marginTop:'1rem' }}>
-                        {(propForm.images || []).map((img, idx) => (
-                          <div key={idx} style={{ position:'relative', height:80, borderRadius:12, overflow:'hidden', border:'1px solid #E6E7E8' }}>
-                            <img src={img} alt="Thumbnail" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
-                            <button type="button" onClick={() => removeImg(idx)}
-                              style={{ position:'absolute', top:4, right:4, background:'rgba(255,56,92,0.85)', color:'white', border:'none', borderRadius:'50%', width:20, height:20, display:'flex', alignItems:'center', justifyContent:'space-between', fontSize:'0.65rem', cursor:'pointer', fontWeight:'bold' }}>
-                              ✕
-                            </button>
+                            {/* Grid de Fotos en esta Categoría */}
+                            {(cat.photos || []).length === 0 ? (
+                              <p style={{ fontSize:'0.8rem', color:'#94a3b8', fontStyle:'italic', margin:'0 0 1rem', textAlign:'center', padding:'1rem', background:'#fafafa', borderRadius:10 }}>
+                                No hay fotos agregadas en esta zona todavía. Usa el formulario de abajo para agregar una.
+                              </p>
+                            ) : (
+                              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(140px, 1fr))', gap:'0.8rem', marginBottom:'1.2rem' }}>
+                                {(cat.photos || []).map((photo, photoIdx) => (
+                                  <div key={photo.id || photoIdx} style={{ background:'#f8fafc', borderRadius:12, overflow:'hidden', border:'1px solid #E2E8F0', display:'flex', flexDirection:'column' }}>
+                                    <div style={{ position:'relative', height:100, background:'#0d1724' }}>
+                                      <img src={photo.url} alt={photo.title} style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                                      <button
+                                        type="button"
+                                        onClick={() => deletePhotoFromCat(cat.id, photo.id)}
+                                        title="Eliminar foto"
+                                        style={{ position:'absolute', top:4, right:4, background:'rgba(255,56,92,0.9)', color:'white', border:'none', borderRadius:'50%', width:20, height:20, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'0.65rem', cursor:'pointer', fontWeight:'bold' }}>
+                                        ✕
+                                      </button>
+                                    </div>
+                                    <div style={{ padding:'0.5rem' }}>
+                                      <input
+                                        type="text"
+                                        value={photo.title || ''}
+                                        onChange={(e) => updatePhotoTitleInCat(cat.id, photo.id, e.target.value)}
+                                        placeholder="Nombre de la foto..."
+                                        style={{ width:'100%', padding:'0.3rem 0.5rem', fontSize:'0.75rem', fontWeight:600, border:'1px solid #cbd5e1', borderRadius:6, outline:'none' }}
+                                      />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Formulario para añadir foto a esta Categoría */}
+                            <div style={{ background:'#F8FAFC', padding:'0.9rem', borderRadius:12, border:'1px dashed #CBD5E1', display:'flex', flexDirection:'column', gap:'0.6rem' }}>
+                              <span style={{ fontSize:'0.72rem', fontWeight:800, color:'#0F4C81', textTransform:'uppercase' }}>➕ Agregar foto a: {cat.title}</span>
+                              
+                              <input
+                                type="text"
+                                placeholder="Título / Descripción de la foto (ej: Fachada Principal y Zonas Verdes)..."
+                                value={catNewPhotoTitle[cat.id] || ''}
+                                onChange={(e) => setCatNewPhotoTitle(prev => ({ ...prev, [cat.id]: e.target.value }))}
+                                style={{ width:'100%', padding:'0.5rem 0.8rem', border:'1.5px solid #E2E8F0', borderRadius:8, fontSize:'0.8rem' }}
+                              />
+
+                              <div style={{ display:'flex', gap:'0.5rem' }}>
+                                <input
+                                  type="text"
+                                  placeholder="Pegar URL de foto..."
+                                  value={catNewPhotoUrl[cat.id] || ''}
+                                  onChange={(e) => setCatNewPhotoUrl(prev => ({ ...prev, [cat.id]: e.target.value }))}
+                                  style={{ flex:1, padding:'0.5rem 0.8rem', border:'1.5px solid #E2E8F0', borderRadius:8, fontSize:'0.8rem' }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const url = catNewPhotoUrl[cat.id];
+                                    const title = catNewPhotoTitle[cat.id] || 'Foto de ' + cat.title;
+                                    if (!url || !url.trim()) return alert('Pega una URL válida');
+                                    addPhotoToCat(cat.id, title, url);
+                                    setCatNewPhotoUrl(prev => ({ ...prev, [cat.id]: '' }));
+                                    setCatNewPhotoTitle(prev => ({ ...prev, [cat.id]: '' }));
+                                  }}
+                                  style={{ background:'#0F4C81', color:'white', border:'none', padding:'0 1rem', borderRadius:8, fontSize:'0.75rem', fontWeight:700, cursor:'pointer' }}>
+                                  Añadir URL
+                                </button>
+                              </div>
+
+                              <ImageUploader
+                                id={`cat-uploader-${cat.id}`}
+                                label="O subir foto desde tu dispositivo a esta zona"
+                                currentImage=""
+                                onImageSelected={async (base64) => {
+                                  try {
+                                    const url = await uploadImage(base64, 'images');
+                                    const title = catNewPhotoTitle[cat.id] || 'Foto de ' + cat.title;
+                                    addPhotoToCat(cat.id, title, url);
+                                    setCatNewPhotoTitle(prev => ({ ...prev, [cat.id]: '' }));
+                                  } catch(e) {
+                                    alert('Error subiendo imagen');
+                                  }
+                                }}
+                              />
+                            </div>
+
                           </div>
                         ))}
                       </div>
+
                     </AdminSection>
 
                     {/* Acordeón QRs Personalizados */}
@@ -1750,26 +1981,33 @@ export default function Admin() {
                             <div style={{ flex:1 }}>
                               <h4 style={{ fontSize:'0.95rem', fontWeight:800, color:'#0d1724', margin:0 }}>{p.name}</h4>
                               <span style={{ fontSize:'0.73rem', color:'#5c6d80' }}>📍 {p.location}</span>
-                              <div style={{ display:'flex', gap:'0.5rem', marginTop:'0.25rem' }}>
+                              <div style={{ display:'flex', gap:'0.5rem', marginTop:'0.25rem', flexWrap:'wrap' }}>
                                 <span style={{ fontSize:'0.65rem', textTransform:'uppercase', fontWeight:800, color: p.isAirbnb ? '#dc2626' : '#059669', background: p.isAirbnb ? 'rgba(220,38,38,0.08)' : 'rgba(5,150,105,0.08)', padding:'0.15rem 0.5rem', borderRadius:50 }}>
                                   {p.isAirbnb ? 'Airbnb' : 'Directo'}
                                 </span>
                                 <span style={{ fontSize:'0.65rem', textTransform:'uppercase', fontWeight:800, color:'#F57C00', background:'rgba(245,124,0,0.08)', padding:'0.15rem 0.5rem', borderRadius:50 }}>
                                   {p.price}
                                 </span>
+                                <span style={{ fontSize:'0.65rem', fontWeight:700, color:'#0F4C81', background:'rgba(15,76,129,0.08)', padding:'0.15rem 0.5rem', borderRadius:50 }}>
+                                  📸 {p.images?.length || 0} fotos
+                                </span>
                               </div>
                             </div>
                           </div>
                           
-                          <div style={{ display:'flex', gap:'0.4rem', justifyContent:'flex-end', borderTop:'1px solid #E6E7E8', paddingTop:'0.8rem' }}>
-                            <Link to={`/imprimir/${p.id}`} target="_blank"
-                              style={{ display:'inline-flex', alignItems:'center', gap:'0.35rem', border:'1.5px solid rgba(15,76,129,0.3)', background:'white', color:'#0F4C81', padding:'0.45rem 1rem', borderRadius:50, fontSize:'0.75rem', fontWeight:700, textDecoration:'none' }}>
-                              🖨️ Tarjeta Bienvenida
+                          <div style={{ display:'flex', gap:'0.4rem', justifyContent:'flex-end', borderTop:'1px solid #E6E7E8', paddingTop:'0.8rem', flexWrap:'wrap' }}>
+                            <Link to={`/propiedad/${p.id}`} target="_blank"
+                              style={{ display:'inline-flex', alignItems:'center', gap:'0.35rem', border:'1.5px solid rgba(15,76,129,0.3)', background:'#0F4C81', color:'white', padding:'0.45rem 1rem', borderRadius:50, fontSize:'0.75rem', fontWeight:700, textDecoration:'none' }}>
+                              👁️ Ver Espacio
                             </Link>
-                            <button onClick={() => startEditProp(p)} style={{ border:'none', background:'rgba(15,76,129,0.1)', color:'#0F4C81', padding:'0.45rem 1.1rem', borderRadius:50, fontSize:'0.75rem', fontWeight:700, cursor:'pointer' }}>
+                            <Link to={`/imprimir/${p.id}`} target="_blank"
+                              style={{ display:'inline-flex', alignItems:'center', gap:'0.35rem', border:'1.5px solid #E2E8F0', background:'white', color:'#0F4C81', padding:'0.45rem 0.9rem', borderRadius:50, fontSize:'0.75rem', fontWeight:700, textDecoration:'none' }}>
+                              🖨️ Póster QR
+                            </Link>
+                            <button onClick={() => startEditProp(p)} style={{ border:'none', background:'rgba(15,76,129,0.1)', color:'#0F4C81', padding:'0.45rem 1rem', borderRadius:50, fontSize:'0.75rem', fontWeight:700, cursor:'pointer' }}>
                               Editar
                             </button>
-                            <button onClick={() => deleteProperty(p.id)} style={{ border:'none', background:'rgba(255,56,92,0.1)', color:'#FF385C', padding:'0.45rem 1.1rem', borderRadius:50, fontSize:'0.75rem', fontWeight:700, cursor:'pointer' }}>
+                            <button onClick={() => deleteProperty(p.id)} style={{ border:'none', background:'rgba(255,56,92,0.1)', color:'#FF385C', padding:'0.45rem 1rem', borderRadius:50, fontSize:'0.75rem', fontWeight:700, cursor:'pointer' }}>
                               Eliminar
                             </button>
                           </div>
@@ -1781,6 +2019,301 @@ export default function Admin() {
               </div>
 
             </div>
+          </div>
+        )}
+
+        {activeTab === 'analytics' && (
+          /* TAB: MÉTRICAS Y TRACKING DE COMPARTIDOS */
+          <div style={{ display:'flex', flexDirection:'column', gap:'2rem' }}>
+            
+            {/* Encabezado del Dashboard */}
+            <div style={{ background:'white', borderRadius:24, border:'1px solid #E6E7E8', padding:'1.8rem 2rem', boxShadow:'0 4px 20px rgba(0,0,0,0.02)', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:'1rem' }}>
+              <div>
+                <span style={{ fontSize:'0.72rem', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.12em', color:'#0F4C81' }}>
+                  📈 Inteligencia de Tráfico & Viralidad
+                </span>
+                <h3 style={{ fontSize:'1.4rem', fontWeight:800, color:'#0d1724', margin:'0.2rem 0 0' }}>
+                  Métricas de Compartidos y Procedencia de Visitas
+                </h3>
+                <p style={{ fontSize:'0.82rem', color:'#5c6d80', margin:'0.3rem 0 0' }}>
+                  Monitorea en tiempo real qué apartamentos son más compartidos y de dónde provienen tus huéspedes.
+                </p>
+              </div>
+              <button 
+                onClick={loadAnalytics}
+                disabled={loadingAnalytics}
+                style={{
+                  display:'inline-flex', alignItems:'center', gap:'0.45rem',
+                  background: loadingAnalytics ? '#94a3b8' : 'linear-gradient(135deg,#0a3560,#0F4C81)',
+                  color:'white', border:'none', padding:'0.65rem 1.4rem', borderRadius:50,
+                  fontSize:'0.82rem', fontWeight:700, cursor: loadingAnalytics ? 'default' : 'pointer',
+                  boxShadow:'0 4px 14px rgba(15,76,129,0.2)'
+                }}
+              >
+                <span>{loadingAnalytics ? '⏳ Actualizando...' : '🔄 Actualizar Métricas'}</span>
+              </button>
+            </div>
+
+            {/* 4 KPI Cards */}
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(220px, 1fr))', gap:'1.2rem' }}>
+              
+              {/* KPI 1: Total Compartidos */}
+              <div style={{ background:'white', borderRadius:20, padding:'1.5rem', border:'1px solid #E6E7E8', boxShadow:'0 2px 10px rgba(0,0,0,0.02)', display:'flex', alignItems:'center', gap:'1.2rem' }}>
+                <div style={{ width:50, height:50, borderRadius:14, background:'rgba(245,124,0,0.1)', color:'#F57C00', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                  <Share2 size={24} />
+                </div>
+                <div>
+                  <span style={{ fontSize:'0.72rem', fontWeight:700, color:'#64748b', textTransform:'uppercase' }}>Veces Compartido</span>
+                  <div style={{ fontSize:'1.8rem', fontWeight:900, color:'#0d1724', lineHeight:1.1 }}>
+                    {analyticsData?.totalShares || 0}
+                  </div>
+                </div>
+              </div>
+
+              {/* KPI 2: Total Visitas */}
+              <div style={{ background:'white', borderRadius:20, padding:'1.5rem', border:'1px solid #E6E7E8', boxShadow:'0 2px 10px rgba(0,0,0,0.02)', display:'flex', alignItems:'center', gap:'1.2rem' }}>
+                <div style={{ width:50, height:50, borderRadius:14, background:'rgba(15,76,129,0.1)', color:'#0F4C81', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                  <Globe size={24} />
+                </div>
+                <div>
+                  <span style={{ fontSize:'0.72rem', fontWeight:700, color:'#64748b', textTransform:'uppercase' }}>Visitas Registradas</span>
+                  <div style={{ fontSize:'1.8rem', fontWeight:900, color:'#0d1724', lineHeight:1.1 }}>
+                    {analyticsData?.totalVisits || 0}
+                  </div>
+                </div>
+              </div>
+
+              {/* KPI 3: Red Social Principal */}
+              <div style={{ background:'white', borderRadius:20, padding:'1.5rem', border:'1px solid #E6E7E8', boxShadow:'0 2px 10px rgba(0,0,0,0.02)', display:'flex', alignItems:'center', gap:'1.2rem' }}>
+                <div style={{ width:50, height:50, borderRadius:14, background:'rgba(37,211,102,0.12)', color:'#25D366', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                  <TrendingUp size={24} />
+                </div>
+                <div>
+                  <span style={{ fontSize:'0.72rem', fontWeight:700, color:'#64748b', textTransform:'uppercase' }}>Canal Más Usado</span>
+                  <div style={{ fontSize:'1.2rem', fontWeight:900, color:'#0d1724', lineHeight:1.2, textTransform:'capitalize' }}>
+                    {(() => {
+                      const platforms = analyticsData?.sharesByPlatform || {};
+                      const top = Object.entries(platforms).sort((a,b)=>b[1]-a[1])[0];
+                      if (!top || top[1] === 0) return 'Sin datos';
+                      return top[0] === 'copy_link' ? 'Copiar Enlace' : top[0];
+                    })()}
+                  </div>
+                </div>
+              </div>
+
+              {/* KPI 4: Apartamento Estrella */}
+              <div style={{ background:'white', borderRadius:20, padding:'1.5rem', border:'1px solid #E6E7E8', boxShadow:'0 2px 10px rgba(0,0,0,0.02)', display:'flex', alignItems:'center', gap:'1.2rem' }}>
+                <div style={{ width:50, height:50, borderRadius:14, background:'rgba(14,165,233,0.1)', color:'#0ea5e9', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                  <BarChart3 size={24} />
+                </div>
+                <div style={{ minWidth:0 }}>
+                  <span style={{ fontSize:'0.72rem', fontWeight:700, color:'#64748b', textTransform:'uppercase' }}>Apartamento Top</span>
+                  <div style={{ fontSize:'1rem', fontWeight:800, color:'#0d1724', lineHeight:1.2, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+                    {(() => {
+                      const props = analyticsData?.sharesByProperty || {};
+                      const top = Object.entries(props).sort((a,b)=>b[1]-a[1])[0];
+                      if (!top || top[1] === 0) return 'Sin datos';
+                      return top[0];
+                    })()}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* ── SECCIÓN 2: GRÁFICOS & RANKINGS ── */}
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(400px, 1fr))', gap:'2rem' }}>
+              
+              {/* Ranking por Apartamento */}
+              <div style={{ background:'white', borderRadius:24, border:'1px solid #E6E7E8', padding:'1.8rem', boxShadow:'0 4px 20px rgba(0,0,0,0.02)' }}>
+                <h4 style={{ fontSize:'1.1rem', fontWeight:800, color:'#0d1724', margin:'0 0 1.2rem', display:'flex', alignItems:'center', gap:'0.5rem' }}>
+                  🏨 Compartidos por Apartamento
+                </h4>
+                
+                {(!analyticsData || Object.keys(analyticsData.sharesByProperty || {}).length === 0) ? (
+                  <p style={{ fontSize:'0.85rem', color:'#64748b', fontStyle:'italic', margin:0 }}>No se registran eventos de compartir aún.</p>
+                ) : (
+                  <div style={{ display:'flex', flexDirection:'column', gap:'1rem' }}>
+                    {Object.entries(analyticsData.sharesByProperty || {})
+                      .sort((a,b) => b[1] - a[1])
+                      .map(([propName, count], idx) => {
+                        const maxCount = Math.max(...Object.values(analyticsData.sharesByProperty));
+                        const pct = Math.round((count / (analyticsData.totalShares || 1)) * 100);
+                        const widthPct = Math.max(10, Math.round((count / maxCount) * 100));
+                        return (
+                          <div key={idx} style={{ display:'flex', flexDirection:'column', gap:'0.3rem' }}>
+                            <div style={{ display:'flex', justifyContent:'space-between', fontSize:'0.82rem', fontWeight:700, color:'#1e293b' }}>
+                              <span>{propName}</span>
+                              <span style={{ color:'#0F4C81' }}>{count} {count === 1 ? 'compartido' : 'compartidos'} ({pct}%)</span>
+                            </div>
+                            <div style={{ width:'100%', height:10, background:'#f1f5f9', borderRadius:50, overflow:'hidden' }}>
+                              <div style={{ width:`${widthPct}%`, height:'100%', background:'linear-gradient(90deg, #0A3560, #F57C00)', borderRadius:50, transition:'width 0.5s ease' }} />
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                )}
+              </div>
+
+              {/* Desglose por Red Social */}
+              <div style={{ background:'white', borderRadius:24, border:'1px solid #E6E7E8', padding:'1.8rem', boxShadow:'0 4px 20px rgba(0,0,0,0.02)' }}>
+                <h4 style={{ fontSize:'1.1rem', fontWeight:800, color:'#0d1724', margin:'0 0 1.2rem', display:'flex', alignItems:'center', gap:'0.5rem' }}>
+                  📱 Canales & Redes Sociales
+                </h4>
+
+                <div style={{ display:'flex', flexDirection:'column', gap:'0.9rem' }}>
+                  {[
+                    { key:'whatsapp', label:'WhatsApp', color:'#25D366', icon:'💬' },
+                    { key:'facebook', label:'Facebook', color:'#1877F2', icon:'👥' },
+                    { key:'twitter', label:'X / Twitter', color:'#0f172a', icon:'🐦' },
+                    { key:'telegram', label:'Telegram', color:'#0088cc', icon:'✈️' },
+                    { key:'copy_link', label:'Enlace Copiado', color:'#0F4C81', icon:'📋' }
+                  ].map((chan) => {
+                    const count = analyticsData?.sharesByPlatform?.[chan.key] || 0;
+                    const pct = analyticsData?.totalShares > 0 ? Math.round((count / analyticsData.totalShares) * 100) : 0;
+                    return (
+                      <div key={chan.key} style={{ display:'flex', alignItems:'center', gap:'1rem' }}>
+                        <span style={{ fontSize:'1.2rem', width:28, textAlign:'center' }}>{chan.icon}</span>
+                        <div style={{ flex:1 }}>
+                          <div style={{ display:'flex', justifyContent:'space-between', fontSize:'0.82rem', fontWeight:700, color:'#1e293b', marginBottom:'0.25rem' }}>
+                            <span>{chan.label}</span>
+                            <span>{count} ({pct}%)</span>
+                          </div>
+                          <div style={{ width:'100%', height:8, background:'#f1f5f9', borderRadius:50, overflow:'hidden' }}>
+                            <div style={{ width:`${pct}%`, height:'100%', background:chan.color, borderRadius:50 }} />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+            </div>
+
+            {/* ── SECCIÓN 3: PROCEDENCIA DE VISITAS & DISPOSITIVOS ── */}
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(400px, 1fr))', gap:'2rem' }}>
+              
+              {/* Procedencia / Referrers */}
+              <div style={{ background:'white', borderRadius:24, border:'1px solid #E6E7E8', padding:'1.8rem', boxShadow:'0 4px 20px rgba(0,0,0,0.02)' }}>
+                <h4 style={{ fontSize:'1.1rem', fontWeight:800, color:'#0d1724', margin:'0 0 1.2rem', display:'flex', alignItems:'center', gap:'0.5rem' }}>
+                  🌐 De dónde vienen las personas (Procedencia de Visitas)
+                </h4>
+
+                {(!analyticsData || Object.keys(analyticsData.visitsByReferrer || {}).length === 0) ? (
+                  <p style={{ fontSize:'0.85rem', color:'#64748b', fontStyle:'italic', margin:0 }}>No se han registrado visitas externas todavía.</p>
+                ) : (
+                  <div style={{ overflowX:'auto' }}>
+                    <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.85rem' }}>
+                      <thead>
+                        <tr style={{ borderBottom:'2px solid #f1f5f9', color:'#64748b', textAlign:'left' }}>
+                          <th style={{ padding:'0.6rem 0.5rem' }}>Fuente / Referrer</th>
+                          <th style={{ padding:'0.6rem 0.5rem', textAlign:'right' }}>Visitas</th>
+                          <th style={{ padding:'0.6rem 0.5rem', textAlign:'right' }}>% Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.entries(analyticsData.visitsByReferrer || {})
+                          .sort((a,b)=>b[1]-a[1])
+                          .map(([refName, vCount], rIdx) => {
+                            const vPct = Math.round((vCount / (analyticsData.totalVisits || 1)) * 100);
+                            return (
+                              <tr key={rIdx} style={{ borderBottom:'1px solid #f8fafc' }}>
+                                <td style={{ padding:'0.75rem 0.5rem', fontWeight:700, color:'#0f172a' }}>
+                                  📍 {refName}
+                                </td>
+                                <td style={{ padding:'0.75rem 0.5rem', textAlign:'right', fontWeight:800, color:'#0F4C81' }}>
+                                  {vCount}
+                                </td>
+                                <td style={{ padding:'0.75rem 0.5rem', textAlign:'right', color:'#64748b' }}>
+                                  {vPct}%
+                                </td>
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+              {/* Dispositivos */}
+              <div style={{ background:'white', borderRadius:24, border:'1px solid #E6E7E8', padding:'1.8rem', boxShadow:'0 4px 20px rgba(0,0,0,0.02)' }}>
+                <h4 style={{ fontSize:'1.1rem', fontWeight:800, color:'#0d1724', margin:'0 0 1.2rem', display:'flex', alignItems:'center', gap:'0.5rem' }}>
+                  💻 Dispositivos de los Visitantes
+                </h4>
+
+                <div style={{ display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'1rem', marginTop:'1.5rem' }}>
+                  {[
+                    { key:'mobile', label:'Móvil', icon:<Smartphone size={24} color="#0F4C81" />, count: analyticsData?.visitsByDevice?.mobile || 0 },
+                    { key:'desktop', label:'Computador', icon:<Monitor size={24} color="#0F4C81" />, count: analyticsData?.visitsByDevice?.desktop || 0 },
+                    { key:'tablet', label:'Tablet', icon:<Globe size={24} color="#0F4C81" />, count: analyticsData?.visitsByDevice?.tablet || 0 }
+                  ].map(dev => {
+                    const devPct = analyticsData?.totalVisits > 0 ? Math.round((dev.count / analyticsData.totalVisits) * 100) : 0;
+                    return (
+                      <div key={dev.key} style={{ background:'#f8fafc', padding:'1.2rem', borderRadius:16, textAlign:'center', border:'1px solid #f1f5f9' }}>
+                        <div style={{ display:'flex', justifyContent:'center', marginBottom:'0.5rem' }}>{dev.icon}</div>
+                        <div style={{ fontSize:'1.3rem', fontWeight:900, color:'#0d1724' }}>{dev.count}</div>
+                        <div style={{ fontSize:'0.72rem', color:'#64748b', fontWeight:700, textTransform:'uppercase' }}>{dev.label}</div>
+                        <span style={{ fontSize:'0.7rem', color:'#0F4C81', fontWeight:800 }}>{devPct}%</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+            </div>
+
+            {/* ── SECCIÓN 4: HISTORIAL DE ÚLTIMOS EVENTOS ── */}
+            <div style={{ background:'white', borderRadius:24, border:'1px solid #E6E7E8', padding:'1.8rem', boxShadow:'0 4px 20px rgba(0,0,0,0.02)' }}>
+              <h4 style={{ fontSize:'1.1rem', fontWeight:800, color:'#0d1724', margin:'0 0 1rem' }}>
+                📋 Últimos Eventos de Compartir Registrados
+              </h4>
+
+              {(!analyticsData || (analyticsData.recentShares || []).length === 0) ? (
+                <p style={{ fontSize:'0.85rem', color:'#64748b', fontStyle:'italic', margin:0 }}>No hay eventos recientes.</p>
+              ) : (
+                <div style={{ overflowX:'auto' }}>
+                  <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.82rem', minWidth:'550px' }}>
+                    <thead>
+                      <tr style={{ borderBottom:'2px solid #E6E7E8', color:'#0F4C81', textAlign:'left', fontWeight:700 }}>
+                        <th style={{ padding:'0.75rem 0.5rem' }}>Fecha / Hora</th>
+                        <th style={{ padding:'0.75rem 0.5rem' }}>Apartamento</th>
+                        <th style={{ padding:'0.75rem 0.5rem' }}>Red / Canal</th>
+                        <th style={{ padding:'0.75rem 0.5rem' }}>ID Propiedad</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {analyticsData.recentShares.map((s, sIdx) => (
+                        <tr key={sIdx} style={{ borderBottom:'1px solid #f1f5f9' }}>
+                          <td style={{ padding:'0.65rem 0.5rem', color:'#64748b', whiteSpace:'nowrap' }}>
+                            {new Date(s.created_at).toLocaleString('es-CO', { dateStyle:'short', timeStyle:'short' })}
+                          </td>
+                          <td style={{ padding:'0.65rem 0.5rem', fontWeight:700, color:'#0f172a' }}>
+                            {s.property_name || 'Rentun Group'}
+                          </td>
+                          <td style={{ padding:'0.65rem 0.5rem' }}>
+                            <span style={{
+                              display:'inline-flex', alignItems:'center', padding:'0.2rem 0.6rem', borderRadius:50,
+                              fontSize:'0.68rem', fontWeight:800, textTransform:'uppercase',
+                              background: s.platform === 'whatsapp' ? 'rgba(37,211,102,0.12)' : s.platform === 'facebook' ? 'rgba(24,119,242,0.12)' : 'rgba(15,76,129,0.1)',
+                              color: s.platform === 'whatsapp' ? '#059669' : s.platform === 'facebook' ? '#1877F2' : '#0F4C81'
+                            }}>
+                              {s.platform === 'copy_link' ? 'Copiar Enlace' : s.platform}
+                            </span>
+                          </td>
+                          <td style={{ padding:'0.65rem 0.5rem', color:'#94a3b8', fontFamily:'monospace' }}>
+                            {s.property_id}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
           </div>
         )}
 

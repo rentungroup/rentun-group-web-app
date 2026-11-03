@@ -1,17 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Página Principal / Landing -->
   <url>
-    <loc>https://rentungroup.com/</loc>
+    <loc>https://www.rentungroup.com/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+
+  <!-- Catálogo de Propiedades -->
   <url>
-    <loc>https://rentungroup.com/guest-guide</loc>
+    <loc>https://www.rentungroup.com/propiedades</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Propiedades Individuales (Rentun Collection) -->
+  <url>
+    <loc>https://www.rentungroup.com/propiedad/97a5e8ac-d580-4ab6-9a7e-ec2666b2134e</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://rentungroup.com/legal</loc>
+    <loc>https://www.rentungroup.com/propiedad/d4e01a31-f4c0-4798-aa6f-42304dc8ce5b</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.rentungroup.com/propiedad/a9efffef-0da7-4532-b602-068d9bf9921e</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.rentungroup.com/propiedad/a44e8dcb-2c0b-4189-b3b5-1f00df458e63</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.rentungroup.com/propiedad/d1cf83be-c1e7-43f7-8f36-4758b981dfbe</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.rentungroup.com/propiedad/0939a96e-a05c-4eb8-a6de-abdd7f7b8755</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://www.rentungroup.com/propiedad/d01dd3bc-ae6b-46ce-8b8c-1db99cbd6ac1</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Guía del Huésped & Recomendaciones -->
+  <url>
+    <loc>https://www.rentungroup.com/guia</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Legal & Normativas -->
+  <url>
+    <loc>https://www.rentungroup.com/legal</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

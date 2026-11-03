@@ -14,6 +14,16 @@ import { AuthProvider } from './context/AuthContext';
 import { ConfigProvider, useConfig } from './context/ConfigContext';
 import { Analytics } from '@vercel/analytics/react';
 
+import PropertyDetails from './pages/PropertyDetails';
+import { trackPageView } from './utils/analytics';
+
+function PageViewTracker() {
+  useEffect(() => {
+    trackPageView({ path: window.location.pathname });
+  }, []);
+  return null;
+}
+
 function FontLoader() {
   const { config } = useConfig();
   if (!config) return null;
@@ -51,9 +61,12 @@ export default function App() {
         <FontLoader />
         <BrowserRouter>
           <ScrollToTop />
+          <PageViewTracker />
           <Routes>
             <Route path="/"              element={<Landing />} />
             <Route path="/propiedades"   element={<Properties />} />
+            <Route path="/propiedad/:id" element={<PropertyDetails />} />
+            <Route path="/propiedades/:id" element={<PropertyDetails />} />
             <Route path="/guia"          element={<GuestGuide />} />
             <Route path="/admin"         element={<Admin />} />
             <Route path="/legal"         element={<Legal />} />

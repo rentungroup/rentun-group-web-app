@@ -271,7 +271,7 @@ PROPIEDADES DISPONIBLES:\n`;
               )}
             </div>
             <div>
-              <h3>{chatName}</h3>
+              <div style={{ fontWeight: 700, fontSize: '0.95rem', margin: 0, lineHeight: 1.2 }}>{chatName}</div>
               <p>{chatSubtitle}</p>
             </div>
           </div>

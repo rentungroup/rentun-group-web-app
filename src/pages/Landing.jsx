@@ -4,8 +4,9 @@ import { useConfig } from '../context/ConfigContext';
 import { waLink, getTranslation, formatPrice } from '../utils/db';
 import { SITE } from '../config/site';
 import Navbar from '../components/Navbar';
-import { ArrowRight, Star, Home, Coffee, Info, Smartphone, ExternalLink, CalendarDays, Users, Clock, Zap, MapPin, Key, Wifi, PawPrint } from 'lucide-react';
+import { ArrowRight, Star, Home, Coffee, Info, Smartphone, ExternalLink, CalendarDays, Users, Clock, Zap, MapPin, Key, Wifi, PawPrint, Share2, ChevronLeft, ChevronRight, Check, Copy } from 'lucide-react';
 import { handleRedirectWithLead } from '../components/LeadModal';
+import { trackShareEvent } from '../utils/analytics';
 
 // ── Scroll Reveal Hook ──────────────────────────────────
 function useReveal() {
@@ -208,39 +209,126 @@ function PropImageCycle({ images }) {
 // ── PropCard: reusable card for properties grid and slider ─────────────────────
 export function PropCard({ p, idx, lang, t, waLink }) {
   const [imgIdx, setImgIdx] = useState(0);
+  const [copiedShare, setCopiedShare] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const { config: cfg } = useConfig();
+  const images = p.images?.length > 0 ? p.images : [];
   
-  useEffect(() => {
-    if (!p.images || p.images.length <= 1) return;
-    const timer = setInterval(() => setImgIdx(i => (i + 1) % p.images.length), 3500);
-    return () => clearInterval(timer);
-  }, [p.images]);
+  const handlePrevImg = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (images.length <= 1) return;
+    setImgIdx((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  const handleNextImg = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    if (images.length <= 1) return;
+    setImgIdx((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
+
+  const shareUrl = typeof window !== 'undefined' 
+    ? `${window.location.origin}/propiedad/${p.id}` 
+    : `https://rentungroup.com/propiedad/${p.id}`;
+
+  const handleQuickCopy = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      setCopiedShare(true);
+      trackShareEvent({ propertyId: p.id, propertyName: p.name, platform: 'copy_link' });
+      setTimeout(() => setCopiedShare(false), 2500);
+    });
+  };
+
+  const handleQuickWhatsAppShare = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    trackShareEvent({ propertyId: p.id, propertyName: p.name, platform: 'whatsapp' });
+    const text = `🏨 ${p.name} en Bogotá: ${shareUrl}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+  };
 
   return (
-    <div className={`rv d${idx + 1}`} style={{ background:'white', borderRadius:28, overflow:'hidden', border:'1px solid #E6E7E8', boxShadow:'0 10px 30px rgba(0,0,0,0.04)', display:'flex', flexDirection:'column', height:'100%' }}>
-      {/* Image with auto-rotation */}
-      <div style={{ aspectRatio: '1.25', width: '100%', overflow:'hidden', background:'#fafafa', position:'relative', flexShrink:0 }}>
-        {p.images?.length > 0 ? (
-          <img src={p.images[imgIdx]} alt={p.name}
-               style={{ width:'100%', height:'100%', objectFit:'cover', transition:'opacity 0.5s' }} />
-        ) : (
-          <div style={{ height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'3rem', background:'#e2e8f0' }}>🏨</div>
-        )}
-        <span style={{ position:'absolute', top:'1rem', left:'1rem', background:'#F57C00', color:'white', fontSize:'0.65rem', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em', padding:'0.28rem 0.8rem', borderRadius:50, zIndex:2 }}>
+    <div className={`rv d${idx + 1}`} style={{ background:'white', borderRadius:28, overflow:'hidden', border:'1px solid #E6E7E8', boxShadow:'0 10px 30px rgba(0,0,0,0.04)', display:'flex', flexDirection:'column', height:'100%', position:'relative' }}>
+      
+      {/* Mini Toast al copiar */}
+      {copiedShare && (
+        <div style={{ position:'absolute', top:'1rem', left:'50%', transform:'translateX(-50%)', background:'#0F4C81', color:'white', padding:'0.4rem 0.9rem', borderRadius:50, fontSize:'0.72rem', fontWeight:800, zIndex:20, boxShadow:'0 4px 15px rgba(0,0,0,0.2)', display:'flex', alignItems:'center', gap:'0.3rem' }}>
+          <Check size={14} color="#25D366" />
+          <span>{lang === 'EN' ? 'Link Copied!' : '¡Enlace Copiado!'}</span>
+        </div>
+      )}
+
+      {/* Image with manual navigation and Link to /propiedad/:id */}
+      <div style={{ aspectRatio: '1.25', width: '100%', overflow:'hidden', background:'#0f172a', position:'relative', flexShrink:0 }}>
+        <Link to={`/propiedad/${p.id}`} style={{ display:'block', width:'100%', height:'100%' }}>
+          {images.length > 0 ? (
+            <img src={images[imgIdx]} alt={p.name}
+                 style={{ width:'100%', height:'100%', objectFit:'cover', transition:'opacity 0.3s' }} />
+          ) : (
+            <div style={{ height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'3rem', background:'#e2e8f0' }}>🏨</div>
+          )}
+        </Link>
+
+        {/* Badges superiores */}
+        <span style={{ position:'absolute', top:'1rem', left:'1rem', background:'#F57C00', color:'white', fontSize:'0.65rem', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.1em', padding:'0.28rem 0.8rem', borderRadius:50, zIndex:2, pointerEvents:'none' }}>
           {p.isAirbnb ? 'Airbnb' : (lang === 'EN' ? 'Direct' : 'Directo')}
         </span>
-        <span style={{ position:'absolute', top:'1rem', right:'1rem', background:'rgba(255,255,255,0.96)', borderRadius:50, padding:'0.3rem 0.75rem', fontSize:'0.75rem', fontWeight:800, color:'#1a2332', zIndex:2 }}>⭐ 5.0</span>
-        {p.images?.length > 1 && (
-          <span style={{ position:'absolute', bottom:8, right:10, background:'rgba(0,0,0,0.5)', color:'white', fontSize:'0.6rem', fontWeight:700, padding:'0.15rem 0.5rem', borderRadius:50, zIndex:2 }}>📸 {p.images.length}</span>
+        <span style={{ position:'absolute', top:'1rem', right:'1rem', background:'rgba(255,255,255,0.96)', borderRadius:50, padding:'0.3rem 0.75rem', fontSize:'0.75rem', fontWeight:800, color:'#1a2332', zIndex:2, pointerEvents:'none' }}>⭐ 5.0</span>
+        
+        {/* Controles manuales del Slider */}
+        {images.length > 1 && (
+          <>
+            <button 
+              onClick={handlePrevImg}
+              aria-label="Foto anterior"
+              style={{
+                position:'absolute', top:'50%', left:'0.6rem', transform:'translateY(-50%)',
+                background:'rgba(15, 23, 42, 0.75)', color:'white', border:'none',
+                borderRadius:'50%', width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center',
+                cursor:'pointer', zIndex:3, transition:'all 0.2s'
+              }}
+              onMouseEnter={(e)=>e.currentTarget.style.background='rgba(15, 23, 42, 0.95)'}
+              onMouseLeave={(e)=>e.currentTarget.style.background='rgba(15, 23, 42, 0.75)'}
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button 
+              onClick={handleNextImg}
+              aria-label="Foto siguiente"
+              style={{
+                position:'absolute', top:'50%', right:'0.6rem', transform:'translateY(-50%)',
+                background:'rgba(15, 23, 42, 0.75)', color:'white', border:'none',
+                borderRadius:'50%', width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center',
+                cursor:'pointer', zIndex:3, transition:'all 0.2s'
+              }}
+              onMouseEnter={(e)=>e.currentTarget.style.background='rgba(15, 23, 42, 0.95)'}
+              onMouseLeave={(e)=>e.currentTarget.style.background='rgba(15, 23, 42, 0.75)'}
+            >
+              <ChevronRight size={20} />
+            </button>
+
+            {/* Contador de Fotos */}
+            <span style={{ position:'absolute', bottom:8, right:10, background:'rgba(0,0,0,0.65)', color:'white', fontSize:'0.65rem', fontWeight:700, padding:'0.2rem 0.6rem', borderRadius:50, zIndex:2, backdropFilter:'blur(4px)' }}>
+              📸 {imgIdx + 1} / {images.length}
+            </span>
+          </>
         )}
       </div>
 
       {/* Card Content */}
       <div style={{ padding:'1.8rem', flex:1, display:'flex', flexDirection:'column', justifyContent:'space-between', gap:'1.2rem' }}>
         <div>
-          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text)', margin: '0 0 0.4rem', letterSpacing: '-0.01em', lineHeight: 1.25 }}>
-            {lang === 'EN' ? (p.nameEn || p.name) : p.name
-          }</h3>
+          <Link to={`/propiedad/${p.id}`} style={{ textDecoration:'none', color:'inherit' }}>
+            <h3 style={{ fontSize: '1.18rem', fontWeight: 800, color: 'var(--text)', margin: '0 0 0.4rem', letterSpacing: '-0.01em', lineHeight: 1.25, transition:'color 0.2s' }}
+                onMouseEnter={(e)=>e.currentTarget.style.color='var(--orange)'}
+                onMouseLeave={(e)=>e.currentTarget.style.color='var(--text)'}
+            >
+              {lang === 'EN' ? (p.nameEn || p.name) : p.name}
+            </h3>
+          </Link>
           <p style={{ fontSize:'0.75rem', color:'var(--orange)', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.05em', margin:'0 0 0.8rem' }}>
             📍 {lang === 'EN' ? (p.locationEn || p.location) : p.location}
           </p>
@@ -255,48 +343,87 @@ export function PropCard({ p, idx, lang, t, waLink }) {
             <span>🚿 {p.baths} {t.propBaths}</span>
           </div>
         </div>
+
+        {/* Action Buttons */}
         <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem', borderTop:'1px solid #f1f2f4', paddingTop:'1rem' }}>
-          <div style={{ display:'grid', gridTemplateColumns:(p.isAirbnb && p.bookingLink) ? '1fr 1fr' : '1fr', gap:'0.6rem' }}>
-            {p.isAirbnb && (
-              <a href={p.airbnbListing} target="_blank" rel="noopener noreferrer"
-                 onClick={(e) => {
-                   if (!localStorage.getItem('lead_registered')) {
-                     e.preventDefault();
-                     handleRedirectWithLead(p.airbnbListing, 'airbnb');
-                   }
-                 }}
-                 style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#FF385C', color:'white', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700, transition:'all 0.2s' }}
-                 onMouseEnter={(e)=>e.currentTarget.style.filter='brightness(0.9)'}
-                 onMouseLeave={(e)=>e.currentTarget.style.filter='none'}
-              >
-                🗓️ Airbnb
-              </a>
-            )}
-            {p.bookingLink && (
-              <a href={p.bookingLink} target="_blank" rel="noopener noreferrer"
-                 onClick={(e) => {
-                   if (!localStorage.getItem('lead_registered')) {
-                     e.preventDefault();
-                     handleRedirectWithLead(p.bookingLink, 'booking');
-                   }
-                 }}
-                 style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#003580', color:'white', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700, transition:'all 0.2s' }}
-                 onMouseEnter={(e)=>e.currentTarget.style.filter='brightness(0.95)'}
-                 onMouseLeave={(e)=>e.currentTarget.style.filter='none'}
-              >
-                🏨 Booking
-              </a>
-            )}
+          
+          {/* Fila 1: Ver Apartamento & Compartir */}
+          <div style={{ display:'grid', gridTemplateColumns:'1fr auto', gap:'0.5rem' }}>
+            <Link to={`/propiedad/${p.id}`}
+                  style={{
+                    display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem',
+                    background:'linear-gradient(135deg, #0A3560, #0F4C81)', color:'white',
+                    textDecoration:'none', padding:'0.65rem 1rem', borderRadius:50,
+                    fontSize:'0.8rem', fontWeight:800, transition:'all 0.2s',
+                    boxShadow:'0 3px 10px rgba(15,76,129,0.2)'
+                  }}
+                  onMouseEnter={(e)=>e.currentTarget.style.filter='brightness(1.1)'}
+                  onMouseLeave={(e)=>e.currentTarget.style.filter='none'}
+            >
+              <span>🏨 {lang === 'EN' ? 'View Details & Gallery' : 'Ver Apartamento & Fotos'} →</span>
+            </Link>
+
+            <button 
+              onClick={handleQuickCopy}
+              title={lang === 'EN' ? 'Share / Copy link' : 'Compartir / Copiar enlace'}
+              style={{
+                display:'flex', alignItems:'center', justifyContent:'center',
+                background:'#F1F5F9', color:'#0F4C81', border:'1px solid #E2E8F0',
+                borderRadius:50, width:38, height:38, cursor:'pointer', transition:'all 0.2s'
+              }}
+              onMouseEnter={(e)=>{e.currentTarget.style.background='#0F4C81'; e.currentTarget.style.color='white';}}
+              onMouseLeave={(e)=>{e.currentTarget.style.background='#F1F5F9'; e.currentTarget.style.color='#0F4C81';}}
+            >
+              <Share2 size={16} />
+            </button>
           </div>
-          <a href={waLink(p.whatsappNumber || cfg?.whatsapp || SITE.whatsapp, lang === 'EN' ? `Hello! I'm interested in booking the apartment ${p.name}` : `Hola! Me interesa reservar el apartamento ${p.name}`)} target="_blank" rel="noopener noreferrer"
+
+          {/* Fila 2: Airbnb / Booking (si aplica) */}
+          {(p.isAirbnb || p.bookingLink) && (
+            <div style={{ display:'grid', gridTemplateColumns:(p.isAirbnb && p.bookingLink) ? '1fr 1fr' : '1fr', gap:'0.5rem' }}>
+              {p.isAirbnb && (
+                <a href={p.airbnbListing} target="_blank" rel="noopener noreferrer"
+                   onClick={(e) => {
+                     if (!localStorage.getItem('lead_registered')) {
+                       e.preventDefault();
+                       handleRedirectWithLead(p.airbnbListing, 'airbnb');
+                     }
+                   }}
+                   style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#FF385C', color:'white', textDecoration:'none', padding:'0.55rem', borderRadius:50, fontSize:'0.75rem', fontWeight:700, transition:'all 0.2s' }}
+                   onMouseEnter={(e)=>e.currentTarget.style.filter='brightness(0.9)'}
+                   onMouseLeave={(e)=>e.currentTarget.style.filter='none'}
+                >
+                  🗓️ Airbnb
+                </a>
+              )}
+              {p.bookingLink && (
+                <a href={p.bookingLink} target="_blank" rel="noopener noreferrer"
+                   onClick={(e) => {
+                     if (!localStorage.getItem('lead_registered')) {
+                       e.preventDefault();
+                       handleRedirectWithLead(p.bookingLink, 'booking');
+                     }
+                   }}
+                   style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#003580', color:'white', textDecoration:'none', padding:'0.55rem', borderRadius:50, fontSize:'0.75rem', fontWeight:700, transition:'all 0.2s' }}
+                   onMouseEnter={(e)=>e.currentTarget.style.filter='brightness(0.95)'}
+                   onMouseLeave={(e)=>e.currentTarget.style.filter='none'}
+                >
+                  🏨 Booking
+                </a>
+              )}
+            </div>
+          )}
+
+          {/* Fila 3: WhatsApp Directo */}
+          <a href={waLink(p.whatsappNumber || cfg?.whatsapp || SITE.whatsapp, lang === 'EN' ? `Hello! I'm interested in booking the apartment ${p.name} (ID: ${p.id})` : `Hola! Me interesa reservar el apartamento ${p.name} (ID: ${p.id})`)} target="_blank" rel="noopener noreferrer"
              onClick={(e) => {
-               const url = waLink(p.whatsappNumber || cfg?.whatsapp || SITE.whatsapp, lang === 'EN' ? `Hello! I'm interested in booking the apartment ${p.name}` : `Hola! Me interesa reservar el apartamento ${p.name}`);
+               const url = waLink(p.whatsappNumber || cfg?.whatsapp || SITE.whatsapp, lang === 'EN' ? `Hello! I'm interested in booking the apartment ${p.name} (ID: ${p.id})` : `Hola! Me interesa reservar el apartamento ${p.name} (ID: ${p.id})`);
                if (!localStorage.getItem('lead_registered')) {
                  e.preventDefault();
                  handleRedirectWithLead(url, 'whatsapp');
                }
              }}
-             style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.65rem', borderRadius:50, fontSize:'0.78rem', fontWeight:700, transition:'all 0.2s' }}
+             style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#25D366', color:'white', textDecoration:'none', padding:'0.55rem', borderRadius:50, fontSize:'0.76rem', fontWeight:700, transition:'all 0.2s' }}
              onMouseEnter={(e)=>e.currentTarget.style.filter='brightness(0.9)'}
              onMouseLeave={(e)=>e.currentTarget.style.filter='none'}
           >
@@ -840,6 +967,10 @@ export default function Landing() {
                         {t.btnBooking}
                       </a>
                     )}
+                    <Link to={`/propiedad/${mainProp.id}`}
+                       style={{ display:'inline-flex', alignItems:'center', gap:'0.55rem', background:'linear-gradient(135deg, #0A3560, #0F4C81)', color:'white', textDecoration:'none', padding:'0.75rem 1.6rem', borderRadius:8, fontWeight:700, fontSize:'0.85rem', boxShadow:'var(--shadow-sm)', transition:'all 0.2s' }}>
+                      <span>🏨 {lang === 'EN' ? 'View Details & Gallery' : 'Ver Apartamento & Fotos'} →</span>
+                    </Link>
                     <a href={waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name}` : `Hola! Me interesa reservar el apartamento ${mainProp.name}`)} target="_blank" rel="noopener noreferrer" id="props-whatsapp-btn"
                        onClick={(e) => {
                          const url = waLink(lang === 'EN' ? `Hello! I'm interested in booking the apartment ${mainProp.name}` : `Hola! Me interesa reservar el apartamento ${mainProp.name}`);
@@ -982,7 +1113,7 @@ export default function Landing() {
                   {f.icon}
                 </div>
                 <div>
-                  <h4 style={{ fontSize:'1rem', fontWeight:700, color:'var(--text)', marginBottom:'0.3rem', letterSpacing:'-0.01em' }}>{f.title}</h4>
+                  <h3 style={{ fontSize:'1rem', fontWeight:700, color:'var(--text)', marginBottom:'0.3rem', letterSpacing:'-0.01em' }}>{f.title}</h3>
                   <p style={{ fontSize:'0.84rem', color:'var(--text-muted)', lineHeight:1.65 }}>{f.desc}</p>
                 </div>
               </div>
@@ -1013,7 +1144,7 @@ export default function Landing() {
               <div key={i} className={`rv d${i + 1}`} style={{ background:'white', borderRadius:22, padding:'2rem 1.5rem', border:'1px solid #E6E7E8', position:'relative', textAlign:'center' }}>
                 <div style={{ width:38, height:38, background:'var(--orange)', borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'0.9rem', fontWeight:900, color:'var(--text)', boxShadow:'var(--shadow-sm)', margin:'0 auto 1.2rem' }}>{s.n}</div>
                 <div style={{ fontSize:'2rem', marginBottom:'0.8rem' }}>{s.e}</div>
-                <h4 style={{ fontSize:'0.95rem', fontWeight:700, color:'var(--text)', marginBottom:'0.5rem', letterSpacing:'-0.01em' }}>{s.t}</h4>
+                <h3 style={{ fontSize:'0.95rem', fontWeight:700, color:'var(--text)', marginBottom:'0.5rem', letterSpacing:'-0.01em' }}>{s.t}</h3>
                 <p style={{ fontSize:'0.8rem', color:'var(--text-muted)', lineHeight:1.62 }}>{s.d}</p>
               </div>
             ))}
@@ -1042,9 +1173,9 @@ export default function Landing() {
 
           {/* Column 2: Navigation */}
           <div>
-            <h4 style={{ fontSize:'0.85rem', fontWeight:800, color:'white', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'1.4rem', margin:0 }}>
+            <div style={{ fontSize:'0.85rem', fontWeight:800, color:'white', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'1.4rem', margin:0 }}>
               {lang === 'EN' ? 'Explore' : 'Explora'}
-            </h4>
+            </div>
             <ul style={{ listStyle:'none', padding:0, margin:0, display:'flex', flexDirection:'column', gap:'0.75rem' }}>
               <li>
                 <a href="#propiedades" style={{ color:'rgba(255,255,255,0.48)', textDecoration:'none', fontSize:'0.82rem', fontWeight:500, transition:'color 0.2s' }}
@@ -1071,9 +1202,9 @@ export default function Landing() {
 
           {/* Column 3: Contact & Links */}
           <div>
-            <h4 style={{ fontSize:'0.85rem', fontWeight:800, color:'white', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'1.4rem', margin:0 }}>
+            <div style={{ fontSize:'0.85rem', fontWeight:800, color:'white', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'1.4rem', margin:0 }}>
               {lang === 'EN' ? 'Contact' : 'Contacto'}
-            </h4>
+            </div>
             <ul style={{ listStyle:'none', padding:0, margin:0, display:'flex', flexDirection:'column', gap:'0.75rem' }}>
               <li>
                 <a href={waLink('Hola Rentun Group!')} target="_blank" rel="noopener noreferrer"
@@ -1101,9 +1232,9 @@ export default function Landing() {
 
           {/* Column 4: Legal & RNT */}
           <div>
-            <h4 style={{ fontSize:'0.85rem', fontWeight:800, color:'white', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'1.4rem', margin:0 }}>
+            <div style={{ fontSize:'0.85rem', fontWeight:800, color:'white', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'1.4rem', margin:0 }}>
               {lang === 'EN' ? 'Policies' : 'Normativas'}
-            </h4>
+            </div>
             <ul style={{ listStyle:'none', padding:0, margin:0, display:'flex', flexDirection:'column', gap:'0.75rem' }}>
               <li>
                 <Link to="/legal" style={{ color:'var(--orange)', textDecoration:'none', fontSize:'0.82rem', fontWeight:800, transition:'opacity 0.2s' }}

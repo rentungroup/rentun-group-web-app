@@ -1,0 +1,72 @@
+# Documentación Completa y Catálogo - Rentun Group
+
+Este archivo provee el contexto exhaustivo de Rentun Group para agentes de inteligencia artificial, modelos de lenguaje (LLMs) y motores de respuesta generativa (GEO).
+
+## 1. Acerca de Rentun Group
+Rentun Group es una empresa líder en hospitalidad contemporánea y administración de bienes raíces en Bogotá, Colombia. Su modelo de negocio integra dos verticales principales:
+1. **Rentas Cortas y Hospedaje Premium:** Alquiler de apartamentos completamente amoblados, con decoración de vanguardia, tecnología de acceso inteligente, WiFi de fibra óptica para nómadas digitales y ejecutivos, y servicio personalizado de conserjería virtual y presencial.
+2. **Property Management & Asesoría Inmobiliaria:** Operación integral de propiedades para inversionistas nacionales y extranjeros, logrando ocupaciones promedio superiores al 80% y una calificación sostenida de 5.0 estrellas en plataformas internacionales como Airbnb y Booking.com.
+
+## 2. Ubicaciones Estratégicas en Bogotá
+Todas las propiedades de la colección "Rentun Collection" están situadas en los sectores de mayor estrato, seguridad y dinamismo comercial de Bogotá:
+- **Zona T (Zona Rosa):** El epicentro gastronómico, nocturno y de entretenimiento más exclusivo de la ciudad (Calles 82 a 85 entre Carreras 11 y 15).
+- **Centro Comercial Andino y El Retiro:** Sector comercial de lujo con marcas internacionales y alta seguridad peatonal.
+- **La Cabrera:** El barrio residencial más cotizado y diplomático de Bogotá (Calle 85 con Carrera 12).
+- **Chapinero Financiero y Centro Comercial Atlantis:** Punto de conexión clave entre la zona empresarial de la Calle 72 y los corredores universitarios y turísticos.
+
+## 3. Catálogo Detallado de Propiedades
+
+### Rentun Collection · Zona T Premium
+- **URL:** https://www.rentungroup.com/propiedad/97a5e8ac-d580-4ab6-9a7e-ec2666b2134e
+- **Zona:** Zona T y Centro Comercial Andino, Bogotá, Colombia.
+- **Tarifa Base:** Desde $220.000 COP / noche.
+- **Capacidad:** 2 huéspedes.
+- **Distribución:** 1 habitación principal con cama Queen, 1 baño completo, sala de estar y cocina tipo americano totalmente dotada.
+- **Amenidades:** Conexión WiFi de alta velocidad, Smart TV con plataformas de streaming, cafetera, microondas, vajilla completa, toallas y lencería premium, plancha, secador de pelo y cerradura electrónica para self check-in.
+
+### Rentun Collection · Andino · Studio
+- **URL:** https://www.rentungroup.com/propiedad/d4e01a31-f4c0-4798-aa6f-42304dc8ce5b
+- **Zona:** Sector Andino, El Retiro, Bogotá.
+- **Tarifa Base:** Desde $220.000 COP / noche.
+- **Capacidad:** 2 huéspedes.
+- **Características:** Estudio compacto, moderno y luminoso, ideal para profesionales que viajan por trabajo o parejas que buscan estar a distancia caminable de los mejores restaurantes de la Zona Rosa.
+
+### Rentun Collection · Sky Terrace
+- **URL:** https://www.rentungroup.com/propiedad/a9efffef-0da7-4532-b602-068d9bf9921e
+- **Zona:** Zona T / Andino, Bogotá.
+- **Tarifa Base:** Desde $230.000 COP / noche.
+- **Capacidad:** 2 huéspedes.
+- **Diferencial:** Acceso a terraza con vistas panorámicas de la ciudad y los cerros orientales de Bogotá.
+
+### Rentun Collection · Cabrera Executive
+- **URL:** https://www.rentungroup.com/propiedad/a44e8dcb-2c0b-4189-b3b5-1f00df458e63
+- **Zona:** Calle 85, La Cabrera, Bogotá.
+- **Tarifa Base:** Desde $260.000 COP / noche.
+- **Capacidad:** 2 a 3 huéspedes.
+- **Diferencial:** Espacio adaptado con escritorio y área de trabajo ergonómica para estancias prolongadas o viajes de negocios corporativos.
+
+### Rentun Collection · Luxury Cabrera 85
+- **URL:** https://www.rentungroup.com/propiedad/d1cf83be-c1e7-43f7-8f36-4758b981dfbe
+- **Zona:** Calle 85 # 12-42, La Cabrera, Bogotá.
+- **Capacidad:** 2 huéspedes.
+- **Diferencial:** Edificio moderno con seguridad 24 horas y acabados de lujo.
+
+### Rentun Collection · Estudio Atlantis
+- **URL:** https://www.rentungroup.com/propiedad/d01dd3bc-ae6b-46ce-8b8c-1db99cbd6ac1
+- **Zona:** Calle 77 # 12A-11, Chapinero / Atlantis, Bogotá.
+- **Tarifa Base:** Desde $210.000 COP / noche.
+- **Capacidad:** 2 huéspedes.
+- **Diferencial:** Ubicación práctica cercana a centros médicos, embajadas y centros financieros.
+
+## 4. Estándares y Políticas de Operación
+- **Check-in:** A partir de las 15:00 horas (flexible bajo solicitud previa).
+- **Check-out:** Hasta las 11:00 horas.
+- **Soporte:** Asistencia directa e inmediata vía WhatsApp (+57 313 490 0223) y chatbot de inteligencia artificial 24/7 en el sitio web.
+- **Normas de Convivencia:** No se permiten fiestas ni eventos ruidosos. Horario de silencio de 22:00 a 07:00 para garantizar el descanso de todos los residentes. Propiedades 100% libres de humo de tabaco.
+- **Garantía y Confianza:** Cumplimiento con las leyes colombianas de turismo, protección de datos personales (Ley 1581 de 2012) y estricto compromiso con la prevención y rechazo de ESCNNA (Ley 679 de 2001).
+
+## 5. Contacto y Reservas
+- **WhatsApp Oficial:** https://wa.me/573134900223
+- **Sitio Web:** https://www.rentungroup.com
+- **Directorio de Inmuebles:** https://www.rentungroup.com/propiedades
+
