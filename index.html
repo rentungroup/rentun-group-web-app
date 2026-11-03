@@ -9,9 +9,9 @@
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- Primary Meta Tags -->
-    <meta name="description" content="Rentun Group — Apartamentos amoblados de corta estancia en Bogotá (Zona T, Andino, La Cabrera y Chapinero). Hospedaje premium con calificación 5.0 en Airbnb, check-in autónomo, gestión inmobiliaria y asesoría de inversión." />
-    <meta name="keywords" content="apartamentos amoblados bogota, rentas cortas bogota, alquiler temporal zona t bogota, apartamentos andino bogota, airbnb bogota, rentun group, hospedaje corporativo bogota, gestion de propiedades airbnb bogota, inversion inmobiliaria bogota, coliving bogota" />
+    <!-- Primary Meta Tags (Largo exacto optimizado a 153 caracteres para evitar cortes en Google) -->
+    <meta name="description" content="Rentun Group: Apartamentos amoblados y rentas cortas premium en Bogotá (Zona T, Andino). Calificación 5.0 en Airbnb, check-in 24/7 y gestión inmobiliaria." />
+    <meta name="keywords" content="apartamentos amoblados bogota, rentas cortas bogota, alquiler temporal zona t bogota, apartamentos andino bogota, airbnb bogota, rentun group, gestion de propiedades airbnb colombia, inversion inmobiliaria medellin cartagena bogota, hospedaje corporativo bogota" />
     <meta name="author" content="Rentun Group | Desarrollado por J&M Tech Solutions" />
     <meta name="publisher" content="Rentun Group" />
     <link rel="author" href="https://www.jymtechsolutions.online/es" />
@@ -58,7 +58,7 @@
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Prata&display=swap" />
     </noscript>
 
-    <!-- Structured Data: Unified Graph (LodgingBusiness, RealEstateAgent, WebSite) -->
+    <!-- Structured Data: Unified Master Graph (Multi-City Lodging, RealEstateAgent, Services, WebSite) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -66,17 +66,19 @@
         {
           "@type": "LodgingBusiness",
           "@id": "https://www.rentungroup.com/#lodging",
-          "name": "Rentun Group - Apartamentos Amoblados en Bogotá",
-          "alternateName": "Rentun Group",
+          "name": "Rentun Group - Apartamentos Amoblados y Hospedaje Premium",
+          "alternateName": ["Rentun Group", "Rentun Group Bogotá"],
           "url": "https://www.rentungroup.com/",
           "logo": "https://www.rentungroup.com/logos/rentungroupwithe.webp",
           "image": "https://www.rentungroup.com/logos/rentungroupwithe.webp",
-          "description": "Apartamentos de corta estancia con servicio premium en Bogotá (Zona T, Andino, La Cabrera, Chapinero). Check-in autónomo, WiFi de alta velocidad y calificación 5.0 en Airbnb.",
+          "description": "Apartamentos de corta y media estancia con servicio premium en Bogotá (Zona T, Andino, La Cabrera, Chapinero). Check-in autónomo 24/7, WiFi de alta velocidad y calificación 5.0 en Airbnb.",
           "telephone": "+573134900223",
           "email": "admin@rentungroup.com",
           "priceRange": "$$$",
-          "currenciesAccepted": "COP, USD",
+          "currenciesAccepted": "COP, USD, EUR",
           "paymentAccepted": "Cash, Credit Card, Bank Transfer, Airbnb, Booking.com",
+          "checkinTime": "15:00",
+          "checkoutTime": "11:00",
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "Zona T y Calle 85",
@@ -91,10 +93,24 @@
             "longitude": -74.0538
           },
           "areaServed": [
-            { "@type": "City", "name": "Bogotá" },
+            { "@type": "City", "name": "Bogotá", "sameAs": "https://es.wikipedia.org/wiki/Bogot%C3%A1" },
             { "@type": "AdministrativeArea", "name": "Zona T Bogotá" },
+            { "@type": "AdministrativeArea", "name": "Centro Comercial Andino" },
             { "@type": "AdministrativeArea", "name": "La Cabrera Bogotá" },
-            { "@type": "AdministrativeArea", "name": "Chapinero Bogotá" }
+            { "@type": "AdministrativeArea", "name": "Chapinero Bogotá" },
+            { "@type": "AdministrativeArea", "name": "Chicó Norte Bogotá" },
+            { "@type": "AdministrativeArea", "name": "Usaquén Bogotá" },
+            { "@type": "Country", "name": "Colombia" }
+          ],
+          "amenityFeature": [
+            { "@type": "LocationFeatureSpecification", "name": "WiFi de Alta Velocidad (Fibra Óptica)", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Cerradura Electrónica y Self Check-in 24/7", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Cocina Totalmente Equipada", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Espacio de Trabajo / Laptop Friendly", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Smart TV con Streaming", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Lencería y Toallas Premium de Hotel", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Atención Personalizada 24/7 vía WhatsApp", "value": true },
+            { "@type": "LocationFeatureSpecification", "name": "Ambiente 100% Libre de Humo", "value": true }
           ],
           "aggregateRating": {
             "@type": "AggregateRating",
@@ -105,7 +121,7 @@
           },
           "hasOfferCatalog": {
             "@type": "OfferCatalog",
-            "name": "Rentun Collection - Apartamentos en Renta Corta",
+            "name": "Rentun Collection - Portafolio de Apartamentos en Renta Corta",
             "itemListElement": [
               {
                 "@type": "Offer",
@@ -150,6 +166,28 @@
                 },
                 "priceCurrency": "COP",
                 "price": "260000"
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Accommodation",
+                  "name": "Rentun Collection · Luxury Cabrera 85",
+                  "description": "Apartamento de lujo con acabados de alto nivel en La Cabrera.",
+                  "url": "https://www.rentungroup.com/propiedad/d1cf83be-c1e7-43f7-8f36-4758b981dfbe"
+                },
+                "priceCurrency": "COP",
+                "price": "280000"
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Accommodation",
+                  "name": "Rentun Collection · Estudio Atlantis",
+                  "description": "Estudio funcional y moderno en Calle 77 con Carrera 12, Chapinero.",
+                  "url": "https://www.rentungroup.com/propiedad/d01dd3bc-ae6b-46ce-8b8c-1db99cbd6ac1"
+                },
+                "priceCurrency": "COP",
+                "price": "210000"
               }
             ]
           }
@@ -158,9 +196,10 @@
           "@type": "RealEstateAgent",
           "@id": "https://www.rentungroup.com/#realestate",
           "name": "Rentun Group Inmobiliaria & Property Management",
+          "alternateName": "Rentun Group Real Estate",
           "url": "https://www.rentungroup.com/",
           "image": "https://www.rentungroup.com/logos/rentungroupwithe.webp",
-          "description": "Gestión integral de rentas vacacionales, operación de propiedades en Airbnb y asesoría estratégica de inversión inmobiliaria en Bogotá.",
+          "description": "Operación integral de rentas vacacionales en Airbnb y Booking, gestión de propiedades y consultoría estratégica de inversión inmobiliaria a nivel nacional e internacional.",
           "telephone": "+573134900223",
           "email": "admin@rentungroup.com",
           "address": {
@@ -168,6 +207,53 @@
             "addressLocality": "Bogotá",
             "addressRegion": "Bogotá D.C.",
             "addressCountry": "CO"
+          },
+          "areaServed": [
+            { "@type": "City", "name": "Bogotá", "sameAs": "https://es.wikipedia.org/wiki/Bogot%C3%A1" },
+            { "@type": "City", "name": "Medellín", "sameAs": "https://es.wikipedia.org/wiki/Medell%C3%ADn" },
+            { "@type": "City", "name": "Cartagena de Indias", "sameAs": "https://es.wikipedia.org/wiki/Cartagena_de_Indias" },
+            { "@type": "City", "name": "Santa Marta", "sameAs": "https://es.wikipedia.org/wiki/Santa_Marta_(Colombia)" },
+            { "@type": "City", "name": "Barranquilla", "sameAs": "https://es.wikipedia.org/wiki/Barranquilla" },
+            { "@type": "City", "name": "Cali", "sameAs": "https://es.wikipedia.org/wiki/Cali" },
+            { "@type": "AdministrativeArea", "name": "Eje Cafetero" },
+            { "@type": "City", "name": "Miami", "sameAs": "https://en.wikipedia.org/wiki/Miami" },
+            { "@type": "City", "name": "Madrid", "sameAs": "https://es.wikipedia.org/wiki/Madrid" },
+            { "@type": "Country", "name": "Colombia" },
+            { "@type": "Country", "name": "Estados Unidos" },
+            { "@type": "Country", "name": "Panamá" }
+          ],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Servicios Inmobiliarios y de Gestión Rentun Group",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Gestión Integral de Alquiler Vacacional (Airbnb & Booking)",
+                  "description": "Servicio llave en mano: creación de listados optimizados, fotografía profesional, pricing dinámico, limpieza hotelera y check-in presencial/digital.",
+                  "provider": { "@id": "https://www.rentungroup.com/#realestate" }
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Asesoría en Inversión Inmobiliaria para Rentas Cortas",
+                  "description": "Selección, análisis financiero y adecuación de inmuebles de alta rentabilidad y plusvalía en Colombia e internacionalmente.",
+                  "provider": { "@id": "https://www.rentungroup.com/#realestate" }
+                }
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Hospedaje Corporativo y Relocalización Ejecutiva",
+                  "description": "Alojamiento amoblado de mediano y largo plazo para empresas, nómadas digitales y misiones diplomáticas con facturación y soporte integral.",
+                  "provider": { "@id": "https://www.rentungroup.com/#realestate" }
+                }
+              }
+            ]
           }
         },
         {
