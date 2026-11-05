@@ -285,7 +285,12 @@ export default function Admin() {
             .select('*')
             .order('created_at', { ascending: false });
           if (error) throw error;
-          setLeads(data || []);
+          const loaded = data || [];
+          setLeads(loaded);
+          if (loaded.length > 0) {
+            setSelectedLeadForMsg(prev => prev || loaded[0]);
+            setLeadCustomMsg(prev => prev || getLeadTemplateText('fechas', loaded[0].name));
+          }
         } catch (err) {
           console.error('Error fetching leads:', err);
         } finally {
@@ -1465,7 +1470,7 @@ export default function Admin() {
       </div>
 
       {/* ── Form content ── */}
-      <div style={{ maxWidth:1200, margin:'2rem auto', padding:'0 3rem 4rem' }}>
+      <div style={{ maxWidth: activeTab === 'leads' ? 1560 : 1200, margin:'2rem auto', padding: activeTab === 'leads' ? '0 1.5rem 4rem' : '0 3rem 4rem', transition:'max-width 0.25s ease' }}>
 
         {activeTab === 'landing' && (
           <>
@@ -2902,273 +2907,233 @@ export default function Admin() {
         )}
 
         {activeTab === 'leads' && (
-          <div style={{ background:'white', borderRadius:24, border:'1px solid #E6E7E8', padding:'2.2rem', boxShadow:'0 4px 20px rgba(0,0,0,0.02)' }}>
-            <div style={{ display:'flex', flexWrap:'wrap', justifyContent:'space-between', alignItems:'flex-start', gap:'1rem', marginBottom:'1.5rem' }}>
-              <div>
-                <h3 style={{ fontSize:'1.4rem', fontWeight:800, color:'#0F4C81', fontFamily:'var(--font-header, sans-serif)', marginBottom:'0.4rem', display:'flex', alignItems:'center', gap:'0.6rem' }}>
-                  👥 Leads Capturados por la IA
-                </h3>
-                <p style={{ fontSize:'0.88rem', color:'#5c6d80', margin:0, lineHeight:1.5 }}>
-                  Prospectos interesados en reservar que completaron sus datos. Escríbeles directamente por WhatsApp o correo con 1 clic.
-                </p>
-              </div>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(420px, 1fr))', gap:'2rem', alignItems:'start' }}>
+            
+            {/* ── COLUMNA IZQUIERDA: LISTA Y TABLA DE PROSPECTOS ── */}
+            <div style={{ background:'white', borderRadius:24, border:'1px solid #E6E7E8', padding:'1.8rem', boxShadow:'0 4px 20px rgba(0,0,0,0.02)' }}>
+              <div style={{ display:'flex', flexWrap:'wrap', justifyContent:'space-between', alignItems:'center', gap:'1rem', marginBottom:'1.2rem' }}>
+                <div>
+                  <h3 style={{ fontSize:'1.3rem', fontWeight:800, color:'#0F4C81', fontFamily:'var(--font-header, sans-serif)', margin:0, display:'flex', alignItems:'center', gap:'0.5rem' }}>
+                    👥 Prospectos Capturados ({leads.length})
+                  </h3>
+                  <p style={{ fontSize:'0.82rem', color:'#64748b', margin:'0.2rem 0 0' }}>
+                    Haz clic en cualquier prospecto para redactarle al lado.
+                  </p>
+                </div>
 
-              <div style={{ display:'flex', alignItems:'center', gap:'0.8rem', flexWrap:'wrap' }}>
-                <span style={{ fontSize:'0.82rem', fontWeight:700, color:'#0F4C81', background:'#e0f2fe', padding:'0.4rem 0.8rem', borderRadius:50 }}>
-                  Total: {leads.length} prospectos
-                </span>
                 <button
                   onClick={exportLeadsToCSV}
                   disabled={!leads.length}
                   style={{
                     display:'inline-flex', alignItems:'center', gap:'0.4rem',
                     background:'#f8fafc', border:'1.5px solid #cbd5e1',
-                    padding:'0.45rem 0.9rem', borderRadius:10,
-                    fontSize:'0.82rem', fontWeight:700, color:'#334155',
+                    padding:'0.4rem 0.8rem', borderRadius:10,
+                    fontSize:'0.78rem', fontWeight:700, color:'#334155',
                     cursor: leads.length ? 'pointer' : 'not-allowed',
                     transition:'all 0.2s'
                   }}
                   onMouseEnter={(e)=>{ if (leads.length) e.currentTarget.style.background='#e2e8f0'; }}
                   onMouseLeave={(e)=>{ e.currentTarget.style.background='#f8fafc'; }}
                 >
-                  <Download size={15} /> Exportar CSV
+                  <Download size={14} /> Exportar CSV
                 </button>
               </div>
-            </div>
 
-            {/* Barra de búsqueda y filtros */}
-            <div style={{ display:'flex', alignItems:'center', gap:'0.8rem', marginBottom:'1.5rem', background:'#f8fafc', padding:'0.6rem 1rem', borderRadius:14, border:'1px solid #e2e8f0' }}>
-              <Search size={18} color="#94a3b8" />
-              <input
-                type="text"
-                placeholder="Buscar lead por nombre, teléfono, correo o plataforma..."
-                value={leadSearchQuery}
-                onChange={(e) => setLeadSearchQuery(e.target.value)}
-                style={{
-                  border:'none', background:'transparent', outline:'none',
-                  width:'100%', fontSize:'0.88rem', color:'#0d1724',
-                  fontFamily:'Outfit,sans-serif'
-                }}
-              />
-              {leadSearchQuery && (
-                <button
-                  onClick={() => setLeadSearchQuery('')}
-                  style={{ border:'none', background:'none', cursor:'pointer', color:'#94a3b8', fontSize:'0.8rem', fontWeight:700 }}
-                >
-                  ✕ Limpiar
-                </button>
+              {/* Buscador de leads */}
+              <div style={{ display:'flex', alignItems:'center', gap:'0.6rem', marginBottom:'1.2rem', background:'#f8fafc', padding:'0.5rem 0.9rem', borderRadius:12, border:'1px solid #e2e8f0' }}>
+                <Search size={16} color="#94a3b8" />
+                <input
+                  type="text"
+                  placeholder="Filtrar por nombre, teléfono, correo..."
+                  value={leadSearchQuery}
+                  onChange={(e) => setLeadSearchQuery(e.target.value)}
+                  style={{
+                    border:'none', background:'transparent', outline:'none',
+                    width:'100%', fontSize:'0.85rem', color:'#0d1724',
+                    fontFamily:'Outfit,sans-serif'
+                  }}
+                />
+                {leadSearchQuery && (
+                  <button
+                    onClick={() => setLeadSearchQuery('')}
+                    style={{ border:'none', background:'none', cursor:'pointer', color:'#94a3b8', fontSize:'0.75rem', fontWeight:700 }}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+
+              {loadingLeads ? (
+                <div style={{ display:'flex', justifyContent:'center', padding:'3rem', color:'#5c6d80', fontWeight:600 }}>
+                  ⏳ Cargando leads de la base de datos...
+                </div>
+              ) : leads.length === 0 ? (
+                <div style={{ padding:'3rem 1.5rem', textAlign:'center', background:'#f8fafc', borderRadius:16, border:'1.5px dashed #E6E7E8' }}>
+                  <p style={{ fontSize:'0.95rem', color:'#5c6d80', fontWeight:600, margin:0 }}>No se han capturado leads todavía.</p>
+                  <p style={{ fontSize:'0.82rem', color:'#8c9ba5', margin:'0.4rem 0 0' }}>Los prospectos aparecerán aquí automáticamente.</p>
+                </div>
+              ) : (
+                (() => {
+                  const filteredLeads = leads.filter(l => {
+                    if (!leadSearchQuery) return true;
+                    const q = leadSearchQuery.toLowerCase();
+                    return (l.name || '').toLowerCase().includes(q) ||
+                           (l.phone || '').includes(q) ||
+                           (l.email || '').toLowerCase().includes(q) ||
+                           (l.destination || '').toLowerCase().includes(q);
+                  });
+
+                  if (filteredLeads.length === 0) {
+                    return (
+                      <div style={{ padding:'2rem', textAlign:'center', color:'#64748b', fontSize:'0.85rem' }}>
+                        No se encontraron prospectos con "{leadSearchQuery}".
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div style={{ overflowX:'auto' }}>
+                      <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.84rem' }}>
+                        <thead>
+                          <tr style={{ borderBottom:'2px solid #E6E7E8', color:'#0F4C81', textAlign:'left', fontWeight:700 }}>
+                            <th style={{ padding:'0.7rem 0.6rem' }}>Prospecto</th>
+                            <th style={{ padding:'0.7rem 0.6rem' }}>Teléfono</th>
+                            <th style={{ padding:'0.7rem 0.6rem' }}>Fecha</th>
+                            <th style={{ padding:'0.7rem 0.6rem', textAlign:'center' }}>Acción</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredLeads.map((l) => {
+                            const isSelected = selectedLeadForMsg?.id === l.id;
+                            const cleanPhone = cleanPhoneForWhatsApp(l.phone);
+                            const directWa = cleanPhone 
+                              ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(getLeadTemplateText('fechas', l.name))}`
+                              : null;
+
+                            return (
+                              <tr 
+                                key={l.id} 
+                                onClick={() => {
+                                  setSelectedLeadForMsg(l);
+                                  setLeadCustomMsg(getLeadTemplateText(leadMsgTemplate, l.name));
+                                  setCopiedLeadMsg(false);
+                                }}
+                                style={{ 
+                                  borderBottom:'1px solid #f1f5f9', 
+                                  cursor:'pointer',
+                                  background: isSelected ? '#eff6ff' : 'transparent',
+                                  transition:'background 0.15s'
+                                }} 
+                                onMouseEnter={(e)=>{ if (!isSelected) e.currentTarget.style.background='#f8fafc'; }} 
+                                onMouseLeave={(e)=>{ if (!isSelected) e.currentTarget.style.background='transparent'; }}
+                              >
+                                <td style={{ padding:'0.8rem 0.6rem' }}>
+                                  <div style={{ display:'flex', alignItems:'center', gap:'0.6rem' }}>
+                                    <div style={{ 
+                                      width:32, height:32, borderRadius:50, 
+                                      background: isSelected ? '#0F4C81' : '#e2e8f0', 
+                                      color: isSelected ? 'white' : '#334155', 
+                                      display:'flex', alignItems:'center', justifyContent:'center',
+                                      fontWeight:800, fontSize:'0.75rem', flexShrink:0 
+                                    }}>
+                                      {(l.name || 'P').charAt(0).toUpperCase()}
+                                    </div>
+                                    <div>
+                                      <div style={{ fontWeight:700, color:'#0f172a', lineHeight:1.2 }}>{l.name}</div>
+                                      <div style={{ display:'flex', alignItems:'center', gap:'0.3rem', marginTop:'0.2rem' }}>
+                                        <span style={{ 
+                                          fontSize:'0.65rem', fontWeight:800, textTransform:'uppercase', 
+                                          padding:'0.15rem 0.45rem', borderRadius:50,
+                                          background: l.destination === 'airbnb' ? 'rgba(255,56,92,0.1)' : (l.destination === 'booking' ? 'rgba(0,53,128,0.1)' : 'rgba(37,211,102,0.1)'),
+                                          color: l.destination === 'airbnb' ? '#FF385C' : (l.destination === 'booking' ? '#003580' : '#059669')
+                                        }}>
+                                          {l.destination || 'web'}
+                                        </span>
+                                        {l.email && (
+                                          <span style={{ fontSize:'0.72rem', color:'#64748b' }}>• {l.email}</span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+
+                                <td style={{ padding:'0.8rem 0.6rem', whiteSpace:'nowrap' }}>
+                                  {cleanPhone ? (
+                                    <span style={{ color:'#059669', fontWeight:700, display:'inline-flex', alignItems:'center', gap:'0.25rem' }}>
+                                      🟢 {l.phone}
+                                    </span>
+                                  ) : (
+                                    <span style={{ color:'#94a3b8' }}>{l.phone || '—'}</span>
+                                  )}
+                                </td>
+
+                                <td style={{ padding:'0.8rem 0.6rem', whiteSpace:'nowrap', color:'#64748b', fontSize:'0.75rem' }}>
+                                  {new Date(l.created_at).toLocaleDateString('es-CO', { day:'2-digit', month:'short' })}
+                                </td>
+
+                                <td style={{ padding:'0.8rem 0.6rem', textAlign:'center', whiteSpace:'nowrap' }}>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedLeadForMsg(l);
+                                      setLeadCustomMsg(getLeadTemplateText(leadMsgTemplate, l.name));
+                                      setCopiedLeadMsg(false);
+                                    }}
+                                    style={{
+                                      background: isSelected ? '#0F4C81' : '#e0f2fe',
+                                      color: isSelected ? 'white' : '#0369a1',
+                                      border:'none', borderRadius:8,
+                                      padding:'0.35rem 0.7rem', fontSize:'0.75rem',
+                                      fontWeight:700, cursor:'pointer'
+                                    }}
+                                  >
+                                    {isSelected ? '✓ Viendo' : 'Redactar'}
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  );
+                })()
               )}
             </div>
 
-            {loadingLeads ? (
-              <div style={{ display:'flex', justifyContent:'center', padding:'3rem', color:'#5c6d80', fontWeight:600 }}>
-                ⏳ Cargando leads de la base de datos...
-              </div>
-            ) : leads.length === 0 ? (
-              <div style={{ padding:'3rem 1.5rem', textAlign:'center', background:'#f8fafc', borderRadius:16, border:'1.5px dashed #E6E7E8' }}>
-                <p style={{ fontSize:'0.95rem', color:'#5c6d80', fontWeight:600, margin:0 }}>No se han capturado leads todavía.</p>
-                <p style={{ fontSize:'0.82rem', color:'#8c9ba5', margin:'0.4rem 0 0' }}>Los prospectos aparecerán aquí cuando hagan clic en los botones de reserva e ingresen sus datos.</p>
-              </div>
-            ) : (
-              (() => {
-                const filteredLeads = leads.filter(l => {
-                  if (!leadSearchQuery) return true;
-                  const q = leadSearchQuery.toLowerCase();
-                  return (l.name || '').toLowerCase().includes(q) ||
-                         (l.phone || '').includes(q) ||
-                         (l.email || '').toLowerCase().includes(q) ||
-                         (l.destination || '').toLowerCase().includes(q);
-                });
-
-                if (filteredLeads.length === 0) {
-                  return (
-                    <div style={{ padding:'2rem', textAlign:'center', color:'#64748b', fontSize:'0.88rem' }}>
-                      No se encontraron prospectos que coincidan con "<strong>{leadSearchQuery}</strong>".
+            {/* ── COLUMNA DERECHA: DESK DE COMUNICACIÓN INTEGRADO (SIN MODALES) ── */}
+            <div style={{ 
+              background:'white', borderRadius:24, border:'1.5px solid #cbd5e1', 
+              padding:'1.8rem', boxShadow:'0 10px 30px rgba(15,76,129,0.06)',
+              position:'sticky', top:'1.5rem'
+            }}>
+              {selectedLeadForMsg ? (
+                <div>
+                  <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', borderBottom:'1px solid #e2e8f0', paddingBottom:'1rem', marginBottom:'1.2rem' }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:'0.6rem' }}>
+                      <div style={{ width:40, height:40, borderRadius:50, background:'#ecfdf5', color:'#059669', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                        <MessageSquare size={20} />
+                      </div>
+                      <div>
+                        <h4 style={{ margin:0, fontSize:'1.15rem', fontWeight:800, color:'#0F4C81' }}>
+                          {selectedLeadForMsg.name}
+                        </h4>
+                        <div style={{ fontSize:'0.75rem', color:'#64748b', display:'flex', alignItems:'center', gap:'0.4rem', marginTop:'0.15rem' }}>
+                          <span>📞 {selectedLeadForMsg.phone}</span>
+                          {selectedLeadForMsg.email && <span>• ✉️ {selectedLeadForMsg.email}</span>}
+                        </div>
+                      </div>
                     </div>
-                  );
-                }
 
-                return (
-                  <div style={{ overflowX:'auto' }}>
-                    <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.88rem', minWidth:'820px' }}>
-                      <thead>
-                        <tr style={{ borderBottom:'2px solid #E6E7E8', color:'#0F4C81', textAlign:'left', fontWeight:700 }}>
-                          <th style={{ padding:'1rem 0.8rem' }}>Fecha</th>
-                          <th style={{ padding:'1rem 0.8rem' }}>Nombre</th>
-                          <th style={{ padding:'1rem 0.8rem' }}>Teléfono / WhatsApp</th>
-                          <th style={{ padding:'1rem 0.8rem' }}>Correo Electrónico</th>
-                          <th style={{ padding:'1rem 0.8rem' }}>Plataforma</th>
-                          <th style={{ padding:'1rem 0.8rem', textAlign:'center' }}>Habeas Data</th>
-                          <th style={{ padding:'1rem 0.8rem', textAlign:'center' }}>Acción Rápida</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredLeads.map((l) => {
-                          const cleanPhone = cleanPhoneForWhatsApp(l.phone);
-                          const directWaUrl = cleanPhone 
-                            ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(getLeadTemplateText('fechas', l.name))}`
-                            : null;
-                          const mailtoUrl = l.email 
-                            ? `mailto:${l.email}?subject=Información de Hospedaje en Bogotá • Rentun Group&body=${encodeURIComponent(getLeadTemplateText('fechas', l.name))}`
-                            : null;
-
-                          return (
-                            <tr key={l.id} style={{ borderBottom:'1px solid #E6E7E8', transition:'background 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e)=>e.currentTarget.style.background='none'}>
-                              <td style={{ padding:'1rem 0.8rem', whiteSpace:'nowrap', color:'#5c6d80', fontSize:'0.8rem' }}>
-                                {new Date(l.created_at).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' })}
-                              </td>
-                              <td style={{ padding:'1rem 0.8rem', fontWeight:700, color:'#0d1724' }}>{l.name}</td>
-                              <td style={{ padding:'1rem 0.8rem' }}>
-                                {cleanPhone ? (
-                                  <a 
-                                    href={directWaUrl} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
-                                    title="Abrir chat en WhatsApp"
-                                    style={{ 
-                                      color:'#059669', 
-                                      textDecoration:'none', 
-                                      fontWeight:700, 
-                                      display:'inline-flex', 
-                                      alignItems:'center', 
-                                      gap:'0.35rem',
-                                      background:'#ecfdf5',
-                                      padding:'0.25rem 0.6rem',
-                                      borderRadius:8,
-                                      border:'1px solid #a7f3d0'
-                                    }}
-                                  >
-                                    <Phone size={13} /> {l.phone}
-                                  </a>
-                                ) : (
-                                  <span style={{ color:'#94a3b8' }}>{l.phone || 'Sin número'}</span>
-                                )}
-                              </td>
-                              <td style={{ padding:'1rem 0.8rem' }}>
-                                {l.email ? (
-                                  <a 
-                                    href={mailtoUrl}
-                                    title="Enviar correo"
-                                    style={{ color:'#0284c7', textDecoration:'none', fontWeight:600, display:'inline-flex', alignItems:'center', gap:'0.3rem' }}
-                                  >
-                                    <Mail size={13} /> {l.email}
-                                  </a>
-                                ) : (
-                                  <span style={{ color:'#8c9ba5', fontStyle:'italic' }}>No proporcionado</span>
-                                )}
-                              </td>
-                              <td style={{ padding:'1rem 0.8rem' }}>
-                                <span style={{ 
-                                  fontSize:'0.72rem', 
-                                  fontWeight:700, 
-                                  textTransform:'uppercase', 
-                                  padding:'0.25rem 0.6rem', 
-                                  borderRadius:50,
-                                  background: l.destination === 'airbnb' ? 'rgba(255,56,92,0.1)' : (l.destination === 'booking' ? 'rgba(0,53,128,0.1)' : 'rgba(37,211,102,0.1)'),
-                                  color: l.destination === 'airbnb' ? '#FF385C' : (l.destination === 'booking' ? '#003580' : '#059669')
-                                }}>
-                                  {l.destination || 'whatsapp'}
-                                </span>
-                              </td>
-                              <td style={{ padding:'1rem 0.8rem', textAlign:'center', color:'#059669', fontWeight:800, fontSize:'0.82rem' }}>
-                                {l.consent ? '✅ Autorizado' : '❌ No'}
-                              </td>
-                              <td style={{ padding:'1rem 0.8rem', textAlign:'center' }}>
-                                <div style={{ display:'inline-flex', alignItems:'center', gap:'0.4rem' }}>
-                                  {cleanPhone && (
-                                    <button
-                                      onClick={() => handleOpenLeadModal(l, 'fechas')}
-                                      title="Escribir con plantilla personalizada"
-                                      style={{
-                                        display:'inline-flex', alignItems:'center', gap:'0.35rem',
-                                        background:'#25D366', color:'white',
-                                        border:'none', borderRadius:8,
-                                        padding:'0.4rem 0.75rem', fontSize:'0.78rem',
-                                        fontWeight:700, cursor:'pointer',
-                                        boxShadow:'0 2px 6px rgba(37,211,102,0.25)',
-                                        transition:'transform 0.1s'
-                                      }}
-                                      onMouseDown={(e)=>e.currentTarget.style.transform='scale(0.97)'}
-                                      onMouseUp={(e)=>e.currentTarget.style.transform='scale(1)'}
-                                    >
-                                      <MessageSquare size={13} /> Escribir
-                                    </button>
-                                  )}
-                                  {l.email && (
-                                    <a
-                                      href={mailtoUrl}
-                                      title="Redactar correo"
-                                      style={{
-                                        display:'inline-flex', alignItems:'center',
-                                        background:'#f0f9ff', color:'#0284c7',
-                                        border:'1px solid #bae6fd', borderRadius:8,
-                                        padding:'0.4rem 0.55rem', fontSize:'0.78rem',
-                                        fontWeight:700, cursor:'pointer', textDecoration:'none'
-                                      }}
-                                    >
-                                      <Mail size={13} />
-                                    </a>
-                                  )}
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                );
-              })()
-            )}
-
-            {/* Modal Interactivo de Plantillas de Mensajes */}
-            {selectedLeadForMsg && (
-              <div 
-                style={{
-                  position:'fixed', inset:0, zIndex:9999,
-                  background:'rgba(15,23,42,0.6)', backdropFilter:'blur(4px)',
-                  display:'flex', alignItems:'center', justifyContent:'center',
-                  padding:'1rem'
-                }}
-                onClick={() => setSelectedLeadForMsg(null)}
-              >
-                <div 
-                  style={{
-                    background:'white', borderRadius:20, maxWidth:580, width:'100%',
-                    padding:'2rem', boxShadow:'0 20px 40px rgba(0,0,0,0.2)',
-                    position:'relative', border:'1px solid #e2e8f0'
-                  }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <button
-                    onClick={() => setSelectedLeadForMsg(null)}
-                    style={{
-                      position:'absolute', top:'1.2rem', right:'1.2rem',
-                      background:'#f1f5f9', border:'none', borderRadius:50,
-                      width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center',
-                      cursor:'pointer', color:'#64748b'
-                    }}
-                  >
-                    <X size={18} />
-                  </button>
-
-                  <div style={{ display:'flex', alignItems:'center', gap:'0.6rem', marginBottom:'0.3rem' }}>
-                    <div style={{ width:38, height:38, borderRadius:50, background:'#ecfdf5', color:'#059669', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                      <MessageSquare size={20} />
-                    </div>
-                    <div>
-                      <h4 style={{ margin:0, fontSize:'1.2rem', fontWeight:800, color:'#0F4C81' }}>
-                        Contactar a {selectedLeadForMsg.name}
-                      </h4>
-                      <p style={{ margin:0, fontSize:'0.8rem', color:'#64748b' }}>
-                        Tel: {selectedLeadForMsg.phone} {selectedLeadForMsg.email ? `• ${selectedLeadForMsg.email}` : ''}
-                      </p>
-                    </div>
+                    <span style={{ fontSize:'0.72rem', fontWeight:700, color:'#059669', background:'#ecfdf5', padding:'0.2rem 0.6rem', borderRadius:50, border:'1px solid #a7f3d0' }}>
+                      {selectedLeadForMsg.consent ? 'Habeas Data OK' : 'Prospecto Web'}
+                    </span>
                   </div>
 
-                  <div style={{ margin:'1.4rem 0 0.8rem' }}>
-                    <label style={{ display:'block', fontSize:'0.75rem', fontWeight:800, color:'#475569', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'0.5rem' }}>
-                      Selecciona una Plantilla Comercial:
+                  {/* Selector de Plantillas */}
+                  <div style={{ marginBottom:'1rem' }}>
+                    <label style={{ display:'block', fontSize:'0.72rem', fontWeight:800, color:'#475569', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'0.4rem' }}>
+                      Plantilla de Respuesta Rápida:
                     </label>
                     <div style={{ display:'flex', flexWrap:'wrap', gap:'0.4rem' }}>
                       <button
@@ -3177,8 +3142,9 @@ export default function Admin() {
                         style={{
                           background: leadMsgTemplate === 'fechas' ? '#0F4C81' : '#f1f5f9',
                           color: leadMsgTemplate === 'fechas' ? 'white' : '#475569',
-                          border: 'none', borderRadius:8, padding:'0.4rem 0.75rem',
-                          fontSize:'0.78rem', fontWeight:700, cursor:'pointer'
+                          border: 'none', borderRadius:8, padding:'0.4rem 0.65rem',
+                          fontSize:'0.75rem', fontWeight:700, cursor:'pointer',
+                          transition:'all 0.15s'
                         }}
                       >
                         📅 Cotizar Fechas
@@ -3189,8 +3155,9 @@ export default function Admin() {
                         style={{
                           background: leadMsgTemplate === 'mensual' ? '#0F4C81' : '#f1f5f9',
                           color: leadMsgTemplate === 'mensual' ? 'white' : '#475569',
-                          border: 'none', borderRadius:8, padding:'0.4rem 0.75rem',
-                          fontSize:'0.78rem', fontWeight:700, cursor:'pointer'
+                          border: 'none', borderRadius:8, padding:'0.4rem 0.65rem',
+                          fontSize:'0.75rem', fontWeight:700, cursor:'pointer',
+                          transition:'all 0.15s'
                         }}
                       >
                         🏢 Mensual Todo Incluido
@@ -3201,79 +3168,100 @@ export default function Admin() {
                         style={{
                           background: leadMsgTemplate === 'descuento' ? '#0F4C81' : '#f1f5f9',
                           color: leadMsgTemplate === 'descuento' ? 'white' : '#475569',
-                          border: 'none', borderRadius:8, padding:'0.4rem 0.75rem',
-                          fontSize:'0.78rem', fontWeight:700, cursor:'pointer'
+                          border: 'none', borderRadius:8, padding:'0.4rem 0.65rem',
+                          fontSize:'0.75rem', fontWeight:700, cursor:'pointer',
+                          transition:'all 0.15s'
                         }}
                       >
-                        💎 Reserva Directa (Sin comisión)
+                        💎 Sin Comisiones
                       </button>
                     </div>
                   </div>
 
-                  <div style={{ marginTop:'1rem' }}>
-                    <label style={{ display:'block', fontSize:'0.75rem', fontWeight:800, color:'#475569', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'0.4rem' }}>
-                      Mensaje para enviar (puedes editarlo):
+                  {/* Editor en vivo del mensaje */}
+                  <div style={{ marginBottom:'1.2rem' }}>
+                    <label style={{ display:'block', fontSize:'0.72rem', fontWeight:800, color:'#475569', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'0.4rem' }}>
+                      Mensaje a enviar (personalízalo si lo deseas):
                     </label>
                     <textarea
                       value={leadCustomMsg}
                       onChange={(e) => setLeadCustomMsg(e.target.value)}
-                      rows={5}
+                      rows={6}
                       style={{
-                        width:'100%', padding:'0.8rem 1rem', borderRadius:12,
-                        border:'1.5px solid #cbd5e1', fontSize:'0.88rem',
+                        width:'100%', padding:'0.8rem', borderRadius:12,
+                        border:'1.5px solid #cbd5e1', fontSize:'0.85rem',
                         lineHeight:1.5, color:'#0f172a', fontFamily:'Outfit,sans-serif',
-                        outline:'none', resize:'vertical'
+                        outline:'none', resize:'vertical', background:'#f8fafc'
                       }}
                     />
                   </div>
 
-                  <div style={{ display:'flex', flexWrap:'wrap', gap:'0.6rem', marginTop:'1.4rem', justifyContent:'flex-end' }}>
-                    <button
-                      type="button"
-                      onClick={handleCopyLeadMsg}
-                      style={{
-                        display:'inline-flex', alignItems:'center', gap:'0.4rem',
-                        background:'#f8fafc', border:'1.5px solid #cbd5e1',
-                        borderRadius:10, padding:'0.6rem 1rem', fontSize:'0.82rem',
-                        fontWeight:700, color:'#334155', cursor:'pointer'
-                      }}
-                    >
-                      {copiedLeadMsg ? <Check size={16} color="#059669" /> : <Copy size={16} />}
-                      {copiedLeadMsg ? '¡Copiado!' : 'Copiar texto'}
-                    </button>
-
-                    {selectedLeadForMsg.email && (
+                  {/* Botones de acción integrados */}
+                  <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem' }}>
+                    {cleanPhoneForWhatsApp(selectedLeadForMsg.phone) ? (
                       <a
-                        href={`mailto:${selectedLeadForMsg.email}?subject=Información de Hospedaje en Bogotá • Rentun Group&body=${encodeURIComponent(leadCustomMsg)}`}
+                        href={`https://wa.me/${cleanPhoneForWhatsApp(selectedLeadForMsg.phone)}?text=${encodeURIComponent(leadCustomMsg)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         style={{
-                          display:'inline-flex', alignItems:'center', gap:'0.4rem',
-                          background:'#f0f9ff', border:'1.5px solid #bae6fd',
-                          borderRadius:10, padding:'0.6rem 1rem', fontSize:'0.82rem',
-                          fontWeight:700, color:'#0284c7', textDecoration:'none'
+                          display:'flex', alignItems:'center', justifyContent:'center', gap:'0.5rem',
+                          background:'#25D366', color:'white',
+                          borderRadius:12, padding:'0.8rem 1rem', fontSize:'0.92rem',
+                          fontWeight:800, textDecoration:'none',
+                          boxShadow:'0 4px 14px rgba(37,211,102,0.35)',
+                          transition:'transform 0.1s'
                         }}
+                        onMouseDown={(e)=>e.currentTarget.style.transform='scale(0.98)'}
+                        onMouseUp={(e)=>e.currentTarget.style.transform='scale(1)'}
                       >
-                        <Mail size={16} /> Enviar por Correo
+                        <Send size={18} /> Escribir por WhatsApp a {selectedLeadForMsg.name.split(' ')[0]}
                       </a>
+                    ) : (
+                      <div style={{ background:'#f1f5f9', color:'#64748b', padding:'0.6rem', borderRadius:10, textAlign:'center', fontSize:'0.8rem' }}>
+                        Sin número de teléfono disponible
+                      </div>
                     )}
 
-                    <a
-                      href={`https://wa.me/${cleanPhoneForWhatsApp(selectedLeadForMsg.phone)}?text=${encodeURIComponent(leadCustomMsg)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        display:'inline-flex', alignItems:'center', gap:'0.5rem',
-                        background:'#25D366', color:'white',
-                        borderRadius:10, padding:'0.6rem 1.2rem', fontSize:'0.85rem',
-                        fontWeight:800, textDecoration:'none',
-                        boxShadow:'0 4px 12px rgba(37,211,102,0.35)'
-                      }}
-                    >
-                      <Send size={16} /> Abrir en WhatsApp
-                    </a>
+                    <div style={{ display:'grid', gridTemplateColumns: selectedLeadForMsg.email ? '1fr 1fr' : '1fr', gap:'0.6rem' }}>
+                      <button
+                        type="button"
+                        onClick={handleCopyLeadMsg}
+                        style={{
+                          display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem',
+                          background:'#f8fafc', border:'1.5px solid #cbd5e1',
+                          borderRadius:10, padding:'0.6rem', fontSize:'0.8rem',
+                          fontWeight:700, color:'#334155', cursor:'pointer'
+                        }}
+                      >
+                        {copiedLeadMsg ? <Check size={15} color="#059669" /> : <Copy size={15} />}
+                        {copiedLeadMsg ? '¡Copiado!' : 'Copiar Texto'}
+                      </button>
+
+                      {selectedLeadForMsg.email && (
+                        <a
+                          href={`mailto:${selectedLeadForMsg.email}?subject=Información de Hospedaje en Bogotá • Rentun Group&body=${encodeURIComponent(leadCustomMsg)}`}
+                          style={{
+                            display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem',
+                            background:'#f0f9ff', border:'1.5px solid #bae6fd',
+                            borderRadius:10, padding:'0.6rem', fontSize:'0.8rem',
+                            fontWeight:700, color:'#0284c7', textDecoration:'none'
+                          }}
+                        >
+                          <Mail size={15} /> Enviar Correo
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              ) : (
+                <div style={{ textAlign:'center', padding:'3rem 1rem', color:'#64748b' }}>
+                  <MessageSquare size={36} color="#94a3b8" style={{ margin:'0 auto 0.8rem' }} />
+                  <p style={{ fontWeight:700, margin:0, color:'#334155' }}>Selecciona un prospecto</p>
+                  <p style={{ fontSize:'0.8rem', margin:'0.3rem 0 0' }}>Haz clic en cualquier persona de la lista para escribirle.</p>
+                </div>
+              )}
+            </div>
+
           </div>
         )}
 
