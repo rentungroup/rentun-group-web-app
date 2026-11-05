@@ -193,7 +193,7 @@ export default function Admin() {
     id: '', name: '', description: '', location: '', address: '', wifiSSID: '', wifiPassword: '', price: '',
     bedrooms: 1, beds: 1, baths: 1, guests: 2, isAirbnb: true,
     airbnbListing: '', airbnbBooking: '', airbnbReviews: '', airbnbContact: '', airbnbCalendar: '', airbnbRules: '', airbnbSafety: '', airbnbEmbedId: '',
-    bookingLink: '', whatsappNumber: '',
+    bookingLink: '', whatsappNumber: '', rntNumber: '',
     images: [], customWifiQR: '', customGuideQR: '', customWhatsappQR: ''
   });
   const [isEditingProp, setIsEditingProp] = useState(false);
@@ -554,6 +554,7 @@ export default function Admin() {
   const startEditProp = (p) => {
     setPropForm({
       ...p,
+      rntNumber: p.rntNumber || '',
       bookingLink: p.bookingLink || '',
       whatsappNumber: p.whatsappNumber || '',
       images: p.images || [],
@@ -580,7 +581,7 @@ export default function Admin() {
       id: '', name: '', description: '', location: '', address: '', wifiSSID: '', wifiPassword: '', price: '',
       bedrooms: 1, beds: 1, baths: 1, guests: 2, isAirbnb: true,
       airbnbListing: '', airbnbBooking: '', airbnbReviews: '', airbnbContact: '', airbnbCalendar: '', airbnbRules: '', airbnbSafety: '', airbnbEmbedId: '',
-      bookingLink: '', whatsappNumber: '',
+      bookingLink: '', whatsappNumber: '', rntNumber: '',
       images: [], customWifiQR: '', customGuideQR: '', customWhatsappQR: ''
     });
     setIsEditingProp(false);
@@ -1732,6 +1733,9 @@ export default function Admin() {
                       </div>
                       <div style={{ marginTop:'0.8rem' }}>
                         <Field label="Número de WhatsApp para Reservas de este apartamento (con código de país, sin +)" value={propForm.whatsappNumber || ''} onChange={e => setPropForm(p => ({ ...p, whatsappNumber: e.target.value }))} placeholder="Ej: 573219511173" hint="Si se deja vacío, usará el número de WhatsApp de la empresa configurado arriba." />
+                      </div>
+                      <div style={{ marginTop:'0.8rem' }}>
+                        <Field label="Registro Nacional de Turismo (RNT de este apartamento)" value={propForm.rntNumber || ''} onChange={e => setPropForm(p => ({ ...p, rntNumber: e.target.value }))} placeholder="Ej: 305919" hint="Número de RNT oficial aprobado por Confecámaras para esta propiedad. Se muestra automáticamente en su ficha pública." />
                       </div>
                     </AdminSection>
 

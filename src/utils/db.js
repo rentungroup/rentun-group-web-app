@@ -220,6 +220,7 @@ export const fetchConfig = async () => {
       airbnbRules: p.airbnb_rules, airbnbSafety: p.airbnb_safety,
       airbnbEmbedId: p.airbnb_embed_id, bookingLink: p.booking_link || '',
       whatsappNumber: p.whatsapp_number || '',
+      rntNumber: p.rnt_number || '',
       images: p.images || [],
       customWifiQR: p.custom_wifi_qr, customGuideQR: p.custom_guide_qr,
       customWhatsappQR: p.custom_whatsapp_qr
@@ -347,6 +348,7 @@ export const saveConfig = async (newData) => {
         airbnb_safety: p.airbnbSafety || '', airbnb_embed_id: p.airbnbEmbedId || '',
         booking_link: p.bookingLink || '',
         whatsapp_number: p.whatsappNumber || '',
+        rnt_number: p.rntNumber || '',
         images: Array.isArray(p.images) ? p.images : [],
         custom_wifi_qr: p.customWifiQR || '', custom_guide_qr: p.customGuideQR || '',
         custom_whatsapp_qr: p.customWhatsappQR || ''

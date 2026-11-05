@@ -281,6 +281,24 @@ export default function PropertyDetails() {
                 <Star size={14} fill="#F59E0B" color="#F59E0B" />
                 <span>5.0 Rating</span>
               </span>
+              {(prop.rntNumber || (prop.name?.includes('Atlantis') ? '305919' : prop.name?.includes('Cabrera') ? '305927' : null)) && (
+                <span style={{
+                  background: 'rgba(255,255,255,0.15)',
+                  color: 'white',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  fontSize: '0.72rem',
+                  fontWeight: 800,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  padding: '0.35rem 0.85rem',
+                  borderRadius: 50,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.35rem'
+                }}>
+                  🏛️ RNT {prop.rntNumber || (prop.name?.includes('Atlantis') ? '305919' : '305927')}
+                </span>
+              )}
             </div>
           </div>
 
@@ -437,6 +455,11 @@ export default function PropertyDetails() {
                   <MapPin size={20} color="#0F4C81" style={{ flexShrink: 0, marginTop: 2 }} />
                   <div>
                     <strong>{lang === 'EN' ? 'Location Note:' : 'Nota de Ubicación:'}</strong> {prop.address}
+                    {(prop.rntNumber || (prop.name?.includes('Atlantis') ? '305919' : prop.name?.includes('Cabrera') ? '305927' : null)) && (
+                      <div style={{ marginTop: '0.4rem', color: '#0F4C81', fontWeight: 700, fontSize: '0.8rem' }}>
+                        📄 {lang === 'EN' ? 'National Tourism Registry (RNT):' : 'Registro Nacional de Turismo (RNT):'} {prop.rntNumber || (prop.name?.includes('Atlantis') ? '305919' : '305927')} · {lang === 'EN' ? 'Approved & Verified' : 'Inscripción Vigente'}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
