@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Edit2, Trash2, Save, RotateCcw, AlertTriangle, Eye, ArrowUp, ArrowDown, Search, FileText, Upload, X, Check, EyeOff, Share2, BarChart3, TrendingUp, Globe, Smartphone, Monitor, ExternalLink } from 'lucide-react';
+import { Plus, Edit2, Trash2, Save, RotateCcw, AlertTriangle, Eye, ArrowUp, ArrowDown, Search, FileText, Upload, X, Check, EyeOff, Share2, BarChart3, TrendingUp, Globe, Smartphone, Monitor, ExternalLink, MessageSquare, Mail, Download, Send, Copy, Phone } from 'lucide-react';
 import { saveConfig, resetConfig, DEFAULTS, uploadImage } from '../utils/db';
 import { useConfig } from '../context/ConfigContext';
 import { useAuth } from '../context/AuthContext';
@@ -200,6 +200,80 @@ export default function Admin() {
   const [newImgUrl, setNewImgUrl] = useState('');
   const [leads, setLeads] = useState([]);
   const [loadingLeads, setLoadingLeads] = useState(false);
+  const [leadSearchQuery, setLeadSearchQuery] = useState('');
+  const [selectedLeadForMsg, setSelectedLeadForMsg] = useState(null);
+  const [leadMsgTemplate, setLeadMsgTemplate] = useState('fechas');
+  const [leadCustomMsg, setLeadCustomMsg] = useState('');
+  const [copiedLeadMsg, setCopiedLeadMsg] = useState(false);
+
+  const cleanPhoneForWhatsApp = (rawPhone) => {
+    if (!rawPhone) return '';
+    let p = rawPhone.replace(/[^0-9]/g, '');
+    if (p.length === 10 && p.startsWith('3')) {
+      p = '57' + p;
+    }
+    return p;
+  };
+
+  const getLeadTemplateText = (templateKey, name) => {
+    const firstName = name ? name.trim().split(' ')[0] : 'Estimado/a';
+    switch (templateKey) {
+      case 'fechas':
+        return `¡Hola ${firstName}! Te escribo de Rentun Group respecto a tu solicitud de hospedaje en Bogotá. ¿Para qué fechas estás buscando alojamiento y para cuántas personas? Quedamos atentos para enviarte disponibilidad.`;
+      case 'mensual':
+        return `¡Hola ${firstName}! Te saludamos de Rentun Group. Vimos tu interés en nuestros apartamentos en Bogotá. Contamos con opciones amobladas todo incluido por meses en La Cabrera y Zona T (servicios, WiFi fibra óptica, aseo y seguridad 24/7). ¿Te gustaría conocer las tarifas mensuales?`;
+      case 'descuento':
+        return `¡Hola ${firstName}! Te contactamos de Rentun Group. Queremos ofrecerte una tarifa preferencial directa (sin las comisiones de intermediarios) para tu estadía en Bogotá. ¿Qué fechas tienes previstas para tu viaje?`;
+      default:
+        return `¡Hola ${firstName}! Te saludamos de Rentun Group. ¿En qué te podemos ayudar con tu estancia en Bogotá?`;
+    }
+  };
+
+  const handleOpenLeadModal = (lead, defaultTemplate = 'fechas') => {
+    setSelectedLeadForMsg(lead);
+    setLeadMsgTemplate(defaultTemplate);
+    setLeadCustomMsg(getLeadTemplateText(defaultTemplate, lead.name));
+    setCopiedLeadMsg(false);
+  };
+
+  const handleTemplateChange = (tpl) => {
+    setLeadMsgTemplate(tpl);
+    if (selectedLeadForMsg) {
+      setLeadCustomMsg(getLeadTemplateText(tpl, selectedLeadForMsg.name));
+    }
+  };
+
+  const handleCopyLeadMsg = () => {
+    if (!leadCustomMsg) return;
+    navigator.clipboard.writeText(leadCustomMsg);
+    setCopiedLeadMsg(true);
+    setTimeout(() => setCopiedLeadMsg(false), 2500);
+  };
+
+  const exportLeadsToCSV = () => {
+    if (!leads.length) return;
+    const headers = ['ID', 'Fecha', 'Nombre', 'Telefono', 'Email', 'Plataforma', 'HabeasData'];
+    const rows = [headers.join(',')];
+    leads.forEach(l => {
+      const row = [
+        `"${l.id}"`,
+        `"${new Date(l.created_at).toLocaleString('es-CO')}"`,
+        `"${(l.name || '').replace(/"/g, '""')}"`,
+        `"${l.phone || ''}"`,
+        `"${l.email || ''}"`,
+        `"${l.destination || 'whatsapp'}"`,
+        `"${l.consent ? 'Autorizado' : 'No'}"`
+      ];
+      rows.push(row.join(','));
+    });
+    const blob = new Blob([rows.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `leads_rentun_group_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   useEffect(() => {
     if (activeTab === 'leads') {
@@ -2829,12 +2903,62 @@ export default function Admin() {
 
         {activeTab === 'leads' && (
           <div style={{ background:'white', borderRadius:24, border:'1px solid #E6E7E8', padding:'2.2rem', boxShadow:'0 4px 20px rgba(0,0,0,0.02)' }}>
-            <h3 style={{ fontSize:'1.4rem', fontWeight:800, color:'#0F4C81', fontFamily:'var(--font-header, sans-serif)', marginBottom:'0.5rem', display:'flex', alignItems:'center', gap:'0.6rem' }}>
-              👥 Leads Capturados por la IA
-            </h3>
-            <p style={{ fontSize:'0.88rem', color:'#5c6d80', marginBottom:'2rem', lineHeight:1.5 }}>
-              Esta tabla muestra a los huéspedes interesados que han completado el formulario de contacto (Habeas Data) antes de dirigirse a WhatsApp, Airbnb o Booking.com.
-            </p>
+            <div style={{ display:'flex', flexWrap:'wrap', justifyContent:'space-between', alignItems:'flex-start', gap:'1rem', marginBottom:'1.5rem' }}>
+              <div>
+                <h3 style={{ fontSize:'1.4rem', fontWeight:800, color:'#0F4C81', fontFamily:'var(--font-header, sans-serif)', marginBottom:'0.4rem', display:'flex', alignItems:'center', gap:'0.6rem' }}>
+                  👥 Leads Capturados por la IA
+                </h3>
+                <p style={{ fontSize:'0.88rem', color:'#5c6d80', margin:0, lineHeight:1.5 }}>
+                  Prospectos interesados en reservar que completaron sus datos. Escríbeles directamente por WhatsApp o correo con 1 clic.
+                </p>
+              </div>
+
+              <div style={{ display:'flex', alignItems:'center', gap:'0.8rem', flexWrap:'wrap' }}>
+                <span style={{ fontSize:'0.82rem', fontWeight:700, color:'#0F4C81', background:'#e0f2fe', padding:'0.4rem 0.8rem', borderRadius:50 }}>
+                  Total: {leads.length} prospectos
+                </span>
+                <button
+                  onClick={exportLeadsToCSV}
+                  disabled={!leads.length}
+                  style={{
+                    display:'inline-flex', alignItems:'center', gap:'0.4rem',
+                    background:'#f8fafc', border:'1.5px solid #cbd5e1',
+                    padding:'0.45rem 0.9rem', borderRadius:10,
+                    fontSize:'0.82rem', fontWeight:700, color:'#334155',
+                    cursor: leads.length ? 'pointer' : 'not-allowed',
+                    transition:'all 0.2s'
+                  }}
+                  onMouseEnter={(e)=>{ if (leads.length) e.currentTarget.style.background='#e2e8f0'; }}
+                  onMouseLeave={(e)=>{ e.currentTarget.style.background='#f8fafc'; }}
+                >
+                  <Download size={15} /> Exportar CSV
+                </button>
+              </div>
+            </div>
+
+            {/* Barra de búsqueda y filtros */}
+            <div style={{ display:'flex', alignItems:'center', gap:'0.8rem', marginBottom:'1.5rem', background:'#f8fafc', padding:'0.6rem 1rem', borderRadius:14, border:'1px solid #e2e8f0' }}>
+              <Search size={18} color="#94a3b8" />
+              <input
+                type="text"
+                placeholder="Buscar lead por nombre, teléfono, correo o plataforma..."
+                value={leadSearchQuery}
+                onChange={(e) => setLeadSearchQuery(e.target.value)}
+                style={{
+                  border:'none', background:'transparent', outline:'none',
+                  width:'100%', fontSize:'0.88rem', color:'#0d1724',
+                  fontFamily:'Outfit,sans-serif'
+                }}
+              />
+              {leadSearchQuery && (
+                <button
+                  onClick={() => setLeadSearchQuery('')}
+                  style={{ border:'none', background:'none', cursor:'pointer', color:'#94a3b8', fontSize:'0.8rem', fontWeight:700 }}
+                >
+                  ✕ Limpiar
+                </button>
+              )}
+            </div>
 
             {loadingLeads ? (
               <div style={{ display:'flex', justifyContent:'center', padding:'3rem', color:'#5c6d80', fontWeight:600 }}>
@@ -2846,65 +2970,308 @@ export default function Admin() {
                 <p style={{ fontSize:'0.82rem', color:'#8c9ba5', margin:'0.4rem 0 0' }}>Los prospectos aparecerán aquí cuando hagan clic en los botones de reserva e ingresen sus datos.</p>
               </div>
             ) : (
-              <div style={{ overflowX:'auto' }}>
-                <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.88rem', minWidth:'650px' }}>
-                  <thead>
-                    <tr style={{ borderBottom:'2px solid #E6E7E8', color:'#0F4C81', textAlign:'left', fontWeight:700 }}>
-                      <th style={{ padding:'1rem 0.8rem' }}>Fecha</th>
-                      <th style={{ padding:'1rem 0.8rem' }}>Nombre</th>
-                      <th style={{ padding:'1rem 0.8rem' }}>Teléfono / WhatsApp</th>
-                      <th style={{ padding:'1rem 0.8rem' }}>Correo Electrónico</th>
-                      <th style={{ padding:'1rem 0.8rem' }}>Plataforma</th>
-                      <th style={{ padding:'1rem 0.8rem', textAlign:'center' }}>Habeas Data</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {leads.map((l) => (
-                      <tr key={l.id} style={{ borderBottom:'1px solid #E6E7E8', transition:'background 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e)=>e.currentTarget.style.background='none'}>
-                        <td style={{ padding:'1rem 0.8rem', whiteSpace:'nowrap', color:'#5c6d80' }}>
-                          {new Date(l.created_at).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' })}
-                        </td>
-                        <td style={{ padding:'1rem 0.8rem', fontWeight:700, color:'#0d1724' }}>{l.name}</td>
-                        <td style={{ padding:'1rem 0.8rem' }}>
-                          <a 
-                            href={`https://wa.me/${l.phone.replace(/[^0-9]/g, '')}`} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            style={{ 
-                              color:'#059669', 
-                              textDecoration:'none', 
-                              fontWeight:700, 
-                              display:'inline-flex', 
-                              alignItems:'center', 
-                              gap:'0.3rem' 
-                            }}
-                          >
-                            🟢 {l.phone}
-                          </a>
-                        </td>
-                        <td style={{ padding:'1rem 0.8rem', color: l.email ? '#0d1724' : '#8c9ba5', fontStyle: l.email ? 'normal' : 'italic' }}>
-                          {l.email || 'No proporcionado'}
-                        </td>
-                        <td style={{ padding:'1rem 0.8rem' }}>
-                          <span style={{ 
-                            fontSize:'0.72rem', 
-                            fontWeight:700, 
-                            textTransform:'uppercase', 
-                            padding:'0.25rem 0.6rem', 
-                            borderRadius:50,
-                            background: l.destination === 'airbnb' ? 'rgba(255,56,92,0.1)' : (l.destination === 'booking' ? 'rgba(0,53,128,0.1)' : 'rgba(37,211,102,0.1)'),
-                            color: l.destination === 'airbnb' ? '#FF385C' : (l.destination === 'booking' ? '#003580' : '#059669')
-                          }}>
-                            {l.destination || 'whatsapp'}
-                          </span>
-                        </td>
-                        <td style={{ padding:'1rem 0.8rem', textAlign:'center', color:'#059669', fontWeight:800 }}>
-                          {l.consent ? '✅ Autorizado' : '❌ No'}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              (() => {
+                const filteredLeads = leads.filter(l => {
+                  if (!leadSearchQuery) return true;
+                  const q = leadSearchQuery.toLowerCase();
+                  return (l.name || '').toLowerCase().includes(q) ||
+                         (l.phone || '').includes(q) ||
+                         (l.email || '').toLowerCase().includes(q) ||
+                         (l.destination || '').toLowerCase().includes(q);
+                });
+
+                if (filteredLeads.length === 0) {
+                  return (
+                    <div style={{ padding:'2rem', textAlign:'center', color:'#64748b', fontSize:'0.88rem' }}>
+                      No se encontraron prospectos que coincidan con "<strong>{leadSearchQuery}</strong>".
+                    </div>
+                  );
+                }
+
+                return (
+                  <div style={{ overflowX:'auto' }}>
+                    <table style={{ width:'100%', borderCollapse:'collapse', fontSize:'0.88rem', minWidth:'820px' }}>
+                      <thead>
+                        <tr style={{ borderBottom:'2px solid #E6E7E8', color:'#0F4C81', textAlign:'left', fontWeight:700 }}>
+                          <th style={{ padding:'1rem 0.8rem' }}>Fecha</th>
+                          <th style={{ padding:'1rem 0.8rem' }}>Nombre</th>
+                          <th style={{ padding:'1rem 0.8rem' }}>Teléfono / WhatsApp</th>
+                          <th style={{ padding:'1rem 0.8rem' }}>Correo Electrónico</th>
+                          <th style={{ padding:'1rem 0.8rem' }}>Plataforma</th>
+                          <th style={{ padding:'1rem 0.8rem', textAlign:'center' }}>Habeas Data</th>
+                          <th style={{ padding:'1rem 0.8rem', textAlign:'center' }}>Acción Rápida</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredLeads.map((l) => {
+                          const cleanPhone = cleanPhoneForWhatsApp(l.phone);
+                          const directWaUrl = cleanPhone 
+                            ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(getLeadTemplateText('fechas', l.name))}`
+                            : null;
+                          const mailtoUrl = l.email 
+                            ? `mailto:${l.email}?subject=Información de Hospedaje en Bogotá • Rentun Group&body=${encodeURIComponent(getLeadTemplateText('fechas', l.name))}`
+                            : null;
+
+                          return (
+                            <tr key={l.id} style={{ borderBottom:'1px solid #E6E7E8', transition:'background 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={(e)=>e.currentTarget.style.background='none'}>
+                              <td style={{ padding:'1rem 0.8rem', whiteSpace:'nowrap', color:'#5c6d80', fontSize:'0.8rem' }}>
+                                {new Date(l.created_at).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' })}
+                              </td>
+                              <td style={{ padding:'1rem 0.8rem', fontWeight:700, color:'#0d1724' }}>{l.name}</td>
+                              <td style={{ padding:'1rem 0.8rem' }}>
+                                {cleanPhone ? (
+                                  <a 
+                                    href={directWaUrl} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    title="Abrir chat en WhatsApp"
+                                    style={{ 
+                                      color:'#059669', 
+                                      textDecoration:'none', 
+                                      fontWeight:700, 
+                                      display:'inline-flex', 
+                                      alignItems:'center', 
+                                      gap:'0.35rem',
+                                      background:'#ecfdf5',
+                                      padding:'0.25rem 0.6rem',
+                                      borderRadius:8,
+                                      border:'1px solid #a7f3d0'
+                                    }}
+                                  >
+                                    <Phone size={13} /> {l.phone}
+                                  </a>
+                                ) : (
+                                  <span style={{ color:'#94a3b8' }}>{l.phone || 'Sin número'}</span>
+                                )}
+                              </td>
+                              <td style={{ padding:'1rem 0.8rem' }}>
+                                {l.email ? (
+                                  <a 
+                                    href={mailtoUrl}
+                                    title="Enviar correo"
+                                    style={{ color:'#0284c7', textDecoration:'none', fontWeight:600, display:'inline-flex', alignItems:'center', gap:'0.3rem' }}
+                                  >
+                                    <Mail size={13} /> {l.email}
+                                  </a>
+                                ) : (
+                                  <span style={{ color:'#8c9ba5', fontStyle:'italic' }}>No proporcionado</span>
+                                )}
+                              </td>
+                              <td style={{ padding:'1rem 0.8rem' }}>
+                                <span style={{ 
+                                  fontSize:'0.72rem', 
+                                  fontWeight:700, 
+                                  textTransform:'uppercase', 
+                                  padding:'0.25rem 0.6rem', 
+                                  borderRadius:50,
+                                  background: l.destination === 'airbnb' ? 'rgba(255,56,92,0.1)' : (l.destination === 'booking' ? 'rgba(0,53,128,0.1)' : 'rgba(37,211,102,0.1)'),
+                                  color: l.destination === 'airbnb' ? '#FF385C' : (l.destination === 'booking' ? '#003580' : '#059669')
+                                }}>
+                                  {l.destination || 'whatsapp'}
+                                </span>
+                              </td>
+                              <td style={{ padding:'1rem 0.8rem', textAlign:'center', color:'#059669', fontWeight:800, fontSize:'0.82rem' }}>
+                                {l.consent ? '✅ Autorizado' : '❌ No'}
+                              </td>
+                              <td style={{ padding:'1rem 0.8rem', textAlign:'center' }}>
+                                <div style={{ display:'inline-flex', alignItems:'center', gap:'0.4rem' }}>
+                                  {cleanPhone && (
+                                    <button
+                                      onClick={() => handleOpenLeadModal(l, 'fechas')}
+                                      title="Escribir con plantilla personalizada"
+                                      style={{
+                                        display:'inline-flex', alignItems:'center', gap:'0.35rem',
+                                        background:'#25D366', color:'white',
+                                        border:'none', borderRadius:8,
+                                        padding:'0.4rem 0.75rem', fontSize:'0.78rem',
+                                        fontWeight:700, cursor:'pointer',
+                                        boxShadow:'0 2px 6px rgba(37,211,102,0.25)',
+                                        transition:'transform 0.1s'
+                                      }}
+                                      onMouseDown={(e)=>e.currentTarget.style.transform='scale(0.97)'}
+                                      onMouseUp={(e)=>e.currentTarget.style.transform='scale(1)'}
+                                    >
+                                      <MessageSquare size={13} /> Escribir
+                                    </button>
+                                  )}
+                                  {l.email && (
+                                    <a
+                                      href={mailtoUrl}
+                                      title="Redactar correo"
+                                      style={{
+                                        display:'inline-flex', alignItems:'center',
+                                        background:'#f0f9ff', color:'#0284c7',
+                                        border:'1px solid #bae6fd', borderRadius:8,
+                                        padding:'0.4rem 0.55rem', fontSize:'0.78rem',
+                                        fontWeight:700, cursor:'pointer', textDecoration:'none'
+                                      }}
+                                    >
+                                      <Mail size={13} />
+                                    </a>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                );
+              })()
+            )}
+
+            {/* Modal Interactivo de Plantillas de Mensajes */}
+            {selectedLeadForMsg && (
+              <div 
+                style={{
+                  position:'fixed', inset:0, zIndex:9999,
+                  background:'rgba(15,23,42,0.6)', backdropFilter:'blur(4px)',
+                  display:'flex', alignItems:'center', justifyContent:'center',
+                  padding:'1rem'
+                }}
+                onClick={() => setSelectedLeadForMsg(null)}
+              >
+                <div 
+                  style={{
+                    background:'white', borderRadius:20, maxWidth:580, width:'100%',
+                    padding:'2rem', boxShadow:'0 20px 40px rgba(0,0,0,0.2)',
+                    position:'relative', border:'1px solid #e2e8f0'
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    onClick={() => setSelectedLeadForMsg(null)}
+                    style={{
+                      position:'absolute', top:'1.2rem', right:'1.2rem',
+                      background:'#f1f5f9', border:'none', borderRadius:50,
+                      width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center',
+                      cursor:'pointer', color:'#64748b'
+                    }}
+                  >
+                    <X size={18} />
+                  </button>
+
+                  <div style={{ display:'flex', alignItems:'center', gap:'0.6rem', marginBottom:'0.3rem' }}>
+                    <div style={{ width:38, height:38, borderRadius:50, background:'#ecfdf5', color:'#059669', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                      <MessageSquare size={20} />
+                    </div>
+                    <div>
+                      <h4 style={{ margin:0, fontSize:'1.2rem', fontWeight:800, color:'#0F4C81' }}>
+                        Contactar a {selectedLeadForMsg.name}
+                      </h4>
+                      <p style={{ margin:0, fontSize:'0.8rem', color:'#64748b' }}>
+                        Tel: {selectedLeadForMsg.phone} {selectedLeadForMsg.email ? `• ${selectedLeadForMsg.email}` : ''}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div style={{ margin:'1.4rem 0 0.8rem' }}>
+                    <label style={{ display:'block', fontSize:'0.75rem', fontWeight:800, color:'#475569', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'0.5rem' }}>
+                      Selecciona una Plantilla Comercial:
+                    </label>
+                    <div style={{ display:'flex', flexWrap:'wrap', gap:'0.4rem' }}>
+                      <button
+                        type="button"
+                        onClick={() => handleTemplateChange('fechas')}
+                        style={{
+                          background: leadMsgTemplate === 'fechas' ? '#0F4C81' : '#f1f5f9',
+                          color: leadMsgTemplate === 'fechas' ? 'white' : '#475569',
+                          border: 'none', borderRadius:8, padding:'0.4rem 0.75rem',
+                          fontSize:'0.78rem', fontWeight:700, cursor:'pointer'
+                        }}
+                      >
+                        📅 Cotizar Fechas
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleTemplateChange('mensual')}
+                        style={{
+                          background: leadMsgTemplate === 'mensual' ? '#0F4C81' : '#f1f5f9',
+                          color: leadMsgTemplate === 'mensual' ? 'white' : '#475569',
+                          border: 'none', borderRadius:8, padding:'0.4rem 0.75rem',
+                          fontSize:'0.78rem', fontWeight:700, cursor:'pointer'
+                        }}
+                      >
+                        🏢 Mensual Todo Incluido
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleTemplateChange('descuento')}
+                        style={{
+                          background: leadMsgTemplate === 'descuento' ? '#0F4C81' : '#f1f5f9',
+                          color: leadMsgTemplate === 'descuento' ? 'white' : '#475569',
+                          border: 'none', borderRadius:8, padding:'0.4rem 0.75rem',
+                          fontSize:'0.78rem', fontWeight:700, cursor:'pointer'
+                        }}
+                      >
+                        💎 Reserva Directa (Sin comisión)
+                      </button>
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop:'1rem' }}>
+                    <label style={{ display:'block', fontSize:'0.75rem', fontWeight:800, color:'#475569', textTransform:'uppercase', letterSpacing:'0.05em', marginBottom:'0.4rem' }}>
+                      Mensaje para enviar (puedes editarlo):
+                    </label>
+                    <textarea
+                      value={leadCustomMsg}
+                      onChange={(e) => setLeadCustomMsg(e.target.value)}
+                      rows={5}
+                      style={{
+                        width:'100%', padding:'0.8rem 1rem', borderRadius:12,
+                        border:'1.5px solid #cbd5e1', fontSize:'0.88rem',
+                        lineHeight:1.5, color:'#0f172a', fontFamily:'Outfit,sans-serif',
+                        outline:'none', resize:'vertical'
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display:'flex', flexWrap:'wrap', gap:'0.6rem', marginTop:'1.4rem', justifyContent:'flex-end' }}>
+                    <button
+                      type="button"
+                      onClick={handleCopyLeadMsg}
+                      style={{
+                        display:'inline-flex', alignItems:'center', gap:'0.4rem',
+                        background:'#f8fafc', border:'1.5px solid #cbd5e1',
+                        borderRadius:10, padding:'0.6rem 1rem', fontSize:'0.82rem',
+                        fontWeight:700, color:'#334155', cursor:'pointer'
+                      }}
+                    >
+                      {copiedLeadMsg ? <Check size={16} color="#059669" /> : <Copy size={16} />}
+                      {copiedLeadMsg ? '¡Copiado!' : 'Copiar texto'}
+                    </button>
+
+                    {selectedLeadForMsg.email && (
+                      <a
+                        href={`mailto:${selectedLeadForMsg.email}?subject=Información de Hospedaje en Bogotá • Rentun Group&body=${encodeURIComponent(leadCustomMsg)}`}
+                        style={{
+                          display:'inline-flex', alignItems:'center', gap:'0.4rem',
+                          background:'#f0f9ff', border:'1.5px solid #bae6fd',
+                          borderRadius:10, padding:'0.6rem 1rem', fontSize:'0.82rem',
+                          fontWeight:700, color:'#0284c7', textDecoration:'none'
+                        }}
+                      >
+                        <Mail size={16} /> Enviar por Correo
+                      </a>
+                    )}
+
+                    <a
+                      href={`https://wa.me/${cleanPhoneForWhatsApp(selectedLeadForMsg.phone)}?text=${encodeURIComponent(leadCustomMsg)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display:'inline-flex', alignItems:'center', gap:'0.5rem',
+                        background:'#25D366', color:'white',
+                        borderRadius:10, padding:'0.6rem 1.2rem', fontSize:'0.85rem',
+                        fontWeight:800, textDecoration:'none',
+                        boxShadow:'0 4px 12px rgba(37,211,102,0.35)'
+                      }}
+                    >
+                      <Send size={16} /> Abrir en WhatsApp
+                    </a>
+                  </div>
+                </div>
               </div>
             )}
           </div>
