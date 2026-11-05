@@ -6,9 +6,10 @@
 export const SITE = {
   // ── Marca ──────────────────────────────────────────
   name: 'Rentun Group',
+  legalName: 'RENTUN GROUP SAS',
   tagline: 'Rentas · Gestión · Inversión',
   description: 'Apartamentos de corta estancia con servicio premium en Bogotá.',
-  rntNumber: 'En trámite',
+  rntNumber: '305919 · 305927',
 
   // ── Anfitrión ──────────────────────────────────────
   hostName: 'Rentun Group',

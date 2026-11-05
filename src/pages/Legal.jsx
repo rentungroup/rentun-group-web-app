@@ -95,17 +95,27 @@ export default function Legal() {
           ))}
 
           {/* RNT Card */}
-          <div style={{ background: 'linear-gradient(135deg, rgba(15,76,129,0.05), rgba(245,124,0,0.04))', borderRadius: 24, border: '1.5px dashed rgba(15,76,129,0.2)', padding: '2rem', textAlign: 'center', marginTop: '1rem' }}>
+          <div style={{ background: 'linear-gradient(135deg, rgba(15,76,129,0.05), rgba(245,124,0,0.04))', borderRadius: 24, border: '1.5px dashed rgba(15,76,129,0.2)', padding: '2.5rem 2rem', textAlign: 'center', marginTop: '1rem' }}>
             <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>📄</div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0F4C81', margin: '0 0 0.5rem' }}>
-              Registro Nacional de Turismo (RNT)
+            <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#0F4C81', margin: '0 0 0.5rem' }}>
+              Registro Nacional de Turismo (RNT Aprobado)
             </h3>
-            <p style={{ fontSize: '0.9rem', color: '#334155', lineHeight: 1.6, margin: '0 0 1.2rem' }}>
-              En cumplimiento del Decreto Único Reglamentario del Sector Comercio, Industria y Turismo, nuestro establecimiento se encuentra debidamente registrado bajo la siguiente credencial:
+            <p style={{ fontSize: '0.9rem', color: '#334155', lineHeight: 1.6, margin: '0 0 1.5rem', maxWidth: 650, marginLeft: 'auto', marginRight: 'auto' }}>
+              En cumplimiento del Decreto Único Reglamentario del Sector Comercio, Industria y Turismo y la Ley 2068 de 2020, <strong>RENTUN GROUP SAS</strong> cuenta con inscripciones activas y aprobadas en la Cámara de Comercio de Bogotá:
             </p>
-            <span style={{ display: 'inline-block', background: 'linear-gradient(135deg,#F57C00,#FF9A2F)', color: 'white', fontWeight: 800, fontSize: '1rem', padding: '0.6rem 2rem', borderRadius: 50, boxShadow: '0 6px 18px rgba(245,124,0,0.25)' }}>
-              RNT: {cfg.rntNumber || 'En trámite'}
-            </span>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '1.2rem' }}>
+              <div style={{ background: 'linear-gradient(135deg,#0F4C81,#1E6BB8)', color: 'white', fontWeight: 800, fontSize: '0.95rem', padding: '0.8rem 1.6rem', borderRadius: 16, boxShadow: '0 4px 14px rgba(15,76,129,0.2)', textAlign: 'center' }}>
+                <span style={{ fontSize: '0.75rem', opacity: 0.85, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Muttuo Atlantis · Apto 704</span>
+                RNT: 305919
+              </div>
+              <div style={{ background: 'linear-gradient(135deg,#F57C00,#FF9A2F)', color: 'white', fontWeight: 800, fontSize: '0.95rem', padding: '0.8rem 1.6rem', borderRadius: 16, boxShadow: '0 4px 14px rgba(245,124,0,0.25)', textAlign: 'center' }}>
+                <span style={{ fontSize: '0.75rem', opacity: 0.85, display: 'block', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Edificio Cabrera · Apto 814</span>
+                RNT: 305927
+              </div>
+            </div>
+            <p style={{ fontSize: '0.78rem', color: '#64748b', margin: 0 }}>
+              Razón Social: <strong>RENTUN GROUP SAS</strong> · Representante Legal: <strong>Luis José Galíndez Valecillos</strong>
+            </p>
           </div>
         </div>
 

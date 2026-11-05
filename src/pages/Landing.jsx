@@ -1243,7 +1243,7 @@ export default function Landing() {
                 </Link>
               </li>
               <li style={{ fontSize:'0.82rem', color:'rgba(255,255,255,0.7)', fontWeight:700 }}>
-                RNT: {cfg.rntNumber || (lang === 'EN' ? 'In progress' : 'En trámite')}
+                RNT Vigente: {(!cfg.rntNumber || cfg.rntNumber === 'En trámite') ? '305919 · 305927' : cfg.rntNumber}
               </li>
             </ul>
             <p style={{ fontSize:'0.65rem', color:'rgba(255,255,255,0.3)', lineHeight:1.5, marginTop:'1rem', margin:0 }}>

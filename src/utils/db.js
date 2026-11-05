@@ -243,7 +243,7 @@ export const fetchConfig = async () => {
       hostName: settings.host_name || DEFAULTS.hostName,
       hostBio: settings.host_bio || DEFAULTS.hostBio,
       hostImage: settings.host_image || DEFAULTS.hostImage,
-      rntNumber: settings.rnt_number || DEFAULTS.rntNumber,
+      rntNumber: (settings.rnt_number && settings.rnt_number !== 'En trámite') ? settings.rnt_number : DEFAULTS.rntNumber,
       heroImages: settings.hero_images || DEFAULTS.heroImages,
       
       chatAssistant: {
