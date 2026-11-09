@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Landing from './pages/Landing';
-import ChatWidget from './components/ChatWidget';
+const ChatWidget = lazy(() => import('./components/ChatWidget'));
 import LeadModal from './components/LeadModal';
 import ScrollToTop from './components/ScrollToTop';
 import { AuthProvider } from './context/AuthContext';
@@ -73,7 +73,7 @@ export default function App() {
               <Route path="/imprimir-contrato/:id" element={<PrintContract />} />
             </Routes>
           </Suspense>
-          <ChatWidget />
+          <Suspense fallback={null}><ChatWidget /></Suspense>
           <LeadModal />
         </BrowserRouter>
         <Analytics />

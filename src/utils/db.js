@@ -16,7 +16,7 @@ export const DEFAULTS = {
   ctaSub:       'Contáctanos por WhatsApp o reserva directamente en Airbnb.',
   
   heroImages: [
-    'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=60&w=800',
+    '/images/hero.webp',
     'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=60&w=800',
     'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=60&w=800'
   ],
@@ -78,7 +78,7 @@ export const DEFAULTS = {
       vrboLink: SITE.vrboLink || 'https://www.vrbo.com/5524174?dateless=true',
       whatsappNumber: SITE.whatsapp,
       images: [
-        'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=60&w=800',
+        '/images/hero.webp',
         'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=60&w=800',
         'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=60&w=800'
       ],

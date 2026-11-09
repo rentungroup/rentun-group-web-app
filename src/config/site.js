@@ -48,7 +48,7 @@ export const SITE = {
     baths:     1,
     description: 'Acogedor apartamento completamente equipado en Bogotá. Ideal para viajes de negocio o de placer. Disfruta de un ambiente moderno con todo lo que necesitas para una estadía perfecta.',
     amenities: ['🛏️ Cama cómoda', '📶 WiFi incluido', '🍳 Cocina equipada', '❄️ Climatización', '📺 TV Smart', '🔑 Check-in flexible'],
-    image:     'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=60&w=800',
+    image:     '/images/hero.webp',
   },
 
   // ── Stats Landing ──────────────────────────────────

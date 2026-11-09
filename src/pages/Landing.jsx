@@ -491,47 +491,6 @@ export default function Landing() {
   const t = getTranslation(lang);
   const waBtnLink = cfg ? waLink(cfg.whatsapp, '¡Hola! Quiero información para reservar mi estadía en Rentun Group.') : '';
   
-  // Cargamos el SDK de Airbnb para mostrar el widget en la sección de propiedades
-  useEffect(() => {
-    if (mainProp.isAirbnb) {
-      const loadAirbnbScript = () => {
-        const existing = document.getElementById('airbnb-jssdk');
-        if (existing) existing.remove();
-
-        if (window.AirbnbJSSDK) {
-          try { window.AirbnbJSSDK.init(); } catch (e) { console.error(e); }
-        }
-        const script = document.createElement('script');
-        script.id = 'airbnb-jssdk';
-        script.async = true;
-        script.src = 'https://www.airbnb.com.co/embeddable/airbnb_jssdk';
-        document.body.appendChild(script);
-      };
-
-      // Retrasamos la carga 3.5 segundos para no bloquear el Lighthouse/PageSpeed inicial
-      const timer = setTimeout(loadAirbnbScript, 3500);
-      return () => clearTimeout(timer);
-    }
-  }, [mainProp.id, mainProp.isAirbnb]);
-
-  // Efecto para añadir 'title' a los iframes de Airbnb inyectados para mejorar accesibilidad (Lighthouse)
-  useEffect(() => {
-    let attempts = 0;
-    const interval = setInterval(() => {
-      attempts++;
-      const iframes = document.querySelectorAll('.airbnb-embed-frame iframe');
-      iframes.forEach(iframe => {
-        if (!iframe.getAttribute('title')) {
-          iframe.setAttribute('title', 'Airbnb Property Details');
-        }
-      });
-      if (iframes.length > 0 || attempts > 20) {
-        clearInterval(interval);
-      }
-    }, 500);
-    return () => clearInterval(interval);
-  }, [mainProp.isAirbnb]);
-
   if (!cfg) return null;
 
   // Enlaces de Airbnb para el primer apartamento (Hero)
