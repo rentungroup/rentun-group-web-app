@@ -1,23 +1,43 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { fetchConfig } from '../utils/db';
+import { fetchConfig, DEFAULTS } from '../utils/db';
 
 const ConfigContext = createContext(null);
+const CACHE_KEY = 'rentun_cached_config_v1';
 
 export function ConfigProvider({ children }) {
-  const [config, setConfig] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [config, setConfig] = useState(() => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && typeof parsed === 'object') {
+          return { ...DEFAULTS, ...parsed };
+        }
+      }
+    } catch (e) {
+      console.warn("Error reading cached config:", e);
+    }
+    return DEFAULTS;
+  });
+  const [isSyncing, setIsSyncing] = useState(false);
   const [error, setError] = useState(null);
 
   const loadConfig = async () => {
     try {
-      setLoading(true);
+      setIsSyncing(true);
       const data = await fetchConfig();
-      setConfig(data);
+      if (data) {
+        setConfig(data);
+        try {
+          localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+        } catch (e) {}
+      }
+      return data;
     } catch (err) {
       console.error("Error fetching config:", err);
       setError(err);
     } finally {
-      setLoading(false);
+      setIsSyncing(false);
     }
   };
 
@@ -25,22 +45,8 @@ export function ConfigProvider({ children }) {
     loadConfig();
   }, []);
 
-  if (loading) {
-    return (
-      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#0B2035', color: 'white' }}>
-        <div style={{ width: 40, height: 40, border: '4px solid rgba(255,255,255,0.1)', borderTopColor: 'var(--orange)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        <p style={{ marginTop: '1rem', opacity: 0.8 }}>Cargando información...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return <div style={{ padding: '2rem', color: 'red' }}>Error cargando la aplicación.</div>;
-  }
-
   return (
-    <ConfigContext.Provider value={{ config, setConfig, reloadConfig: loadConfig }}>
+    <ConfigContext.Provider value={{ config: config || DEFAULTS, setConfig, reloadConfig: loadConfig, isSyncing }}>
       {children}
     </ConfigContext.Provider>
   );

@@ -378,9 +378,13 @@ export function PropCard({ p, idx, lang, t, waLink }) {
             </button>
           </div>
 
-          {/* Fila 2: Airbnb / Booking (si aplica) */}
-          {(p.isAirbnb || p.bookingLink) && (
-            <div style={{ display:'grid', gridTemplateColumns:(p.isAirbnb && p.bookingLink) ? '1fr 1fr' : '1fr', gap:'0.5rem' }}>
+          {/* Fila 2: Airbnb / Booking / Vrbo (si aplica) */}
+          {(p.isAirbnb || p.bookingLink || p.vrboLink) && (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: `repeat(${[Boolean(p.isAirbnb), Boolean(p.bookingLink), Boolean(p.vrboLink)].filter(Boolean).length}, 1fr)`,
+              gap: '0.4rem'
+            }}>
               {p.isAirbnb && (
                 <a href={p.airbnbListing} target="_blank" rel="noopener noreferrer"
                    onClick={(e) => {
@@ -389,7 +393,7 @@ export function PropCard({ p, idx, lang, t, waLink }) {
                        handleRedirectWithLead(p.airbnbListing, 'airbnb');
                      }
                    }}
-                   style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#FF385C', color:'white', textDecoration:'none', padding:'0.55rem', borderRadius:50, fontSize:'0.75rem', fontWeight:700, transition:'all 0.2s' }}
+                   style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.3rem', background:'#FF385C', color:'white', textDecoration:'none', padding:'0.55rem 0.2rem', borderRadius:50, fontSize:'0.73rem', fontWeight:700, transition:'all 0.2s' }}
                    onMouseEnter={(e)=>e.currentTarget.style.filter='brightness(0.9)'}
                    onMouseLeave={(e)=>e.currentTarget.style.filter='none'}
                 >
@@ -404,11 +408,26 @@ export function PropCard({ p, idx, lang, t, waLink }) {
                        handleRedirectWithLead(p.bookingLink, 'booking');
                      }
                    }}
-                   style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.4rem', background:'#003580', color:'white', textDecoration:'none', padding:'0.55rem', borderRadius:50, fontSize:'0.75rem', fontWeight:700, transition:'all 0.2s' }}
+                   style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.3rem', background:'#003580', color:'white', textDecoration:'none', padding:'0.55rem 0.2rem', borderRadius:50, fontSize:'0.73rem', fontWeight:700, transition:'all 0.2s' }}
                    onMouseEnter={(e)=>e.currentTarget.style.filter='brightness(0.95)'}
                    onMouseLeave={(e)=>e.currentTarget.style.filter='none'}
                 >
                   🏨 Booking
+                </a>
+              )}
+              {p.vrboLink && (
+                <a href={p.vrboLink} target="_blank" rel="noopener noreferrer"
+                   onClick={(e) => {
+                     if (!localStorage.getItem('lead_registered')) {
+                       e.preventDefault();
+                       handleRedirectWithLead(p.vrboLink, 'vrbo');
+                     }
+                   }}
+                   style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:'0.3rem', background:'#1C4482', color:'white', textDecoration:'none', padding:'0.55rem 0.2rem', borderRadius:50, fontSize:'0.73rem', fontWeight:700, transition:'all 0.2s' }}
+                   onMouseEnter={(e)=>e.currentTarget.style.filter='brightness(1.15)'}
+                   onMouseLeave={(e)=>e.currentTarget.style.filter='none'}
+                >
+                  🏖️ Vrbo
                 </a>
               )}
             </div>
@@ -467,6 +486,8 @@ export default function Landing() {
   const properties = cfg?.properties || [];
   const mainProp = properties[0] || {};
   const bookingLink = mainProp.bookingLink || SITE.bookingLink;
+  const vrboProp = properties.find(p => p.vrboLink) || mainProp;
+  const vrboLink = vrboProp.vrboLink || mainProp.vrboLink || SITE.vrboLink || 'https://www.vrbo.com/5524174?dateless=true';
   const t = getTranslation(lang);
   const waBtnLink = cfg ? waLink(cfg.whatsapp, '¡Hola! Quiero información para reservar mi estadía en Rentun Group.') : '';
   

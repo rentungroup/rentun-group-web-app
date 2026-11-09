@@ -75,7 +75,7 @@ export const DEFAULTS = {
       airbnbSafety: SITE.airbnb.safety,
       airbnbEmbedId: SITE.airbnb.embedId,
       bookingLink: SITE.bookingLink,
-      vrboLink: '',
+      vrboLink: SITE.vrboLink || 'https://www.vrbo.com/5524174?dateless=true',
       whatsappNumber: SITE.whatsapp,
       images: [
         'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=60&w=800',
@@ -506,6 +506,7 @@ const TRANSLATIONS = {
     heroDefaultSub: 'Apartamentos de corta estancia cuidadosamente equipados en Bogotá. Atención personalizada, check-in flexible y la tranquilidad de un anfitrión ★5.0 en Airbnb.',
     btnAirbnb: '🗓️ Reservar en Airbnb',
     btnBooking: '🏨 Reservar en Booking',
+    btnVrbo: '🏖️ Reservar en Vrbo',
     btnWhatsapp: '🗓️ Reservar por WhatsApp',
     btnAvailability: '💬 Consultar disponibilidad',
 
@@ -576,6 +577,7 @@ const TRANSLATIONS = {
     heroDefaultSub: 'Carefully equipped short-stay apartments in Bogota. Personalized attention, flexible check-in, and the peace of mind of a ★5.0 host on Airbnb.',
     btnAirbnb: '🗓️ Book on Airbnb',
     btnBooking: '🏨 Book on Booking',
+    btnVrbo: '🏖️ Book on Vrbo',
     btnWhatsapp: '🗓️ Book on WhatsApp',
     btnAvailability: '💬 Check availability',
 

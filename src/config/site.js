@@ -34,6 +34,7 @@ export const SITE = {
 
   // ── Links Booking.com ──────────────────────────────
   bookingLink: 'https://www.booking.com/Share-twQDfc',
+  vrboLink: 'https://www.vrbo.com/5524174?dateless=true',
 
   // ── Propiedad principal ────────────────────────────
   property: {

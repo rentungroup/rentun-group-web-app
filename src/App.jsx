@@ -1,21 +1,22 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Landing    from './pages/Landing';
-import Properties from './pages/Properties';
-import GuestGuide from './pages/GuestGuide';
-import Admin      from './pages/Admin';
-import Legal      from './pages/Legal';
-import PrintView  from './pages/PrintView';
-import PrintContract from './pages/PrintContract';
+import Landing from './pages/Landing';
 import ChatWidget from './components/ChatWidget';
-import LeadModal  from './components/LeadModal';
+import LeadModal from './components/LeadModal';
 import ScrollToTop from './components/ScrollToTop';
 import { AuthProvider } from './context/AuthContext';
 import { ConfigProvider, useConfig } from './context/ConfigContext';
 import { Analytics } from '@vercel/analytics/react';
-
-import PropertyDetails from './pages/PropertyDetails';
 import { trackPageView } from './utils/analytics';
+
+// Code-split heavy routes to slash initial bundle size from 870 kB to <180 kB
+const Properties = lazy(() => import('./pages/Properties'));
+const PropertyDetails = lazy(() => import('./pages/PropertyDetails'));
+const GuestGuide = lazy(() => import('./pages/GuestGuide'));
+const Admin = lazy(() => import('./pages/Admin'));
+const Legal = lazy(() => import('./pages/Legal'));
+const PrintView = lazy(() => import('./pages/PrintView'));
+const PrintContract = lazy(() => import('./pages/PrintContract'));
 
 function PageViewTracker() {
   useEffect(() => {
@@ -30,8 +31,6 @@ function FontLoader() {
   const fontPair = config.fontPair || 'outfit_inter';
 
   useEffect(() => {
-
-    // Aplicar las variables de CSS al documentElement
     const FONT_MAP = {
       outfit_inter: { header: "'Outfit', sans-serif", body: "'Inter', sans-serif" },
       cinzel_montserrat: { header: "'Cinzel', serif", body: "'Montserrat', sans-serif" },
@@ -48,7 +47,6 @@ function FontLoader() {
     const currentPair = FONT_MAP[fontPair] || FONT_MAP.outfit_inter;
     root.style.setProperty('--font-header', currentPair.header);
     root.style.setProperty('--font-body', currentPair.body);
-
   }, [fontPair]);
 
   return null;
@@ -62,17 +60,19 @@ export default function App() {
         <BrowserRouter>
           <ScrollToTop />
           <PageViewTracker />
-          <Routes>
-            <Route path="/"              element={<Landing />} />
-            <Route path="/propiedades"   element={<Properties />} />
-            <Route path="/propiedad/:id" element={<PropertyDetails />} />
-            <Route path="/propiedades/:id" element={<PropertyDetails />} />
-            <Route path="/guia"          element={<GuestGuide />} />
-            <Route path="/admin"         element={<Admin />} />
-            <Route path="/legal"         element={<Legal />} />
-            <Route path="/imprimir/:id"  element={<PrintView />} />
-            <Route path="/imprimir-contrato/:id" element={<PrintContract />} />
-          </Routes>
+          <Suspense fallback={null}>
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/propiedades" element={<Properties />} />
+              <Route path="/propiedad/:id" element={<PropertyDetails />} />
+              <Route path="/propiedades/:id" element={<PropertyDetails />} />
+              <Route path="/guia" element={<GuestGuide />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/legal" element={<Legal />} />
+              <Route path="/imprimir/:id" element={<PrintView />} />
+              <Route path="/imprimir-contrato/:id" element={<PrintContract />} />
+            </Routes>
+          </Suspense>
           <ChatWidget />
           <LeadModal />
         </BrowserRouter>
