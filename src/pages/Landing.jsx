@@ -445,14 +445,14 @@ export default function Landing() {
 
   useEffect(() => {
     document.title = lang === 'EN' 
-      ? 'Rentun Group | Premium Vacation Rentals, Property Management & Investment' 
-      : 'Rentun Group | Apartamentos Amoblados en Bogotá · Rentas Cortas';
+      ? 'Furnished Apartments in Bogotá | Rentun Group' 
+      : 'Apartamentos Amoblados en Bogotá | Rentun Group';
 
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
       metaDesc.setAttribute('content', lang === 'EN'
-        ? 'Rentun Group: Furnished apartments & short-stay rentals in Bogotá (Zona T, Andino). 5.0 Airbnb rating, 24/7 check-in, and property management.'
-        : 'Rentun Group: Apartamentos amoblados y rentas cortas en Bogotá (Zona T, Andino). Calificación 5.0 en Airbnb, check-in 24/7 y gestión inmobiliaria.');
+        ? 'Furnished apartments and short stays in Bogotá (Zona T, Andino & Cabrera). 5.0 Airbnb rating, 24/7 self check-in, and verified RNT.'
+        : 'Apartamentos amoblados y rentas cortas en Bogotá (Zona T, Andino y Cabrera). Calificación 5.0 en Airbnb, check-in 24/7 y RNT verificado.');
     }
 
     const handleConfigChange = () => {
