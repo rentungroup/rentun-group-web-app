@@ -446,13 +446,13 @@ export default function Landing() {
   useEffect(() => {
     document.title = lang === 'EN' 
       ? 'Rentun Group | Premium Vacation Rentals, Property Management & Investment' 
-      : 'Rentun Group | Rentas · Gestión · Inversión';
+      : 'Rentun Group | Apartamentos Amoblados en Bogotá · Rentas Cortas';
 
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
       metaDesc.setAttribute('content', lang === 'EN'
-        ? 'Rentun Group — Premium short-stay apartments and national & international real estate advisory. Vacation rentals, investment, and property management.'
-        : 'Rentun Group — Apartamentos de corta estancia premium y servicios de asesoría inmobiliaria a nivel nacional e internacional. Gestión de rentas vacacionales, inversión y bienes raíces.');
+        ? 'Rentun Group: Furnished apartments & short-stay rentals in Bogotá (Zona T, Andino). 5.0 Airbnb rating, 24/7 check-in, and property management.'
+        : 'Rentun Group: Apartamentos amoblados y rentas cortas en Bogotá (Zona T, Andino). Calificación 5.0 en Airbnb, check-in 24/7 y gestión inmobiliaria.');
     }
 
     const handleConfigChange = () => {

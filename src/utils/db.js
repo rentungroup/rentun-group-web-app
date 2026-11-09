@@ -75,6 +75,7 @@ export const DEFAULTS = {
       airbnbSafety: SITE.airbnb.safety,
       airbnbEmbedId: SITE.airbnb.embedId,
       bookingLink: SITE.bookingLink,
+      vrboLink: '',
       whatsappNumber: SITE.whatsapp,
       images: [
         'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=60&w=800',
@@ -219,6 +220,7 @@ export const fetchConfig = async () => {
       airbnbContact: p.airbnb_contact, airbnbCalendar: p.airbnb_calendar,
       airbnbRules: p.airbnb_rules, airbnbSafety: p.airbnb_safety,
       airbnbEmbedId: p.airbnb_embed_id, bookingLink: p.booking_link || '',
+      vrboLink: p.vrbo_link || (p.name && (p.name.includes('Muttuo') || p.name.includes('Atlantis')) ? 'https://www.vrbo.com/5524174?dateless=true' : ''),
       whatsappNumber: p.whatsapp_number || '',
       rntNumber: p.rnt_number || '',
       images: p.images || [],
@@ -347,6 +349,7 @@ export const saveConfig = async (newData) => {
         airbnb_calendar: p.airbnbCalendar || '', airbnb_rules: p.airbnbRules || '',
         airbnb_safety: p.airbnbSafety || '', airbnb_embed_id: p.airbnbEmbedId || '',
         booking_link: p.bookingLink || '',
+        vrbo_link: p.vrboLink || (p.name && (p.name.includes('Muttuo') || p.name.includes('Atlantis')) ? 'https://www.vrbo.com/5524174?dateless=true' : ''),
         whatsapp_number: p.whatsappNumber || '',
         rnt_number: p.rntNumber || '',
         images: Array.isArray(p.images) ? p.images : [],

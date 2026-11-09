@@ -193,7 +193,7 @@ export default function Admin() {
     id: '', name: '', description: '', location: '', address: '', wifiSSID: '', wifiPassword: '', price: '',
     bedrooms: 1, beds: 1, baths: 1, guests: 2, isAirbnb: true,
     airbnbListing: '', airbnbBooking: '', airbnbReviews: '', airbnbContact: '', airbnbCalendar: '', airbnbRules: '', airbnbSafety: '', airbnbEmbedId: '',
-    bookingLink: '', whatsappNumber: '', rntNumber: '',
+    bookingLink: '', vrboLink: '', whatsappNumber: '', rntNumber: '',
     images: [], customWifiQR: '', customGuideQR: '', customWhatsappQR: ''
   });
   const [isEditingProp, setIsEditingProp] = useState(false);
@@ -1851,6 +1851,7 @@ export default function Admin() {
                       {openBooking && (
                         <div style={{ padding:'1.2rem', background:'white', borderTop:'1px solid #E6E7E8' }}>
                           <Field label="Link del Listing en Booking.com" value={propForm.bookingLink} onChange={e => setPropForm(p => ({ ...p, bookingLink: e.target.value }))} placeholder="Ej: https://www.booking.com/Share-..." />
+                          <Field label="Link del Listing en Vrbo (Expedia Group)" value={propForm.vrboLink} onChange={e => setPropForm(p => ({ ...p, vrboLink: e.target.value }))} placeholder="Ej: https://www.vrbo.com/5524174..." />
                         </div>
                       )}
                     </div>

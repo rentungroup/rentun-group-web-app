@@ -704,6 +704,40 @@ export default function PropertyDetails() {
                     <span>🏨 {lang === 'EN' ? 'Book on Booking.com' : 'Reservar en Booking.com'}</span>
                   </a>
                 )}
+
+                {/* Botón Vrbo si existe */}
+                {prop.vrboLink && (
+                  <a
+                    href={prop.vrboLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => {
+                      if (!localStorage.getItem('lead_registered')) {
+                        e.preventDefault();
+                        handleRedirectWithLead(prop.vrboLink, 'vrbo');
+                      }
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.6rem',
+                      background: '#1c355e',
+                      color: 'white',
+                      textDecoration: 'none',
+                      padding: '0.85rem 1.5rem',
+                      borderRadius: 14,
+                      fontSize: '0.9rem',
+                      fontWeight: 700,
+                      boxShadow: '0 4px 15px rgba(28,53,94,0.25)',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.filter = 'brightness(1.15)'}
+                    onMouseLeave={(e) => e.currentTarget.style.filter = 'none'}
+                  >
+                    <span>🏖️ {lang === 'EN' ? 'Book on Vrbo' : 'Reservar en Vrbo'}</span>
+                  </a>
+                )}
               </div>
 
               {/* Garantías */}
