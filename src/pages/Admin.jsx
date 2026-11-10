@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Plus, Edit2, Trash2, Save, RotateCcw, AlertTriangle, Eye, ArrowUp, ArrowDown, Search, FileText, Upload, X, Check, EyeOff, Share2, BarChart3, TrendingUp, Globe, Smartphone, Monitor, ExternalLink, MessageSquare, Mail, Download, Send, Copy, Phone } from 'lucide-react';
 import { saveConfig, resetConfig, DEFAULTS, uploadImage } from '../utils/db';
 import { useConfig } from '../context/ConfigContext';
-import { useAuth } from '../context/AuthContext';
+import { AuthProvider, useAuth } from '../context/AuthContext';
 import { supabase } from '../supabase';
 import { SITE } from '../config/site';
 import ImageUploader from '../components/ImageUploader';
@@ -77,7 +77,7 @@ function SelectField({ label, name, value, onChange, options, hint, disabled }) 
 // ════════════════════════════════════════════════════════
 //  ADMIN PANEL
 // ════════════════════════════════════════════════════════
-export default function Admin() {
+function AdminContent() {
   const { config: dbConfig, reloadConfig } = useConfig();
   const { session, loading: authLoading } = useAuth();
   
@@ -4252,5 +4252,14 @@ export default function Admin() {
 
       </div>
     </div>
+  );
+}
+
+
+export default function Admin() {
+  return (
+    <AuthProvider>
+      <AdminContent />
+    </AuthProvider>
   );
 }

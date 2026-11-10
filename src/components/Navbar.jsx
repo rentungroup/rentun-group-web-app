@@ -79,7 +79,7 @@ export default function Navbar() {
       <Link to="/" onClick={() => setMenuOpen(false)} className="logo-link" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', textDecoration: 'none' }}>
         <img
           src="/logos/rentungroupwithe.webp"
-          alt="Rentun Group Logo"
+          alt="Rentun Group Logo" width="40" height="40"
           className="nav-logo"
           style={{
             width: 40,
@@ -107,14 +107,14 @@ export default function Navbar() {
         
         {/* Idioma Selector */}
         <li style={{ display:'flex', gap:'2px', border:'1px solid rgba(255,255,255,0.18)', borderRadius:50, padding:'2px', background:'rgba(0,0,0,0.15)' }}>
-          <button onClick={() => changeLang('ES')} style={{ border:'none', background: lang === 'ES' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.7rem', fontWeight:800, padding:'0.2rem 0.5rem', borderRadius:50, cursor:'pointer', transition:'all 0.15s' }}>ES</button>
-          <button onClick={() => changeLang('EN')} style={{ border:'none', background: lang === 'EN' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.7rem', fontWeight:800, padding:'0.2rem 0.5rem', borderRadius:50, cursor:'pointer', transition:'all 0.15s' }}>EN</button>
+          <button aria-label="Cambiar idioma a Español" onClick={() => changeLang('ES')} style={{ border:'none', background: lang === 'ES' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.7rem', fontWeight:800, padding:'0.2rem 0.5rem', borderRadius:50, cursor:'pointer', transition:'all 0.15s' }}>ES</button>
+          <button aria-label="Switch language to English" onClick={() => changeLang('EN')} style={{ border:'none', background: lang === 'EN' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.7rem', fontWeight:800, padding:'0.2rem 0.5rem', borderRadius:50, cursor:'pointer', transition:'all 0.15s' }}>EN</button>
         </li>
 
         {/* Moneda Selector */}
         <li style={{ display:'flex', gap:'2px', border:'1px solid rgba(255,255,255,0.18)', borderRadius:50, padding:'2px', background:'rgba(0,0,0,0.15)', marginRight:'0.5rem' }}>
-          <button onClick={() => changeCurrency('COP')} style={{ border:'none', background: currency === 'COP' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.7rem', fontWeight:800, padding:'0.2rem 0.5rem', borderRadius:50, cursor:'pointer', transition:'all 0.15s' }}>COP</button>
-          <button onClick={() => changeCurrency('USD')} style={{ border:'none', background: currency === 'USD' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.7rem', fontWeight:800, padding:'0.2rem 0.5rem', borderRadius:50, cursor:'pointer', transition:'all 0.15s' }}>USD</button>
+          <button aria-label="Moneda Pesos Colombianos COP" onClick={() => changeCurrency('COP')} style={{ border:'none', background: currency === 'COP' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.7rem', fontWeight:800, padding:'0.2rem 0.5rem', borderRadius:50, cursor:'pointer', transition:'all 0.15s' }}>COP</button>
+          <button aria-label="Currency US Dollars USD" onClick={() => changeCurrency('USD')} style={{ border:'none', background: currency === 'USD' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.7rem', fontWeight:800, padding:'0.2rem 0.5rem', borderRadius:50, cursor:'pointer', transition:'all 0.15s' }}>USD</button>
         </li>
 
         <li>
@@ -127,7 +127,7 @@ export default function Navbar() {
       </ul>
 
       {/* Mobile Menu Button (Hamburger) */}
-      <button onClick={() => setMenuOpen(!menuOpen)} className="nav-mobile-btn" style={{
+      <button aria-label={menuOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"} onClick={() => setMenuOpen(!menuOpen)} className="nav-mobile-btn" style={{
         background: 'none', border: 'none', color: 'white',
         cursor: 'pointer', outline: 'none', display: 'none',
         padding: '0.4rem'
@@ -158,16 +158,16 @@ export default function Navbar() {
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:'1rem', marginTop:'0.5rem' }}>
             <span style={{ fontSize:'0.82rem', color:'rgba(255,255,255,0.6)', fontWeight:600 }}>Idioma / Language</span>
             <div style={{ display:'flex', gap:'2px', border:'1px solid rgba(255,255,255,0.18)', borderRadius:50, padding:'2px', background:'rgba(0,0,0,0.15)' }}>
-              <button onClick={() => changeLang('ES')} style={{ border:'none', background: lang === 'ES' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.75rem', fontWeight:800, padding:'0.3rem 0.7rem', borderRadius:50, cursor:'pointer' }}>ES</button>
-              <button onClick={() => changeLang('EN')} style={{ border:'none', background: lang === 'EN' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.75rem', fontWeight:800, padding:'0.3rem 0.7rem', borderRadius:50, cursor:'pointer' }}>EN</button>
+              <button aria-label="Cambiar idioma a Español" onClick={() => changeLang('ES')} style={{ border:'none', background: lang === 'ES' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.75rem', fontWeight:800, padding:'0.3rem 0.7rem', borderRadius:50, cursor:'pointer' }}>ES</button>
+              <button aria-label="Switch language to English" onClick={() => changeLang('EN')} style={{ border:'none', background: lang === 'EN' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.75rem', fontWeight:800, padding:'0.3rem 0.7rem', borderRadius:50, cursor:'pointer' }}>EN</button>
             </div>
           </div>
 
           <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:'1rem', marginBottom:'0.5rem' }}>
             <span style={{ fontSize:'0.82rem', color:'rgba(255,255,255,0.6)', fontWeight:600 }}>Moneda / Currency</span>
             <div style={{ display:'flex', gap:'2px', border:'1px solid rgba(255,255,255,0.18)', borderRadius:50, padding:'2px', background:'rgba(0,0,0,0.15)' }}>
-              <button onClick={() => changeCurrency('COP')} style={{ border:'none', background: currency === 'COP' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.75rem', fontWeight:800, padding:'0.3rem 0.7rem', borderRadius:50, cursor:'pointer' }}>COP</button>
-              <button onClick={() => changeCurrency('USD')} style={{ border:'none', background: currency === 'USD' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.75rem', fontWeight:800, padding:'0.3rem 0.7rem', borderRadius:50, cursor:'pointer' }}>USD</button>
+              <button aria-label="Moneda Pesos Colombianos COP" onClick={() => changeCurrency('COP')} style={{ border:'none', background: currency === 'COP' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.75rem', fontWeight:800, padding:'0.3rem 0.7rem', borderRadius:50, cursor:'pointer' }}>COP</button>
+              <button aria-label="Currency US Dollars USD" onClick={() => changeCurrency('USD')} style={{ border:'none', background: currency === 'USD' ? '#F57C00' : 'transparent', color: 'white', fontSize:'0.75rem', fontWeight:800, padding:'0.3rem 0.7rem', borderRadius:50, cursor:'pointer' }}>USD</button>
             </div>
           </div>
 

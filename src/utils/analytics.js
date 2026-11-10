@@ -1,4 +1,10 @@
-import { supabase } from '../supabase';
+let _supabasePromise = null;
+const getSupabase = () => {
+  if (!_supabasePromise) {
+    _supabasePromise = import('../supabase').then(m => m.supabase);
+  }
+  return _supabasePromise;
+};
 
 // Helper para detectar tipo de dispositivo
 export const getDeviceType = () => {
@@ -53,6 +59,7 @@ export const trackShareEvent = async ({ propertyId, propertyName, platform }) =>
     };
 
     // Guardar en Supabase
+    const supabase = await getSupabase();
     const { error } = await supabase.from('share_events').insert(payload);
     if (error) {
       console.warn('Analytics: Could not save share event to Supabase, saving locally:', error.message);
@@ -91,6 +98,7 @@ export const trackPageView = async ({ path, propertyId }) => {
       user_agent: navigator.userAgent || ''
     };
 
+    const supabase = await getSupabase();
     const { error } = await supabase.from('page_visits').insert(payload);
     if (error) {
       // Fallback local
@@ -115,6 +123,7 @@ const saveLocalEvent = (key, event) => {
 // ── 3. Consultar Resumen para el Admin ────────────────────────────────
 export const fetchAnalyticsData = async () => {
   try {
+    const supabase = await getSupabase();
     const [sharesRes, visitsRes] = await Promise.all([
       supabase.from('share_events').select('*').order('created_at', { ascending: false }).limit(500),
       supabase.from('page_visits').select('*').order('created_at', { ascending: false }).limit(500)

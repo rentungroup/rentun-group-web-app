@@ -42,7 +42,13 @@ export function ConfigProvider({ children }) {
   };
 
   useEffect(() => {
-    loadConfig();
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const handle = window.requestIdleCallback(() => { loadConfig(); }, { timeout: 1500 });
+      return () => window.cancelIdleCallback(handle);
+    } else {
+      const timer = setTimeout(() => { loadConfig(); }, 300);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   return (

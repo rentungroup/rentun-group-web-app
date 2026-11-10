@@ -221,9 +221,9 @@ img { display: block; max-width: 100%; }
 
 /* ── Image Slider (Carrusel) ── */
 @keyframes gradient-glow {
-  0% { background-position: 0% 50%; opacity: 0.6; transform: scale(1); filter: blur(35px); }
-  50% { background-position: 100% 50%; opacity: 1; transform: scale(1.05); filter: blur(50px); }
-  100% { background-position: 0% 50%; opacity: 0.6; transform: scale(1); filter: blur(35px); }
+  0% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.04); }
+  100% { opacity: 0.6; transform: scale(1); }
 }
 
 .slider-container {
@@ -235,8 +235,9 @@ img { display: block; max-width: 100%; }
 .slider-glow {
   position: absolute;
   top: -10px; left: -10px; right: -10px; bottom: -10px;
-  background: linear-gradient(270deg, #F57C00, #FF9A2F, #C49A3C, #F57C00);
-  background-size: 400% 400%;
+  background: linear-gradient(135deg, rgba(245, 124, 0, 0.45), rgba(196, 154, 60, 0.35));
+  filter: blur(35px);
+  will-change: transform, opacity;
   z-index: 0;
   border-radius: 38px;
   animation: gradient-glow 8s ease infinite;

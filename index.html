@@ -49,18 +49,24 @@
     <!-- Preconnect / Performance Hints -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://api.qrserver.com" />
+    <link rel="preconnect" href="https://bvdmbknemahfupadhnnf.supabase.co" crossorigin />
+    <link rel="dns-prefetch" href="https://bvdmbknemahfupadhnnf.supabase.co" />
     
     <!-- Critical Hero Preload -->
     <link rel="preload" as="image" href="/images/hero.webp" fetchpriority="high" type="image/webp" />
     
     <!-- Optimized Asynchronous Google Fonts (Outfit & Inter) -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" />
-    <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=optional" />
+    <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=optional" />
     <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=optional" />
     </noscript>
 
+    
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
     <!-- Structured Data: Unified Master Graph (Multi-City Lodging, RealEstateAgent, Services, WebSite) -->
     <script type="application/ld+json">
 {
@@ -91,7 +97,7 @@
       "description": "Apartamentos de corta y media estancia con servicio premium en Bogotá (Zona T, Andino, La Cabrera, Chapinero). Check-in autónomo 24/7, WiFi de alta velocidad, cocina equipada y calificación 5.0 en Airbnb.",
       "telephone": "+573134900223",
       "email": "admin@rentungroup.com",
-      "priceRange": "$$$",
+      "priceRange": "$$",
       "currenciesAccepted": "COP, USD, EUR",
       "paymentAccepted": "Cash, Credit Card, Bank Transfer, Airbnb, Booking.com, Vrbo",
       "checkinTime": "15:00",
@@ -506,9 +512,5 @@
   ]
 }
     </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -17,8 +17,8 @@ export const DEFAULTS = {
   
   heroImages: [
     '/images/hero.webp',
-    'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=60&w=800',
-    'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=60&w=800'
+    '/images/hero.webp',
+    '/images/hero.webp'
   ],
 
   // ── Anfitrión e RNT ──
@@ -79,8 +79,8 @@ export const DEFAULTS = {
       whatsappNumber: SITE.whatsapp,
       images: [
         '/images/hero.webp',
-        'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=60&w=800',
-        'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=60&w=800'
+        '/images/hero.webp',
+        '/images/hero.webp'
       ],
       amenities: SITE.property.amenities,
       customWifiQR: '',
@@ -188,11 +188,18 @@ export const DEFAULTS = {
   ]
 };
 
-import { supabase } from '../supabase';
+let _supabasePromise = null;
+const getSupabase = () => {
+  if (!_supabasePromise) {
+    _supabasePromise = import('../supabase').then(m => m.supabase);
+  }
+  return _supabasePromise;
+};
 
 // ── Lee la configuración ────────────────────────────────
 export const fetchConfig = async () => {
   try {
+    const supabase = await getSupabase();
     const [
       settingsRes, propertiesRes, placesRes,
       manualsRes, rulesRes, emergenciesRes, faqsRes, legalPagesRes
@@ -305,6 +312,7 @@ export const fetchConfig = async () => {
 // ── Guarda la configuración (Actualización monolítica para Admin) ──────────
 export const saveConfig = async (newData) => {
   try {
+    const supabase = await getSupabase();
     // 1. Upsert site_settings (crea la fila si no existe, la actualiza si ya existe)
     const { error: settingsError } = await supabase.from('site_settings').upsert({
       id: 1,

@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { X, Send, ShieldCheck, HelpCircle } from 'lucide-react';
-import { supabase } from '../supabase';
+
+let _supabasePromise = null;
+const getSupabase = () => {
+  if (!_supabasePromise) {
+    _supabasePromise = import('../supabase').then(m => m.supabase);
+  }
+  return _supabasePromise;
+};
 
 export default function LeadModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,6 +54,7 @@ export default function LeadModal() {
 
     try {
       // 1. Guardar en Supabase
+      const supabase = await getSupabase();
       const { error: dbErr } = await supabase.from('leads').insert({
         name: name.trim(),
         phone: phone.trim(),

@@ -256,7 +256,7 @@ PROPIEDADES DISPONIBLES:\n`;
           <div className="chat-header-info">
             <div className="chat-avatar">
               {chatAvatar ? (
-                <img src={chatAvatar} alt={chatName} style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover' }} />
+                <img src={chatAvatar} alt={chatName} width="24" height="24" loading="lazy" decoding="async" style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover' }} />
               ) : (
                 <Bot size={24} />
               )}
@@ -267,10 +267,10 @@ PROPIEDADES DISPONIBLES:\n`;
             </div>
           </div>
           <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
-            <button className="chat-close" onClick={() => setIsOpen(false)} title="Minimizar (conservar historial)" style={{ padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <button className="chat-close" onClick={() => setIsOpen(false)} aria-label="Minimizar chat" title="Minimizar (conservar historial)" style={{ padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Minus size={18} />
             </button>
-            <button className="chat-close" onClick={handleClose} title="Cerrar y reiniciar chat" style={{ padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <button className="chat-close" onClick={handleClose} aria-label="Cerrar y reiniciar chat" title="Cerrar y reiniciar chat" style={{ padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <X size={18} />
             </button>
           </div>
@@ -302,7 +302,7 @@ PROPIEDADES DISPONIBLES:\n`;
             onChange={(e) => setInput(e.target.value)}
             disabled={isLoading}
           />
-          <button type="submit" disabled={!input.trim() || isLoading}>
+          <button type="submit" disabled={!input.trim() || isLoading} aria-label="Enviar mensaje">
             <Send size={18} />
           </button>
         </form>

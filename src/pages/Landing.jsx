@@ -365,6 +365,7 @@ export function PropCard({ p, idx, lang, t, waLink }) {
 
             <button 
               onClick={handleQuickCopy}
+              aria-label={lang === 'EN' ? 'Share property link' : 'Compartir enlace de la propiedad'}
               title={lang === 'EN' ? 'Share / Copy link' : 'Compartir / Copiar enlace'}
               style={{
                 display:'flex', alignItems:'center', justifyContent:'center',
@@ -526,7 +527,7 @@ export default function Landing() {
         {/* Skyline de Bogotá sutil de fondo */}
         <div style={{
           position:'absolute', inset:0,
-          backgroundImage: 'url("https://images.unsplash.com/photo-1531168556461-80ae73db214a?auto=format&fit=crop&q=60&w=1200")',
+          background: 'radial-gradient(ellipse at 80% 20%, rgba(196,154,60,0.18) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(21,58,96,0.3) 0%, transparent 70%)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           opacity: 0.1,

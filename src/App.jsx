@@ -4,7 +4,6 @@ import Landing from './pages/Landing';
 const ChatWidget = lazy(() => import('./components/ChatWidget'));
 import LeadModal from './components/LeadModal';
 import ScrollToTop from './components/ScrollToTop';
-import { AuthProvider } from './context/AuthContext';
 import { ConfigProvider, useConfig } from './context/ConfigContext';
 import { Analytics } from '@vercel/analytics/react';
 import { trackPageView } from './utils/analytics';
@@ -20,7 +19,15 @@ const PrintContract = lazy(() => import('./pages/PrintContract'));
 
 function PageViewTracker() {
   useEffect(() => {
-    trackPageView({ path: window.location.pathname });
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      window.requestIdleCallback(() => {
+        trackPageView({ path: window.location.pathname });
+      }, { timeout: 2500 });
+    } else {
+      setTimeout(() => {
+        trackPageView({ path: window.location.pathname });
+      }, 1000);
+    }
   }, []);
   return null;
 }
@@ -54,30 +61,28 @@ function FontLoader() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <ConfigProvider>
-        <FontLoader />
-        <BrowserRouter>
-          <ScrollToTop />
-          <PageViewTracker />
-          <Suspense fallback={null}>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/propiedades" element={<Properties />} />
-              <Route path="/propiedad/:id" element={<PropertyDetails />} />
-              <Route path="/propiedades/:id" element={<PropertyDetails />} />
-              <Route path="/guia" element={<GuestGuide />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/legal" element={<Legal />} />
-              <Route path="/imprimir/:id" element={<PrintView />} />
-              <Route path="/imprimir-contrato/:id" element={<PrintContract />} />
-            </Routes>
-          </Suspense>
-          <Suspense fallback={null}><ChatWidget /></Suspense>
-          <LeadModal />
-        </BrowserRouter>
-        <Analytics />
-      </ConfigProvider>
-    </AuthProvider>
+    <ConfigProvider>
+      <FontLoader />
+      <BrowserRouter>
+        <ScrollToTop />
+        <PageViewTracker />
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/propiedades" element={<Properties />} />
+            <Route path="/propiedad/:id" element={<PropertyDetails />} />
+            <Route path="/propiedades/:id" element={<PropertyDetails />} />
+            <Route path="/guia" element={<GuestGuide />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/legal" element={<Legal />} />
+            <Route path="/imprimir/:id" element={<PrintView />} />
+            <Route path="/imprimir-contrato/:id" element={<PrintContract />} />
+          </Routes>
+        </Suspense>
+        <Suspense fallback={null}><ChatWidget /></Suspense>
+        <LeadModal />
+      </BrowserRouter>
+      <Analytics />
+    </ConfigProvider>
   );
 }
