@@ -42,13 +42,24 @@ export function ConfigProvider({ children }) {
   };
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-      const handle = window.requestIdleCallback(() => { loadConfig(); }, { timeout: 1500 });
-      return () => window.cancelIdleCallback(handle);
-    } else {
-      const timer = setTimeout(() => { loadConfig(); }, 300);
-      return () => clearTimeout(timer);
-    }
+    let synced = false;
+    const triggerSync = () => {
+      if (synced) return;
+      synced = true;
+      loadConfig();
+    };
+
+    window.addEventListener('scroll', triggerSync, { passive: true, once: true });
+    window.addEventListener('touchstart', triggerSync, { passive: true, once: true });
+    window.addEventListener('click', triggerSync, { passive: true, once: true });
+    const timer = setTimeout(triggerSync, 4500);
+
+    return () => {
+      window.removeEventListener('scroll', triggerSync);
+      window.removeEventListener('touchstart', triggerSync);
+      window.removeEventListener('click', triggerSync);
+      clearTimeout(timer);
+    };
   }, []);
 
   return (

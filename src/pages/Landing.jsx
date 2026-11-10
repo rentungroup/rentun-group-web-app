@@ -167,8 +167,8 @@ function ImageSlider({ images }) {
     <div className="slider-container" style={{ borderRadius: '28px', position: 'relative', zIndex: 1 }}>
       <div className="slider-glow" />
       <img 
-        src={images[currentIndex]} 
-        alt="Apartamento" 
+        src={(currentIndex === 0 && (!images[0] || images[0].includes('1782759069078_d70gt') || images[0] === '/images/hero.webp')) ? '/images/hero.webp' : images[currentIndex]} 
+        alt="Apartamento amoblado en Bogotá Rentun Group" width="600" height="480" 
         className="slider-img" 
         style={{ position: 'relative', zIndex: 2, borderRadius: '28px' }}
         fetchPriority={currentIndex === 0 ? "high" : "auto"}
@@ -287,7 +287,7 @@ export function PropCard({ p, idx, lang, t, waLink }) {
               style={{
                 position:'absolute', top:'50%', left:'0.6rem', transform:'translateY(-50%)',
                 background:'rgba(15, 23, 42, 0.75)', color:'white', border:'none',
-                borderRadius:'50%', width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center',
+                borderRadius:'50%', width:44, height:44, display:'flex', alignItems:'center', justifyContent:'center',
                 cursor:'pointer', zIndex:3, transition:'all 0.2s'
               }}
               onMouseEnter={(e)=>e.currentTarget.style.background='rgba(15, 23, 42, 0.95)'}
@@ -301,7 +301,7 @@ export function PropCard({ p, idx, lang, t, waLink }) {
               style={{
                 position:'absolute', top:'50%', right:'0.6rem', transform:'translateY(-50%)',
                 background:'rgba(15, 23, 42, 0.75)', color:'white', border:'none',
-                borderRadius:'50%', width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center',
+                borderRadius:'50%', width:44, height:44, display:'flex', alignItems:'center', justifyContent:'center',
                 cursor:'pointer', zIndex:3, transition:'all 0.2s'
               }}
               onMouseEnter={(e)=>e.currentTarget.style.background='rgba(15, 23, 42, 0.95)'}
@@ -370,7 +370,7 @@ export function PropCard({ p, idx, lang, t, waLink }) {
               style={{
                 display:'flex', alignItems:'center', justifyContent:'center',
                 background:'#F1F5F9', color:'#0F4C81', border:'1px solid #E2E8F0',
-                borderRadius:50, width:38, height:38, cursor:'pointer', transition:'all 0.2s'
+                borderRadius:50, width:44, height:44, cursor:'pointer', transition:'all 0.2s'
               }}
               onMouseEnter={(e)=>{e.currentTarget.style.background='#0F4C81'; e.currentTarget.style.color='white';}}
               onMouseLeave={(e)=>{e.currentTarget.style.background='#F1F5F9'; e.currentTarget.style.color='#0F4C81';}}

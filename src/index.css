@@ -472,8 +472,10 @@ img { display: block; max-width: 100%; }
 }
 
 .slider-dot {
-  width: 7px;
-  height: 7px;
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  min-height: 24px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.45);
   transition: all 0.2s;
